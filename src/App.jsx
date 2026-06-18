@@ -1,0 +1,432 @@
+import React, { useEffect, useState, useRef } from "react";
+import NeanicHero, { Footer } from "./components/hero";
+import { NeanicSections } from "./NeanicSections";
+import "./components/Modal.css";
+
+// ─────────────────────────────────────────────────────────────────
+// STICKY NAVBAR COMPONENT
+// ─────────────────────────────────────────────────────────────────
+function Navbar({ showStickyNav, setActiveModal }) {
+  return (
+    <header
+      className="header-nav"
+      style={{
+        opacity: showStickyNav ? 1 : 0,
+        pointerEvents: showStickyNav ? "auto" : "none",
+        transform: showStickyNav ? "translateY(0)" : "translateY(-100%)",
+        transition: "opacity 0.4s ease, transform 0.4s ease, background-color 0.4s ease",
+        position: "sticky",
+        top: 0,
+        zIndex: 100,
+      }}
+    >
+      <div className="container nav-container">
+        <a href="#about" className="logo">
+          <span className="logo-main">neanic</span>
+          <span className="logo-sub">Solutions Pvt. Ltd.</span>
+        </a>
+        <ul className="nav-links">
+          <li><a href="#why-neanic-matters">About</a></li>
+          <li><a href="#pipeline">Research</a></li>
+          <li><a href="#edtech">Education</a></li>
+          <li><a href="#contact" onClick={(e) => { e.preventDefault(); setActiveModal('contact'); }}>Contact</a></li>
+        </ul>
+      </div>
+    </header>
+  );
+}
+
+export default function App() {
+  const [activeModal, setActiveModal] = useState(null); // 'edtech' | 'medtech' | 'contact' | null
+  const [selectedDomain, setSelectedDomain] = useState(null);
+  // null | "edtech" | "medtech"
+  const [contactSubject, setContactSubject] = useState("");
+  const [contactName, setContactName] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
+  const [contactMessage, setContactMessage] = useState("");
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [showStickyNav, setShowStickyNav] = useState(false);
+
+  const scrollProgress = useRef(0);
+  const prevScrollY = useRef(0);
+
+  // ── Scroll-lock refs (no re-render needed) ───────────────────────
+  const selectedDomainRef = useRef(null);
+  const lockedScrollY = useRef(null);       // window.scrollY at the moment of lock
+  const virtualDelta = useRef(0);           // accumulated wheel delta while locked
+
+  // Keep the ref in sync so the wheel handler (closure) always sees the latest value
+  useEffect(() => { selectedDomainRef.current = selectedDomain; }, [selectedDomain]);
+
+  // Lock / unlock scroll when domain selection changes
+  useEffect(() => {
+    if (selectedDomain) {
+      // Snapshot the scroll position at the moment of entry
+      lockedScrollY.current = window.scrollY;
+      virtualDelta.current = 0;
+    } else {
+      lockedScrollY.current = null;
+    }
+  }, [selectedDomain]);
+
+  const activeModalRef = useRef(activeModal);
+  useEffect(() => {
+    activeModalRef.current = activeModal;
+  }, [activeModal]);
+
+  // Wheel interceptor — active whenever a domain is selected
+  useEffect(() => {
+    const handleWheel = (e) => {
+      if (activeModalRef.current) {
+        e.preventDefault(); // prevent background scrolling while modal is open
+        return;
+      }
+
+      if (!selectedDomainRef.current || lockedScrollY.current === null) return;
+      e.preventDefault();
+
+      const scrollH = document.documentElement.scrollHeight - window.innerHeight;
+      if (scrollH <= 0) return;
+
+      // Accumulate normalised delta (scale down raw pixels)
+      virtualDelta.current += e.deltaY / (scrollH * 2.5);
+
+      // Clamp: never let the virtual position go below the lock point
+      if (virtualDelta.current < 0) {
+        // Enough upward scroll → exit domain and release
+        if (virtualDelta.current < -0.018) {
+          setSelectedDomain(null);
+          virtualDelta.current = 0;
+          // Don't snap back — just let the page resume from locked position
+          return;
+        }
+      }
+
+      // Feed the accumulated delta into scrollProgress so 3-D animations advance
+      const baseProgress = lockedScrollY.current / scrollH;
+      scrollProgress.current = Math.max(0, Math.min(1,
+        baseProgress + Math.max(0, virtualDelta.current)
+      ));
+
+      // Keep the page frozen at the entry position
+      window.scrollTo({ top: lockedScrollY.current, behavior: "instant" });
+    };
+
+    window.addEventListener("wheel", handleWheel, { passive: false });
+    return () => window.removeEventListener("wheel", handleWheel);
+  }, []); // intentionally empty — uses refs inside
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // While scroll-locked, the scroll handler must not override scrollProgress
+      if (selectedDomainRef.current && lockedScrollY.current !== null) return;
+
+      const scrollH = document.documentElement.scrollHeight - window.innerHeight;
+      if (scrollH > 0) {
+        scrollProgress.current = Math.min(window.scrollY / scrollH, 1);
+      }
+
+      // Auto-exit domain focus when scrolling back up past the split threshold
+      const isScrollingUp = window.scrollY < prevScrollY.current;
+      if (isScrollingUp && scrollProgress.current < 0.42) {
+        setSelectedDomain(null);
+      }
+      prevScrollY.current = window.scrollY;
+
+      if (window.scrollY > window.innerHeight * 5.8) {
+        setShowStickyNav(true);
+      } else {
+        setShowStickyNav(false);
+      }
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    // We intentionally removed document.body.style.overflow = "hidden" here
+    // because it causes scrollbar jumping on Windows which breaks the
+    // scrollProgress and DNASplitSection logic when closing modals.
+  }, [activeModal]);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        setActiveModal(null);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  const handleModalClose = () => {
+    setActiveModal(null);
+    setIsSubmitted(false);
+    setContactName("");
+    setContactEmail("");
+    setContactSubject("");
+    setContactMessage("");
+  };
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    setIsSubmitted(true);
+  };
+
+  const getPlaceholder = () => {
+    if (contactSubject === "EdTech Programs") {
+      return "Tell us about your school/college, student batch size, preferred workshops (Robotics, VLSI, Nanotechnology), and your requirements...";
+    }
+    if (contactSubject === "MedTech Diagnostics") {
+      return "Tell us about your clinical requirements, target diagnostic biomarkers, point-of-care solution needs, or research collaboration ideas...";
+    }
+    return "Tell us about your institution, your requirements, or any questions you have...";
+  };
+
+  return (
+    <>
+      {/* Fixed Radial Gradient Backdrop */}
+      <div style={{ position: "fixed", inset: 0, zIndex: -1, background: `radial-gradient(ellipse 60% 65% at 78% 52%, rgba(150,200,255,0.55) 0%, transparent 60%), radial-gradient(ellipse 35% 45% at 18% 55%, rgba(180,215,255,0.4) 0%, transparent 50%), linear-gradient(155deg, #ebf4ff 0%, #ddeaff 50%, #cce0fc 100%)` }} />
+
+
+      {/* ==================================================
+           SECTION 1: NAVBAR
+           ================================================== */}
+      <Navbar showStickyNav={showStickyNav} setActiveModal={setActiveModal} />
+
+      {/* ==================================================
+           SECTION 2: HERO
+           ================================================== */}
+      <NeanicHero setActiveModal={setActiveModal} scrollProgress={scrollProgress} selectedDomain={selectedDomain} setSelectedDomain={setSelectedDomain} />
+
+      {/* ==================================================
+           CINEMATIC SECTIONS
+           ================================================== */}
+      <NeanicSections scrollProgress={scrollProgress} setActiveModal={setActiveModal} selectedDomain={selectedDomain}
+        setSelectedDomain={setSelectedDomain} />
+
+      {/* ==================================================
+           SECTION 14: FOOTER (AND CONTACT AREA)
+           ================================================== */}
+      <Footer setActiveModal={setActiveModal} />
+
+      {/* ==================================================
+           MODAL PORTALS / DIALOGS
+           ================================================== */}
+      {activeModal === "edtech" && (
+        <div className="modal-overlay" onClick={handleModalClose}>
+          <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close-btn" onClick={handleModalClose} aria-label="Close">&times;</button>
+            <div className="modal-header">
+              <h2>Educational Technologies</h2>
+            </div>
+            <div className="modal-body">
+              <p style={{ fontSize: "15px", lineHeight: "1.6", color: "var(--color-text-primary)" }}>
+                Workshops, seminars, and courses designed to bring high-school and undergraduate students to the forefront of modern technological trends like Robotics, VLSI, and Nanotechnology.
+              </p>
+
+              <h3 style={{ marginTop: "24px", fontSize: "16px", fontWeight: "700" }}>Our Key Offerings</h3>
+              <ul className="modal-details-list">
+                <li><strong>Hands-on Robotics Bootcamps:</strong> Practical microcontroller design, sensor calibration, motor drives, and real-time obstacle avoidance programming.</li>
+                <li><strong>VLSI Design & Basics:</strong> Conceptual insights into silicon chip layouts, CMOS technology, logic gates routing, and EDA design software.</li>
+                <li><strong>Nanotechnology & Thin Films:</strong> Exposure to synthesis methods, microfluidic diagnostics, and structural analysis of functional nanomaterials.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeModal === "medtech" && (
+        <div className="modal-overlay" onClick={handleModalClose}>
+          <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close-btn" onClick={handleModalClose} aria-label="Close">&times;</button>
+            <div className="modal-header">
+              <h2>Healthcare Diagnostics</h2>
+            </div>
+            <div className="modal-body">
+              <p style={{ fontSize: "15px", lineHeight: "1.6", color: "var(--color-text-primary)" }}>
+                Nanotechnology enabled diagnostic devices offering point-of-care solutions for affordable healthcare, ranging from diabetes monitoring to advanced cancer detection and organ-on-chip technology.
+              </p>
+
+              <h3 style={{ marginTop: "24px", fontSize: "16px", fontWeight: "700" }}>Key Technical Frontiers</h3>
+              <ul className="modal-details-list">
+                <li><strong>Electrochemical Biosensing:</strong> Extremely low Limit of Detection (LOD) sensors (e.g., 0.03 mIU/mL LOD for LH) for quantitative point-of-care analysis.</li>
+                <li><strong>Organ-on-Chip Platforms:</strong> Advanced microfluidic networks replicating in-vivo cellular environments for accelerated preclinical drug testing.</li>
+                <li><strong>Oncological Screening:</strong> Portable diagnostic readers focusing on early-stage non-invasive detection of specific cancer protein biomarkers.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeModal === "contact" && (
+        <div className="modal-overlay" onClick={handleModalClose}>
+          <div className="modal-container modal-container--wide" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close-btn" onClick={handleModalClose} aria-label="Close">&times;</button>
+
+            <div className="modal-header">
+              <h2>Get In Touch</h2>
+              <p style={{ fontSize: "14px", color: "var(--color-text-secondary, rgba(15,45,90,0.65))", marginTop: "8px", lineHeight: "1.5", fontFamily: "'Inter', sans-serif" }}>
+                Whether you're a student, institution, or healthcare partner — we'd love to connect. Drop us a message and we'll get back to you shortly.
+              </p>
+            </div>
+
+            <div className="modal-body">
+              {!isSubmitted ? (
+                <div className="contact-modal-grid">
+                  {/* Left Side: Contact Information */}
+                  <div className="contact-info-panel">
+                    <div className="info-item">
+                      <span className="info-item-label">Location</span>
+                      <span className="info-item-value">Innovation Hub, North Sector, India</span>
+                    </div>
+
+                    <div className="info-item">
+                      <span className="info-item-label">Email</span>
+                      <span className="info-item-value">
+                        <a href="mailto:info@neanicsolutions.com">info@neanicsolutions.com</a>
+                      </span>
+                    </div>
+
+                    <div className="info-item">
+                      <span className="info-item-label">Phone</span>
+                      <span className="info-item-value">+91 (123) 456-7890</span>
+                    </div>
+
+                    <div className="info-item">
+                      <span className="info-item-label">Collaboration</span>
+                      <p className="collaboration-text">
+                        <strong>Ready to Collaborate?</strong><br />
+                        We partner with schools, colleges, universities, and healthcare organizations to bring cutting-edge programs and solutions to your institution.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Right Side: Form */}
+                  <form className="contact-form" onSubmit={handleFormSubmit}>
+                    <div className="form-group">
+                      <label htmlFor="modal-name">Your Name</label>
+                      <input
+                        type="text"
+                        id="modal-name"
+                        className="form-input"
+                        required
+                        placeholder="Dr. / Prof. / Mr. / Ms."
+                        value={contactName}
+                        onChange={(e) => setContactName(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label htmlFor="modal-email">Email Address</label>
+                      <input
+                        type="email"
+                        id="modal-email"
+                        className="form-input"
+                        required
+                        placeholder="you@institution.edu"
+                        value={contactEmail}
+                        onChange={(e) => setContactEmail(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label htmlFor="modal-subject">Subject</label>
+                      <select
+                        id="modal-subject"
+                        className="form-select"
+                        required
+                        value={contactSubject}
+                        onChange={(e) => setContactSubject(e.target.value)}
+                      >
+                        <option value="">Select a topic...</option>
+                        <option value="EdTech Programs">EdTech - Educational Technologies</option>
+                        <option value="MedTech Diagnostics">MedTech - Healthcare Diagnostics</option>
+                        <option value="Investment Inquiry">Investment Opportunities</option>
+                        <option value="General Inquiry">General Collaboration</option>
+                      </select>
+                    </div>
+
+                    <div className="form-group">
+                      <span className="service-pills-label">Quick Select Service</span>
+                      <div className="service-pills-row">
+                        <button
+                          type="button"
+                          className={`service-pill ${contactSubject === "EdTech Programs" ? "service-pill--active" : ""}`}
+                          onClick={() => setContactSubject("EdTech Programs")}
+                        >
+                          EdTech Programs
+                        </button>
+                        <button
+                          type="button"
+                          className={`service-pill ${contactSubject === "MedTech Diagnostics" ? "service-pill--active" : ""}`}
+                          onClick={() => setContactSubject("MedTech Diagnostics")}
+                        >
+                          MedTech Diagnostics
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="form-group">
+                      <label htmlFor="modal-message">Message</label>
+                      <textarea
+                        id="modal-message"
+                        className="form-textarea"
+                        required
+                        placeholder={getPlaceholder()}
+                        value={contactMessage}
+                        onChange={(e) => setContactMessage(e.target.value)}
+                      ></textarea>
+                    </div>
+
+                    <button type="submit" className="btn btn-primary" style={{ marginTop: "8px" }}>
+                      Send Message
+                    </button>
+                  </form>
+                </div>
+              ) : (
+                <div className="form-success-state">
+                  <div className="success-icon-wrapper">✓</div>
+                  <h3>Message Sent Successfully!</h3>
+                  <p>
+                    Thank you for reaching out, {contactName}. We have received your inquiry regarding <strong>{contactSubject || "General Collaboration"}</strong> and will get back to you shortly.
+                  </p>
+                  <button onClick={handleModalClose} className="btn btn-primary">
+                    Close Modal
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Card Details Modal */}
+      {activeModal?.type === "card" && (
+        <div className="modal-overlay" onClick={handleModalClose}>
+          <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close-btn" onClick={handleModalClose} aria-label="Close">&times;</button>
+            <div className="modal-header">
+              <h2 style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <span style={{ fontSize: "32px" }}>{activeModal.cardData.icon}</span>
+                {activeModal.cardData.label}
+              </h2>
+            </div>
+            <div className="modal-body" style={{ minHeight: "120px" }}>
+              <p style={{ fontSize: "16px", lineHeight: "1.8", color: "var(--color-text-primary)", marginBottom: activeModal.cardData.content ? "20px" : "0" }}>
+                {activeModal.cardData.detail}
+              </p>
+              
+              {/* Optional Extended Data / Content added by user */}
+              {activeModal.cardData.content && (
+                <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px solid rgba(0,0,0,0.1)' }}>
+                  {activeModal.cardData.content}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}

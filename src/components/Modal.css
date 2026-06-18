@@ -1,0 +1,334 @@
+/* --------------------------------------------------
+   MODAL COMPONENT STYLES
+   -------------------------------------------------- */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(3, 5, 8, 0.45); /* Dark tint to align with video colors */
+  backdrop-filter: blur(12px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.modal-container {
+  background-color: var(--color-bg-white);
+  border: 1px solid rgba(0, 119, 182, 0.15);
+  box-shadow: 0 20px 50px rgba(0, 119, 182, 0.12), 0 0 0 1px rgba(0, 119, 182, 0.05);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 680px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: scaleUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Wide Contact Modal layout */
+.modal-container--wide {
+  max-width: 900px;
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  z-index: 10;
+}
+
+.modal-close-btn:hover {
+  background-color: var(--color-bg-cream);
+  color: var(--color-text-primary);
+}
+
+.modal-header {
+  padding: 28px 32px 16px 32px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.modal-header h2 {
+  font-size: 28px;
+  margin-bottom: 0;
+  font-family: var(--font-heading);
+  color: var(--color-text-primary);
+}
+
+.modal-body {
+  padding: 24px 32px 32px 32px;
+  overflow-y: auto;
+  max-height: calc(85vh - 120px);
+}
+
+/* 2-Column Grid for Contact details */
+.contact-modal-grid {
+  display: grid;
+  grid-template-columns: 45% 55%;
+  gap: 36px;
+}
+
+.contact-info-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.contact-info-panel h3 {
+  font-size: 18px;
+  margin-bottom: 6px;
+  color: var(--color-primary);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-item-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+  font-weight: 700;
+}
+
+.info-item-value {
+  font-size: 15px;
+  color: var(--color-text-primary);
+  line-height: 1.5;
+}
+
+.info-item-value a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: text-decoration 0.2s ease;
+}
+
+.info-item-value a:hover {
+  text-decoration: underline;
+}
+
+.collaboration-text {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+  background-color: var(--color-bg-blue-tint);
+  border-left: 3px solid var(--color-primary);
+  padding: 12px 16px;
+  border-radius: 0 8px 8px 0;
+}
+
+/* Form Styles */
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  font-family: var(--font-body);
+  font-size: 14px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg-white);
+  color: var(--color-text-primary);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(0, 119, 182, 0.15);
+}
+
+.form-textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Quick Select Service Pills */
+.service-pills-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.service-pills-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.service-pill {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg-cream);
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.service-pill:hover {
+  border-color: var(--color-primary-mid);
+  background-color: var(--color-bg-blue-tint);
+  color: var(--color-primary);
+}
+
+.service-pill--active {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-bg-white) !important;
+  box-shadow: 0 4px 10px rgba(0, 119, 182, 0.2);
+}
+
+/* Details list inside service modal */
+.modal-details-list {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0 28px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-details-list li {
+  position: relative;
+  padding-left: 24px;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  line-height: 1.55;
+}
+
+.modal-details-list li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--color-accent-green);
+  font-weight: bold;
+}
+
+.modal-action-btn {
+  width: 100%;
+  margin-top: 12px;
+}
+
+/* Success State Screen */
+.form-success-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.success-icon-wrapper {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background-color: rgba(20, 184, 166, 0.1);
+  color: var(--color-accent-green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  margin-bottom: 20px;
+  animation: pulseSuccess 2s infinite ease-in-out;
+}
+
+.form-success-state h3 {
+  font-size: 22px;
+  color: var(--color-text-primary);
+  margin-bottom: 8px;
+}
+
+.form-success-state p {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  max-width: 320px;
+  margin-bottom: 24px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulseSuccess {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(20, 184, 166, 0.4); }
+  50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(20, 184, 166, 0); }
+}
+
+/* Responsive breakpoint */
+@media (max-width: 768px) {
+  .contact-modal-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .modal-container {
+    margin: 10px;
+  }
+  .modal-body {
+    padding: 20px 24px 24px 24px;
+  }
+  .modal-header {
+    padding: 20px 24px 12px 24px;
+  }
+}
