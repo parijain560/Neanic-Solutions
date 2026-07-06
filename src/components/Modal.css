@@ -79,7 +79,7 @@
 /* 2-Column Grid for Contact details */
 .contact-modal-grid {
   display: grid;
-  grid-template-columns: 45% 55%;
+  grid-template-columns: 4.5fr 5.5fr;
   gap: 36px;
 }
 

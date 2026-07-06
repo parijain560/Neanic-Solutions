@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import NeanicHero, { Footer } from "./components/hero";
 import { NeanicSections } from "./NeanicSections";
 import "./components/Modal.css";
-
+// FormspreeProvider removed per instructions to use Fetch API
 // ─────────────────────────────────────────────────────────────────
 // STICKY NAVBAR COMPONENT
 // ─────────────────────────────────────────────────────────────────
@@ -13,22 +13,31 @@ function Navbar({ showStickyNav, setActiveModal }) {
       style={{
         opacity: showStickyNav ? 1 : 0,
         pointerEvents: showStickyNav ? "auto" : "none",
-        transform: showStickyNav ? "translateY(0)" : "translateY(-100%)",
-        transition: "opacity 0.4s ease, transform 0.4s ease, background-color 0.4s ease",
-        position: "sticky",
-        top: 0,
-        zIndex: 100,
+        transform: showStickyNav ? "translateY(0)" : "translateY(-20px)",
+        transition: "opacity 0.4s ease, transform 0.4s ease",
       }}
     >
       <div className="container nav-container">
-        <a href="#about" className="logo">
-          <span className="logo-main">neanic</span>
-          <span className="logo-sub">Solutions Pvt. Ltd.</span>
+        <a href="#about" className="logo" onClick={(e) => { 
+          e.preventDefault(); 
+          const scrollH = document.documentElement.scrollHeight - window.innerHeight;
+          window.scrollTo({ top: scrollH * 0.245, behavior: 'smooth' }); 
+        }}>
+          <img src="/LOGO.png" alt="Neanic Solutions logo" className="logo-img" />
+          <span className="logo-sub">Neanic Solutions</span>
         </a>
         <ul className="nav-links">
           <li><a href="#why-neanic-matters">About</a></li>
           <li><a href="#pipeline">Research</a></li>
-          <li><a href="#edtech">Education</a></li>
+          <li><a href="#edtech" onClick={(e) => {
+            e.preventDefault();
+            const scrollH = document.documentElement.scrollHeight - window.innerHeight;
+            window.scrollTo({ top: scrollH * 0.385, behavior: 'auto' });
+            if (selectedDomain !== "edtech") {
+                setSelectedDomain("edtech");
+            }
+          }}>Education</a></li>
+          <li><a href="#news">Milestones</a></li>
           <li><a href="#contact" onClick={(e) => { e.preventDefault(); setActiveModal('contact'); }}>Contact</a></li>
         </ul>
       </div>
@@ -39,12 +48,13 @@ function Navbar({ showStickyNav, setActiveModal }) {
 export default function App() {
   const [activeModal, setActiveModal] = useState(null); // 'edtech' | 'medtech' | 'contact' | null
   const [selectedDomain, setSelectedDomain] = useState(null);
-  // null | "edtech" | "medtech"
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isError, setIsError] = useState(false);
   const [contactSubject, setContactSubject] = useState("");
   const [contactName, setContactName] = useState("");
   const [contactEmail, setContactEmail] = useState("");
   const [contactMessage, setContactMessage] = useState("");
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const [showStickyNav, setShowStickyNav] = useState(false);
 
   const scrollProgress = useRef(0);
@@ -66,6 +76,11 @@ export default function App() {
       virtualDelta.current = 0;
     } else {
       lockedScrollY.current = null;
+      // Reset scrollProgress to actual scroll when exiting the domain
+      const scrollH = document.documentElement.scrollHeight - window.innerHeight;
+      if (scrollH > 0) {
+        scrollProgress.current = Math.min(window.scrollY / scrollH, 1);
+      }
     }
   }, [selectedDomain]);
 
@@ -162,15 +177,47 @@ export default function App() {
   const handleModalClose = () => {
     setActiveModal(null);
     setIsSubmitted(false);
+    setIsSubmitting(false);
+    setIsError(false);
     setContactName("");
     setContactEmail("");
     setContactSubject("");
     setContactMessage("");
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitted(true);
+    setIsSubmitting(true);
+    setIsError(false);
+
+    const formData = new FormData(e.target);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+    try {
+      const response = await fetch("https://formspree.io/f/xqevjbrv", {
+        method: "POST",
+        body: formData,
+        headers: {
+          Accept: "application/json",
+        },
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (response.ok) {
+        setIsSubmitted(true);
+      } else {
+        setIsError(true);
+      }
+      e.target.reset();
+    } catch (error) {
+      console.error("Form submission error:", error);
+      setIsError(true);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const getPlaceholder = () => {
@@ -208,7 +255,7 @@ export default function App() {
       {/* ==================================================
            SECTION 14: FOOTER (AND CONTACT AREA)
            ================================================== */}
-      <Footer setActiveModal={setActiveModal} />
+      <Footer setActiveModal={setActiveModal} selectedDomain={selectedDomain} setSelectedDomain={setSelectedDomain} />
 
       {/* ==================================================
            MODAL PORTALS / DIALOGS
@@ -284,13 +331,13 @@ export default function App() {
                     <div className="info-item">
                       <span className="info-item-label">Email</span>
                       <span className="info-item-value">
-                        <a href="mailto:info@neanicsolutions.com">info@neanicsolutions.com</a>
+                        <a href="mailto:parijain4141@gmail.com">abc@gmail.com</a>
                       </span>
                     </div>
 
                     <div className="info-item">
                       <span className="info-item-label">Phone</span>
-                      <span className="info-item-value">+91 (123) 456-7890</span>
+                      <span className="info-item-value">+91 98xxxxxxxx</span>
                     </div>
 
                     <div className="info-item">
@@ -310,10 +357,13 @@ export default function App() {
                         type="text"
                         id="modal-name"
                         className="form-input"
+                        name="name"
                         required
+                        autoComplete="name"
                         placeholder="Dr. / Prof. / Mr. / Ms."
                         value={contactName}
                         onChange={(e) => setContactName(e.target.value)}
+                        disabled={isSubmitting}
                       />
                     </div>
 
@@ -323,10 +373,13 @@ export default function App() {
                         type="email"
                         id="modal-email"
                         className="form-input"
+                        name="email"
                         required
+                        autoComplete="email"
                         placeholder="you@institution.edu"
                         value={contactEmail}
                         onChange={(e) => setContactEmail(e.target.value)}
+                        disabled={isSubmitting}
                       />
                     </div>
 
@@ -335,9 +388,11 @@ export default function App() {
                       <select
                         id="modal-subject"
                         className="form-select"
+                        name="subject"
                         required
                         value={contactSubject}
                         onChange={(e) => setContactSubject(e.target.value)}
+                        disabled={isSubmitting}
                       >
                         <option value="">Select a topic...</option>
                         <option value="EdTech Programs">EdTech - Educational Technologies</option>
@@ -354,6 +409,7 @@ export default function App() {
                           type="button"
                           className={`service-pill ${contactSubject === "EdTech Programs" ? "service-pill--active" : ""}`}
                           onClick={() => setContactSubject("EdTech Programs")}
+                          disabled={isSubmitting}
                         >
                           EdTech Programs
                         </button>
@@ -361,6 +417,7 @@ export default function App() {
                           type="button"
                           className={`service-pill ${contactSubject === "MedTech Diagnostics" ? "service-pill--active" : ""}`}
                           onClick={() => setContactSubject("MedTech Diagnostics")}
+                          disabled={isSubmitting}
                         >
                           MedTech Diagnostics
                         </button>
@@ -372,15 +429,22 @@ export default function App() {
                       <textarea
                         id="modal-message"
                         className="form-textarea"
+                        name="message"
                         required
                         placeholder={getPlaceholder()}
                         value={contactMessage}
                         onChange={(e) => setContactMessage(e.target.value)}
+                        disabled={isSubmitting}
                       ></textarea>
                     </div>
 
-                    <button type="submit" className="btn btn-primary" style={{ marginTop: "8px" }}>
-                      Send Message
+                    {isError && (
+                      <div style={{ color: "#e74c3c", fontSize: "14px", marginTop: "8px" }}>
+                        Unable to send your message. Please check your internet connection or try again in a few minutes.
+                      </div>
+                    )}
+                    <button type="submit" className="btn btn-primary" style={{ marginTop: "8px" }} disabled={isSubmitting}>
+                      {isSubmitting ? "Sending..." : "Send Message"}
                     </button>
                   </form>
                 </div>
@@ -389,7 +453,9 @@ export default function App() {
                   <div className="success-icon-wrapper">✓</div>
                   <h3>Message Sent Successfully!</h3>
                   <p>
-                    Thank you for reaching out, {contactName}. We have received your inquiry regarding <strong>{contactSubject || "General Collaboration"}</strong> and will get back to you shortly.
+                    Thank you for contacting Neanic Solutions, {contactName}.<br /><br />
+                    We have received your enquiry regarding <strong>{contactSubject || "General Collaboration"}</strong>.<br /><br />
+                    Our team will review your message and get back to you within 24–48 hours.
                   </p>
                   <button onClick={handleModalClose} className="btn btn-primary">
                     Close Modal
@@ -416,7 +482,7 @@ export default function App() {
               <p style={{ fontSize: "16px", lineHeight: "1.8", color: "var(--color-text-primary)", marginBottom: activeModal.cardData.content ? "20px" : "0" }}>
                 {activeModal.cardData.detail}
               </p>
-              
+
               {/* Optional Extended Data / Content added by user */}
               {activeModal.cardData.content && (
                 <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px solid rgba(0,0,0,0.1)' }}>
@@ -427,6 +493,8 @@ export default function App() {
           </div>
         </div>
       )}
+
+
     </>
   );
 }

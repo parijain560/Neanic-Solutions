@@ -166,26 +166,48 @@ h3 {
    -------------------------------------------------- */
 .header-nav {
   position: sticky;
-  top: 0;
+  top: 20px;
   z-index: 100;
-  background-color: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--color-border);
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  border-bottom: none;
+  box-shadow: none;
+  backdrop-filter: none;
 }
 
 .nav-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 72px;
+  height: auto;
+  width: min(1140px, 92vw);
+  padding: 14px 32px;
+  border-radius: 999px;
+  background-color: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 8px 32px rgba(0, 40, 100, 0.12);
 }
 
 .logo {
   text-decoration: none;
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 20px;
+  gap: 8px;
+  font-size: 28px;
+}
+
+.nav-container {
+  overflow: visible;
+}
+
+.logo-img {
+  height: 120px;
+  width: auto;
+  margin-top: -20px;
+  margin-bottom: -40px;
 }
 
 .logo-main {
@@ -196,8 +218,8 @@ h3 {
 
 .logo-sub {
   color: var(--color-text-secondary);
-  font-size: 14px;
-  font-weight: 400;
+  font-size: 18px;
+  font-weight: 500;
 }
 
 .nav-links {
@@ -210,15 +232,18 @@ h3 {
 .nav-links a {
   text-decoration: none;
   color: var(--color-text-secondary);
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  transition: color 0.2s ease;
+  letter-spacing: 0.1em;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
 }
 
 .nav-links a:hover {
   color: var(--color-primary);
+  background-color: rgba(0, 100, 200, 0.06);
 }
 
 .nav-cta {
@@ -2358,4 +2383,52 @@ h3 {
 .scroll-animate.visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+.focus-area-section {
+  background: linear-gradient(to bottom, #dce9fa, #e8f0fa);
+  text-align: center;
+}
+
+.focus-info-panel {
+  max-width: 640px;
+  margin: 32px auto 0;
+  background-color: var(--color-bg-white);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 28px 32px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  animation: focusFadeIn 0.4s ease;
+}
+
+.focus-info-short {
+  color: var(--color-primary);
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 10px;
+}
+
+.focus-info-detail {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
+@keyframes focusFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 860px) {
+  .partnership-grid {
+    grid-template-columns: 1fr !important;
+  }
 }

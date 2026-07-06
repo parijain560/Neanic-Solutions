@@ -1,0 +1,225 @@
+/* FoundersPopup.css */
+
+.founders-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(240, 248, 255, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 24px;
+}
+
+.founders-modal {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(0, 50, 150, 0.15);
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 24px 60px rgba(0, 40, 100, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+.founders-close-btn {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    background: rgba(0, 50, 150, 0.05);
+    border: 1px solid rgba(0, 50, 150, 0.1);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(0, 50, 150, 0.6);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.founders-close-btn:hover {
+    background: rgba(0, 50, 150, 0.1);
+    color: rgba(0, 50, 150, 0.9);
+    transform: scale(1.05);
+}
+
+.founders-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+    margin-top: 16px;
+}
+
+@media (max-width: 768px) {
+    .founders-grid {
+        grid-template-columns: 1fr;
+    }
+    .founders-modal {
+        padding: 32px 24px;
+    }
+}
+
+.founder-card {
+    display: flex;
+    flex-direction: row;
+    gap: 32px;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(0, 50, 150, 0.1);
+    border-radius: 20px;
+    padding: 40px;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 30px rgba(0, 40, 100, 0.08);
+}
+
+.founder-card:hover {
+    transform: translateY(-4px);
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(0, 136, 204, 0.3);
+    box-shadow: 0 12px 30px rgba(0, 40, 100, 0.12), 0 0 0 1px rgba(0, 136, 204, 0.1);
+}
+
+@media (max-width: 1024px) {
+    .founder-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+}
+
+.founder-card-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    width: 180px;
+}
+
+.founder-photo-wrapper {
+    position: relative;
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.founder-photo-glow {
+    position: absolute;
+    inset: -2px;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, transparent, rgba(0, 136, 204, 0.4), transparent);
+    z-index: 1;
+    opacity: 0.6;
+    animation: rotateGlow 4s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes rotateGlow {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.founder-photo {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 1);
+    transition: transform 0.4s ease;
+}
+
+.founder-card:hover .founder-photo {
+    transform: scale(1.08);
+}
+
+.founder-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: #0f2d5a;
+    margin: 0 0 6px;
+    font-family: 'Inter', sans-serif;
+    text-align: center;
+}
+
+.founder-designation {
+    font-size: 15px;
+    color: rgba(15, 45, 90, 0.7);
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    text-align: center;
+}
+
+.founder-card-right {
+    flex: 1;
+}
+
+.founder-bio {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.founder-bio li {
+    font-size: 15px;
+    color: rgba(15, 45, 90, 0.85);
+    line-height: 1.6;
+    font-family: 'Inter', sans-serif;
+    position: relative;
+    padding-left: 20px;
+    text-align: left;
+}
+
+.founder-bio li::before {
+    content: "•";
+    color: rgba(0, 136, 204, 0.8);
+    position: absolute;
+    left: 0;
+    font-size: 16px;
+    line-height: 1;
+    top: 2px;
+}
+
+/* Meet the Founders Button */
+.meet-founders-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 26px;
+    background: transparent;
+    border: 1.5px solid rgba(0, 100, 180, 0.28);
+    border-radius: 100px;
+    color: #0f2d5a;
+    font-size: 13.5px;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.meet-founders-btn:hover {
+    transform: translateY(-2px);
+    background: rgba(0, 80, 180, 0.06);
+    border-color: rgba(0, 100, 180, 0.4);
+}
+
+.meet-founders-icon {
+    transition: transform 0.3s ease;
+}
+
+.meet-founders-btn:hover .meet-founders-icon {
+    transform: translateX(3px);
+}
