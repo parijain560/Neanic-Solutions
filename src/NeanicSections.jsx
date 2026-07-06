@@ -402,15 +402,14 @@ function EdTechColumn({ inView, selectedDomain, onSelect, cardReveals, cardRefs,
             id="edtech"
             className="dna-column dna-column-ed"
             initial={{ opacity: 0, x: 40 }}
-            animate={inView ? { opacity: isOther ? 0 : 1, x: isOther ? 36 : 0, scale: isFocused ? 1.02 : 1 } : {}}
+            animate={inView ? { opacity: isOther ? 0 : 1, x: isOther ? 36 : 0, scale: isFocused ? 1.02 : 1, y: isFocused ? 29 : 0 } : {}}
             transition={{ duration: selectedDomain ? 1.5 : 1.0, delay: selectedDomain ? 0 : 0.3, ease: APPLE_EASE }}
             onClick={() => onSelect(isFocused ? null : "edtech")}
             style={{
                 display: "flex", flexDirection: "row", alignItems: "center", gap: 28,
                 cursor: isOther ? "default" : "pointer",
                 pointerEvents: isOther ? "none" : "auto",
-                justifyContent: "flex-end",
-                marginTop: isFocused ? "4000px" : "0px",
+                justifyContent: "flex-end"
             }}
         >
             <DomainCardGrid

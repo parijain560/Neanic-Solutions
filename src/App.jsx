@@ -18,11 +18,7 @@ function Navbar({ showStickyNav, setActiveModal }) {
       }}
     >
       <div className="container nav-container">
-        <a href="#about" className="logo" onClick={(e) => { 
-          e.preventDefault(); 
-          const scrollH = document.documentElement.scrollHeight - window.innerHeight;
-          window.scrollTo({ top: scrollH * 0.245, behavior: 'smooth' }); 
-        }}>
+        <a href="#about" className="logo">
           <img src="/LOGO.png" alt="Neanic Solutions logo" className="logo-img" />
           <span className="logo-sub">Neanic Solutions</span>
         </a>
@@ -32,10 +28,7 @@ function Navbar({ showStickyNav, setActiveModal }) {
           <li><a href="#edtech" onClick={(e) => {
             e.preventDefault();
             const scrollH = document.documentElement.scrollHeight - window.innerHeight;
-            window.scrollTo({ top: scrollH * 0.385, behavior: 'auto' });
-            if (selectedDomain !== "edtech") {
-                setSelectedDomain("edtech");
-            }
+            window.scrollTo({ top: scrollH * 0.385, behavior: "smooth" });
           }}>Education</a></li>
           <li><a href="#news">Milestones</a></li>
           <li><a href="#contact" onClick={(e) => { e.preventDefault(); setActiveModal('contact'); }}>Contact</a></li>
@@ -255,7 +248,7 @@ export default function App() {
       {/* ==================================================
            SECTION 14: FOOTER (AND CONTACT AREA)
            ================================================== */}
-      <Footer setActiveModal={setActiveModal} selectedDomain={selectedDomain} setSelectedDomain={setSelectedDomain} />
+      <Footer setActiveModal={setActiveModal} />
 
       {/* ==================================================
            MODAL PORTALS / DIALOGS

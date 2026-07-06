@@ -110,11 +110,10 @@ function OrbitalParticleSystem({
         if (selectedDomain) {
             const nodeRef = selectedDomain === "medtech" ? medNodeRef : edNodeRef;
             if (nodeRef?.current) nodeRef.current.getWorldPosition(a.nodeWorldPos);
-            a.scrollBaseline = 0.385;
+            a.scrollBaseline = scrollProgress.current ?? 0;
             a.phase = "orbit";
             a.orbitRadius = 0;
             a.particleScale = 0;
-            a.autoTime = 0;
             a.flyProgress = [0, 0, 0, 0, 0, 0];
             a.cardReveal = [0, 0, 0, 0, 0, 0];
             a.cardTargets = [null, null, null, null, null, null];
@@ -162,10 +161,7 @@ function OrbitalParticleSystem({
         const { x: cx, y: cy, z: cz } = a.nodeWorldPos;
 
         const scroll = scrollProgress.current ?? 0;
-        
-        // Automatically advance the animation over time (takes ~1.5 seconds to fully reveal)
-        a.autoTime = (a.autoTime || 0) + delta * 0.15;
-        const sd = Math.max(0, scroll - a.scrollBaseline, a.autoTime);
+        const sd = Math.max(0, scroll - a.scrollBaseline);
 
         // Compute card targets lazily once refs are painted
         if (!a.cardTargetsReady) {
@@ -387,7 +383,7 @@ export function DNAScene({
     useFrame((state, delta) => {
         const t = state.clock.getElapsedTime();
         const scroll = scrollProgress.current ?? 0;
-        const splitFactor = THREE.MathUtils.smoothstep(scroll, 0.32, 0.48);
+        const splitFactor = THREE.MathUtils.smoothstep(scroll, 0.32, 0.38);
 
         let targetX = 3.2, targetY = 0.0, baseScale = 1.0;
         if (scroll < 0.2) { targetX = 3.2; targetY = 0.0; baseScale = 1.0; }
@@ -714,10 +710,7 @@ function StageIndicator({ stage }) {
 export function Navbar({ setActiveModal }) {
     return (
         <motion.nav initial={{ opacity: 0, y: -14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.7 }} style={{ position: "absolute", top: 0, left: 0, right: 0, padding: "20px 6vw", display: "flex", justifyContent: "space-between", alignItems: "center", zIndex: 30, borderBottom: "1px solid rgba(0,80,160,0.07)", backdropFilter: "blur(10px)", background: "rgba(236,245,255,0.55)" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }} onClick={() => {
-                const scrollH = document.documentElement.scrollHeight - window.innerHeight;
-                window.scrollTo({ top: scrollH * 0.245, behavior: 'smooth' });
-            }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                 <div style={{ width: 28, height: 28, borderRadius: 7, background: "linear-gradient(135deg,#0066cc,#003388)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 10px rgba(0,80,200,0.2)" }}>
                     <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1.5L7 12.5M3.5 4Q7 1.5 10.5 4M3.5 10Q7 12.5 10.5 10" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" /></svg>
                 </div>
@@ -741,7 +734,7 @@ export function Navbar({ setActiveModal }) {
     );
 }
 
-export function Footer({ setActiveModal, selectedDomain, setSelectedDomain }) {
+export function Footer({ setActiveModal }) {
     return (
         <footer style={{ background: "#060e1c", padding: "80px 6vw 40px", position: "relative", overflow: "hidden" }}>
             <div style={{ maxWidth: 1100, margin: "0 auto" }}>
@@ -766,10 +759,7 @@ export function Footer({ setActiveModal, selectedDomain, setSelectedDomain }) {
                                         window.location.href = "mailto:nanoashish@gmail.com";
                                     } else if (["MedTech", "EdTech"].includes(link)) {
                                         const scrollH = document.documentElement.scrollHeight - window.innerHeight;
-                                        window.scrollTo({ top: scrollH * 0.385, behavior: "auto" });
-                                        if (setSelectedDomain && selectedDomain !== link.toLowerCase()) {
-                                            setSelectedDomain(link.toLowerCase());
-                                        }
+                                        window.scrollTo({ top: scrollH * 0.385, behavior: "smooth" });
                                     } else if (link === "Innovation Pipeline") {
                                         document.getElementById("pipeline")?.scrollIntoView({ behavior: "smooth" });
                                     } else if (link === "Partnership Opportunities") {
