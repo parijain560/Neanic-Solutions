@@ -27,8 +27,13 @@
   --color-border: #D8D6CE;
 
   /* Typography Fonts */
-  --font-heading: 'Georgia', 'Times New Roman', serif;
-  --font-body: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-heading: 'Georgia',
+    'Times New Roman',
+    serif;
+  --font-body: 'Inter',
+    'Segoe UI',
+    system-ui,
+    sans-serif;
 }
 
 /* --------------------------------------------------
@@ -165,6 +170,7 @@ h3 {
    SECTION 1: NAVBAR
    -------------------------------------------------- */
 .header-nav {
+  zoom: 0.75;
   position: sticky;
   top: 20px;
   z-index: 100;
@@ -254,6 +260,7 @@ h3 {
    SECTION 2: HERO
    -------------------------------------------------- */
 .hero-section {
+  zoom: 0.75;
   position: relative;
   background-color: var(--color-bg-white);
   height: calc(100vh - 72px);
@@ -605,6 +612,7 @@ h3 {
    SECTION 3: PROBLEM STATEMENT
    -------------------------------------------------- */
 .problem-section {
+  zoom: 0.75;
   background-color: var(--color-bg-cream);
 }
 
@@ -646,6 +654,7 @@ h3 {
    SECTION 4: STATS BAR
    -------------------------------------------------- */
 .stats-bar {
+  zoom: 0.75;
   background-color: var(--color-bg-cream);
   border-top: 1px solid var(--color-border);
   border-bottom: 1px solid var(--color-border);
@@ -701,6 +710,7 @@ h3 {
    SECTION 5: SOLUTION OVERVIEW
    -------------------------------------------------- */
 .solution-section {
+  zoom: 0.75;
   background: linear-gradient(180deg, var(--color-bg-white) 0%, var(--color-bg-blue-tint) 100%);
 }
 
@@ -796,6 +806,7 @@ h3 {
    SECTION 6: TECHNOLOGY DEEP DIVE
    -------------------------------------------------- */
 .tech-section {
+  zoom: 0.75;
   background-color: var(--color-bg-blue-tint);
 }
 
@@ -894,6 +905,7 @@ h3 {
    SECTION 7: WHY LH MATTERS
    -------------------------------------------------- */
 .lh-section {
+  zoom: 0.75;
   background: linear-gradient(180deg, var(--color-bg-cream) 0%, var(--color-bg-blue-tint) 100%);
 }
 
@@ -955,6 +967,7 @@ h3 {
    SECTION 8: IMPACT SECTION
    -------------------------------------------------- */
 .impact-section {
+  zoom: 0.75;
   background-color: var(--color-bg-green-tint);
 }
 
@@ -999,6 +1012,7 @@ h3 {
    SECTION 9: BUSINESS MODEL
    -------------------------------------------------- */
 .biz-section {
+  zoom: 0.75;
   background: linear-gradient(180deg, var(--color-bg-white) 0%, var(--color-bg-cream) 100%);
 }
 
@@ -1092,6 +1106,7 @@ h3 {
    SECTION 10: 5-YEAR STRATEGIC ROADMAP
    -------------------------------------------------- */
 .roadmap-section {
+  zoom: 0.75;
   background: linear-gradient(180deg, var(--color-bg-cream) 0%, var(--color-bg-blue-tint) 100%);
   border-top: 1px solid var(--color-border);
 }
@@ -1377,6 +1392,7 @@ h3 {
    SECTION 11: TEAM SECTION
    -------------------------------------------------- */
 .team-section {
+  zoom: 0.75;
   background-color: var(--color-bg-cream);
 }
 
@@ -1475,6 +1491,7 @@ h3 {
    SECTION 12: WHY INVEST NOW
    -------------------------------------------------- */
 .invest-section {
+  zoom: 0.75;
   background-color: var(--color-bg-cream);
   border-top: 1px solid var(--color-border);
 }
@@ -1529,6 +1546,7 @@ h3 {
    SECTION 13: THE ASK
    -------------------------------------------------- */
 .ask-section {
+  zoom: 0.75;
   background-color: var(--color-bg-dark);
   color: var(--color-text-primary);
 }
@@ -1724,6 +1742,7 @@ h3 {
    SECTION 14 & 15: FOOTER
    -------------------------------------------------- */
 .footer {
+  zoom: 0.75;
   background-color: var(--color-bg-cream);
   border-top: 1px solid var(--color-border);
   padding: 56px 0 32px 0;
@@ -2388,6 +2407,53 @@ h3 {
 .focus-area-section {
   background: linear-gradient(to bottom, #dce9fa, #e8f0fa);
   text-align: center;
+  padding: 66px 0;
+  /* 88px × 0.75 */
+}
+
+.focus-area-section .section-label {
+  font-size: 9px;
+  /* 12px × 0.75 */
+  margin-bottom: 9px;
+}
+
+.focus-area-section h2 {
+  font-size: 28.5px;
+  /* 38px × 0.75 */
+  margin-bottom: 21px;
+}
+
+.focus-area-section .focus-info-panel {
+  max-width: 480px;
+  /* 640px × 0.75 */
+  margin: 24px auto 0;
+  padding: 21px 24px;
+}
+
+.focus-area-section .focus-info-panel h3 {
+  font-size: 16.5px;
+  /* 22px × 0.75 */
+  margin-bottom: 12px;
+}
+
+.focus-area-section .focus-info-short {
+  font-size: 11.25px;
+  /* 15px × 0.75 */
+  margin-bottom: 7.5px;
+}
+
+.focus-area-section .focus-info-detail {
+  font-size: 10.5px;
+  /* 14px × 0.75 */
+}
+
+#partnership {
+  zoom: 0.75;
+}
+
+#dna-split {
+  transform: scale(0.75);
+  transform-origin: center bottom;
 }
 
 .focus-info-panel {

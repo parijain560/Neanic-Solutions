@@ -119,7 +119,7 @@ export const MEDTECH_CARDS = [
         content: (
             <div>
 
-                <ul style={{ paddingLeft: "20px", fontSize: "14px", color: "rgba(15,45,90,0.65)", display: "flex", flexDirection: "column", gap: "6px" }}>
+                <ul style={{ paddingLeft: "15px", fontSize: "10.5px", color: "rgba(15,45,90,0.65)", display: "flex", flexDirection: "column", gap: "4.5px" }}>
                     <li>Rapid 15-minute turnaround times</li>
                     <li>No cold-chain logistics required</li>
                     <li>High sensitivity and specificity matching RT-PCR</li>
@@ -139,7 +139,7 @@ export const EDTECH_CARDS = [
         detail: "Explore the science of the very small. Learn cutting-edge concepts and real-world applications of nanomaterials and nanosystems.",
         content: (
             <div>
-                <ul style={{ paddingLeft: "20px", fontSize: "14px", color: "rgba(15,45,90,0.65)", display: "flex", flexDirection: "column", gap: "6px" }}>
+                <ul style={{ paddingLeft: "15px", fontSize: "10.5px", color: "rgba(15,45,90,0.65)", display: "flex", flexDirection: "column", gap: "4.5px" }}>
                     <li>12 Hour Program</li>
                     <li>4 Weekend Sessions</li>
                     <li>Hands-on Learning</li>
@@ -151,7 +151,7 @@ export const EDTECH_CARDS = [
         icon: "🏗️", label: "Biotechnology", detail: "Understand living systems and their applications. Gain knowledge in genetic engineering, bioinformatics, and bioprocess technologies.",
         content: (
             <div>
-                <ul style={{ paddingLeft: "20px", fontSize: "14px", color: "rgba(15,45,90,0.65)", display: "flex", flexDirection: "column", gap: "6px" }}>
+                <ul style={{ paddingLeft: "15px", fontSize: "10.5px", color: "rgba(15,45,90,0.65)", display: "flex", flexDirection: "column", gap: "4.5px" }}>
                     <li>12 Hour Program</li>
                     <li>4 Weekend Sessions</li>
                     <li>Industry-Relevant Concepts</li>
@@ -163,7 +163,7 @@ export const EDTECH_CARDS = [
         icon: "🎓", label: "Intellectual Property Rights", detail: "Learn about patents, trademarks, copyrights, and IP laws. Protect your innovations and understand the legal framework around intellectual property.",
         content: (
             <div>
-                <ul style={{ paddingLeft: "20px", fontSize: "14px", color: "rgba(15,45,90,0.65)", display: "flex", flexDirection: "column", gap: "6px" }}>
+                <ul style={{ paddingLeft: "15px", fontSize: "10.5px", color: "rgba(15,45,90,0.65)", display: "flex", flexDirection: "column", gap: "4.5px" }}>
                     <li>6 Hour Workshop</li>
                     <li>Patent Awareness</li>
                     <li>Innovation Protection</li>
@@ -175,7 +175,7 @@ export const EDTECH_CARDS = [
         icon: "🎓", label: "Scientific & Technical Writing", detail: "Develop the ability to write research papers, technical documents, and reports with clarity, precision, and professionalism.",
         content: (
             <div>
-                <ul style={{ paddingLeft: "20px", fontSize: "14px", color: "rgba(15,45,90,0.65)", display: "flex", flexDirection: "column", gap: "6px" }}>
+                <ul style={{ paddingLeft: "15px", fontSize: "10.5px", color: "rgba(15,45,90,0.65)", display: "flex", flexDirection: "column", gap: "4.5px" }}>
                     <li>6 Hour Workshop</li>
                     <li>Research Communication</li>
                     <li>Publication Readiness</li>
@@ -187,7 +187,7 @@ export const EDTECH_CARDS = [
         icon: "🚀", label: "Student Learning Program", detail: "Empowering students with foundational knowledge, hands-on learning, and project-based training to build future-ready skills.",
         content: (
             <div>
-                <ul style={{ paddingLeft: "20px", fontSize: "14px", color: "rgba(15,45,90,0.65)", display: "flex", flexDirection: "column", gap: "6px" }}>
+                <ul style={{ paddingLeft: "15px", fontSize: "10.5px", color: "rgba(15,45,90,0.65)", display: "flex", flexDirection: "column", gap: "4.5px" }}>
                     <li>12 Hours Total</li>
                     <li>4 Weekends</li>
                     <li>Professional Skill Development</li>
@@ -199,7 +199,7 @@ export const EDTECH_CARDS = [
         icon: "🚀", label: "Orientation Program", detail: "Get introduced to emerging technologies, research opportunities, and career paths through expert-led orientation sessions.",
         content: (
             <div>
-                <ul style={{ paddingLeft: "20px", fontSize: "14px", color: "rgba(15,45,90,0.65)", display: "flex", flexDirection: "column", gap: "6px" }}>
+                <ul style={{ paddingLeft: "15px", fontSize: "10.5px", color: "rgba(15,45,90,0.65)", display: "flex", flexDirection: "column", gap: "4.5px" }}>
                     <li>6 Hour Workshop</li>
                     <li>Technology Awareness</li>
                     <li>Career Guidance</li>
@@ -219,7 +219,7 @@ function DomainCard({ card, color, border, glow, cardReveal, cardRef, onCardClic
             ref={cardRef}
             style={{
                 position: "relative",
-                width: 390,
+                width: 292.5,
                 minHeight: showContentInline ? 220 : 180,
             }}
         >
@@ -232,8 +232,8 @@ function DomainCard({ card, color, border, glow, cardReveal, cardRef, onCardClic
                 style={{
                     position: "absolute",
                     inset: 0,
-                    padding: "28px 26px",
-                    borderRadius: 16,
+                    padding: "21px 19.5px",
+                    borderRadius: 12,
                     background: "var(--color-bg-white)",
                     backdropFilter: "blur(18px)",
                     WebkitBackdropFilter: "blur(18px)",
@@ -252,11 +252,11 @@ function DomainCard({ card, color, border, glow, cardReveal, cardRef, onCardClic
                 whileHover={onCardClick ? { y: -4, boxShadow: `0 12px 30px ${border}` } : {}}
             >
 
-                <p style={{ fontSize: 15, fontWeight: 700, color, letterSpacing: "0.02em", marginBottom: 8, lineHeight: 1.3 }}>
+                <p style={{ fontSize: 11.25, fontWeight: 700, color, letterSpacing: "0.02em", marginBottom: 6, lineHeight: 1.3 }}>
                     {card.label}
                 </p>
                 {card.detail && (
-                    <p style={{ fontSize: 12.5, fontWeight: 400, color: "rgba(15,45,90,0.6)", lineHeight: 1.6, margin: 0, marginBottom: showContentInline && card.content ? 16 : 0 }}>
+                    <p style={{ fontSize: 9.375, fontWeight: 400, color: "rgba(15,45,90,0.6)", lineHeight: 1.6, margin: 0, marginBottom: showContentInline && card.content ? 16 : 0 }}>
                         {card.detail}
                     </p>
                 )}
@@ -286,8 +286,8 @@ function DomainCardGrid({ cards, color, border, glow, show, cardReveals, cardRef
                     style={{
                         display: "grid",
                         gridTemplateColumns: "1fr 1fr",
-                        gap: 22,
-                        width: "min(820px, 92vw)",
+                        gap: 16.5,
+                        width: "min(615px, 92vw)",
                         flexShrink: 0,
                     }}
                 >
@@ -325,13 +325,13 @@ function MedTechColumn({ inView, selectedDomain, onSelect, cardReveals, cardRefs
             transition={{ duration: selectedDomain ? 1.5 : 1.0, delay: selectedDomain ? 0 : 0.2, ease: APPLE_EASE }}
             onClick={() => onSelect(isFocused ? null : "medtech")}
             style={{
-                display: "flex", flexDirection: "row", alignItems: "center", gap: 28,
+                display: "flex", flexDirection: "row", alignItems: "center", gap: 21,
                 cursor: isOther ? "default" : "pointer",
                 pointerEvents: isOther ? "none" : "auto",
                 justifyContent: "flex-start",
             }}
         >
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", minWidth: 200 }}>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", minWidth: 150 }}>
                 {isFocused && (
                     <motion.button
                         initial={{ opacity: 0, y: -10 }}
@@ -339,13 +339,13 @@ function MedTechColumn({ inView, selectedDomain, onSelect, cardReveals, cardRefs
                         exit={{ opacity: 0, y: -10 }}
                         onClick={(e) => { e.stopPropagation(); onSelect(null); }}
                         style={{
-                            marginBottom: 16,
-                            padding: "4px 14px",
-                            borderRadius: 20,
+                            marginBottom: 12,
+                            padding: "3px 10.5px",
+                            borderRadius: 15,
                             border: "1px solid rgba(0,136,238,0.3)",
                             background: "rgba(255,255,255,0.8)",
                             color: "var(--color-primary)",
-                            fontSize: 10,
+                            fontSize: 7.5,
                             fontWeight: 600,
                             cursor: "pointer",
                             letterSpacing: "0.05em",
@@ -357,19 +357,19 @@ function MedTechColumn({ inView, selectedDomain, onSelect, cardReveals, cardRefs
                         ✕ Exit MedTech
                     </motion.button>
                 )}
-                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
-                    <div style={{ width: 28, height: 2, background: "linear-gradient(90deg,#0055aa,#0088ee)" }} />
-                    <span style={{ fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-primary)", fontFamily: "'Inter',sans-serif", fontWeight: 700 }}>Neanic MedTech</span>
+                <div style={{ display: "flex", alignItems: "center", gap: 7.5, marginBottom: 10.5 }}>
+                    <div style={{ width: 21, height: 1.5, background: "linear-gradient(90deg,#0055aa,#0088ee)" }} />
+                    <span style={{ fontSize: 7.5, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-primary)", fontFamily: "'Inter',sans-serif", fontWeight: 700 }}>Neanic MedTech</span>
                 </div>
-                <h2 style={{ fontSize: "clamp(32px,4vw,60px)", fontWeight: 900, fontFamily: "'Inter',sans-serif", letterSpacing: "-0.04em", lineHeight: 1.0, marginBottom: 14, background: "linear-gradient(135deg,#060e1c 0%,#003399 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+                <h2 style={{ fontSize: "clamp(24px, 4vw, 45px)", fontWeight: 900, fontFamily: "'Inter',sans-serif", letterSpacing: "-0.04em", lineHeight: 1.0, marginBottom: 10.5, background: "linear-gradient(135deg,#060e1c 0%,#003399 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
                     Med<br />Tech
                 </h2>
-                <p style={{ fontSize: 13, color: "rgba(15,45,90,0.55)", fontFamily: "'Inter',sans-serif", lineHeight: 1.7, maxWidth: 210 }}>
+                <p style={{ fontSize: 9.75, color: "rgba(15,45,90,0.55)", fontFamily: "'Inter',sans-serif", lineHeight: 1.7, maxWidth: 157.5 }}>
                     Advanced diagnostic technologies bridging molecular science and clinical practice.
                 </p>
                 {!isFocused && (
                     <motion.span initial={{ opacity: 0 }} animate={{ opacity: inView ? 0.5 : 0 }}
-                        style={{ marginTop: 12, fontSize: 11, color: "var(--color-primary)", fontFamily: "'Inter',sans-serif", letterSpacing: "0.08em" }}>
+                        style={{ marginTop: 9, fontSize: 8.25, color: "var(--color-primary)", fontFamily: "'Inter',sans-serif", letterSpacing: "0.08em" }}>
                         tap to explore →
                     </motion.span>
                 )}
@@ -406,7 +406,7 @@ function EdTechColumn({ inView, selectedDomain, onSelect, cardReveals, cardRefs,
             transition={{ duration: selectedDomain ? 1.5 : 1.0, delay: selectedDomain ? 0 : 0.3, ease: APPLE_EASE }}
             onClick={() => onSelect(isFocused ? null : "edtech")}
             style={{
-                display: "flex", flexDirection: "row", alignItems: "center", gap: 28,
+                display: "flex", flexDirection: "row", alignItems: "center", gap: 21,
                 cursor: isOther ? "default" : "pointer",
                 pointerEvents: isOther ? "none" : "auto",
                 justifyContent: "flex-end"
@@ -424,7 +424,7 @@ function EdTechColumn({ inView, selectedDomain, onSelect, cardReveals, cardRefs,
                 showContentInline={true}
             />
 
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", minWidth: 200 }}>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", minWidth: 150 }}>
                 {isFocused && (
                     <motion.button
                         initial={{ opacity: 0, y: -10 }}
@@ -432,13 +432,13 @@ function EdTechColumn({ inView, selectedDomain, onSelect, cardReveals, cardRefs,
                         exit={{ opacity: 0, y: -10 }}
                         onClick={(e) => { e.stopPropagation(); onSelect(null); }}
                         style={{
-                            marginBottom: 16,
-                            padding: "4px 14px",
-                            borderRadius: 20,
+                            marginBottom: 12,
+                            padding: "3px 10.5px",
+                            borderRadius: 15,
                             border: "1px solid rgba(170,68,238,0.3)",
                             background: "rgba(255,255,255,0.8)",
                             color: "var(--color-primary)",
-                            fontSize: 10,
+                            fontSize: 7.5,
                             fontWeight: 600,
                             cursor: "pointer",
                             letterSpacing: "0.05em",
@@ -450,19 +450,19 @@ function EdTechColumn({ inView, selectedDomain, onSelect, cardReveals, cardRefs,
                         ✕ Exit EdTech
                     </motion.button>
                 )}
-                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
-                    <span style={{ fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-primary)", fontFamily: "'Inter',sans-serif", fontWeight: 700 }}>Neanic EdTech</span>
-                    <div style={{ width: 28, height: 2, background: "linear-gradient(90deg,#aa44ee,#6622bb)" }} />
+                <div style={{ display: "flex", alignItems: "center", gap: 7.5, marginBottom: 10.5 }}>
+                    <span style={{ fontSize: 7.5, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-primary)", fontFamily: "'Inter',sans-serif", fontWeight: 700 }}>Neanic EdTech</span>
+                    <div style={{ width: 21, height: 1.5, background: "linear-gradient(90deg,#aa44ee,#6622bb)" }} />
                 </div>
-                <h2 style={{ fontSize: "clamp(32px,4vw,60px)", fontWeight: 900, fontFamily: "'Inter',sans-serif", letterSpacing: "-0.04em", lineHeight: 1.0, marginBottom: 14, textAlign: "right", background: "linear-gradient(135deg,#6622bb 0%,#060e1c 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+                <h2 style={{ fontSize: "clamp(24px, 4vw, 45px)", fontWeight: 900, fontFamily: "'Inter',sans-serif", letterSpacing: "-0.04em", lineHeight: 1.0, marginBottom: 10.5, textAlign: "right", background: "linear-gradient(135deg,#6622bb 0%,#060e1c 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
                     Ed<br />Tech
                 </h2>
-                <p style={{ fontSize: 13, color: "rgba(15,45,90,0.55)", fontFamily: "'Inter',sans-serif", lineHeight: 1.7, maxWidth: 210, textAlign: "right" }}>
+                <p style={{ fontSize: 9.75, color: "rgba(15,45,90,0.55)", fontFamily: "'Inter',sans-serif", lineHeight: 1.7, maxWidth: 157.5, textAlign: "right" }}>
                     Building the next generation of scientists, innovators, and healthcare entrepreneurs.
                 </p>
                 {!isFocused && (
                     <motion.span initial={{ opacity: 0 }} animate={{ opacity: inView ? 0.5 : 0 }}
-                        style={{ marginTop: 12, fontSize: 11, color: "var(--color-primary)", fontFamily: "'Inter',sans-serif", letterSpacing: "0.08em" }}>
+                        style={{ marginTop: 9, fontSize: 8.25, color: "var(--color-primary)", fontFamily: "'Inter',sans-serif", letterSpacing: "0.08em" }}>
                         ← tap to explore
                     </motion.span>
                 )}
@@ -515,7 +515,7 @@ export function DNASplitSection({
             id="dna-split"
             ref={ref}
             style={{
-                position: "absolute", inset: 0, padding: "80px 6vw 0",
+                position: "absolute", inset: 0, padding: "60px 6vw 0",
                 background: "transparent", zIndex: 3,
                 display: "flex", flexDirection: "column", justifyContent: "flex-end",
                 opacity: showColumns ? 1 : 0,
@@ -524,15 +524,15 @@ export function DNASplitSection({
                 height: "100vh",
             }}
         >
-            <div style={{ maxWidth: 1200, margin: "0 auto", width: "100%", paddingBottom: "36px" }}>
+            <div style={{ maxWidth: 900, margin: "0 auto", width: "100%", paddingBottom: "27px" }}>
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     animate={showColumns ? { opacity: 1, y: 0 } : {}}
                     transition={{ duration: 0.8 }}
-                    style={{ textAlign: "center", marginBottom: 24 }}
+                    style={{ textAlign: "center", marginBottom: 18 }}
                 >
-                    <p style={{ fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-primary)", fontFamily: "'Inter',sans-serif", marginBottom: 6 }}>One Platform</p>
-                    <h2 style={{ fontSize: "clamp(16px,2.2vw,28px)", fontWeight: 800, color: "var(--color-text-primary)", fontFamily: "'Inter',sans-serif", letterSpacing: "-0.025em" }}>Our Training Programs</h2>
+                    <p style={{ fontSize: 7.5, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-primary)", fontFamily: "'Inter',sans-serif", marginBottom: 4.5 }}>One Platform</p>
+                    <h2 style={{ fontSize: "clamp(12px, 2.2vw, 21px)", fontWeight: 800, color: "var(--color-text-primary)", fontFamily: "'Inter',sans-serif", letterSpacing: "-0.025em" }}>Our Training Programs</h2>
                 </motion.div>
 
                 <div className="dna-split-grid" style={{ display: "grid", gridTemplateColumns: "1fr 120px 1fr", gap: 0, alignItems: "center" }}>
@@ -577,20 +577,20 @@ function PipelineSection() {
     const [activeStage, setActiveStage] = useState(null);
 
     return (
-        <section id="pipeline" ref={ref} style={{ padding: "clamp(64px,10vw,120px) 6vw", background: "linear-gradient(to bottom, #dce9fa, #e8f0fa)", position: "relative", zIndex: 1, overflow: "hidden" }}>
-            <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-                <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8 }} style={{ textAlign: "center", marginBottom: 64 }}>
-                    <p style={{ fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-primary)", fontFamily: "'Inter', sans-serif", marginBottom: 12 }}>How We Build</p>
-                    <h2 style={{ fontSize: "clamp(28px, 3.5vw, 48px)", fontWeight: 800, color: "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.025em" }}>
+        <section id="pipeline" ref={ref} style={{ padding: "clamp(48px, 10vw, 90px) 6vw", background: "linear-gradient(to bottom, #dce9fa, #e8f0fa)", position: "relative", zIndex: 1, overflow: "hidden" }}>
+            <div style={{ maxWidth: 825, margin: "0 auto" }}>
+                <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8 }} style={{ textAlign: "center", marginBottom: 48 }}>
+                    <p style={{ fontSize: 8.25, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-primary)", fontFamily: "'Inter', sans-serif", marginBottom: 9 }}>How We Build</p>
+                    <h2 style={{ fontSize: "clamp(21px, 3.5vw, 36px)", fontWeight: 800, color: "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.025em" }}>
                         Innovation Pipeline
                     </h2>
-                    <p style={{ fontSize: 16, color: "rgba(15,45,90,0.55)", fontFamily: "'Inter', sans-serif", marginTop: 14 }}>
+                    <p style={{ fontSize: 12, color: "rgba(15,45,90,0.55)", fontFamily: "'Inter', sans-serif", marginTop: 10.5 }}>
                         From breakthrough idea to deployed technology — a rigorous, transparent process.
                     </p>
                 </motion.div>
 
                 <div style={{ display: "flex", gap: 0, position: "relative" }}>
-                    <div style={{ position: "absolute", left: "calc(50% - 1px)", top: 0, bottom: 0, width: 2, background: "linear-gradient(to bottom, #0099cc33, #003366)", pointerEvents: "none", zIndex: 0 }}>
+                    <div style={{ position: "absolute", left: "calc(50% - 0.75px)", top: 0, bottom: 0, width: 1.5, background: "linear-gradient(to bottom, #0099cc33, #003366)", pointerEvents: "none", zIndex: 0 }}>
                         <style>{`
                             @keyframes flowDown {
                                 0%   { top: -10%; opacity: 0; }
@@ -604,8 +604,8 @@ function PipelineSection() {
                                 position: "absolute",
                                 left: "50%",
                                 transform: "translateX(-50%)",
-                                width: 6,
-                                height: 6,
+                                width: 4.5,
+                                height: 4.5,
                                 borderRadius: "50%",
                                 background: "#0088cc",
                                 boxShadow: "0 0 8px 3px rgba(0,136,204,0.55)",
@@ -630,20 +630,20 @@ function PipelineSection() {
                                     <div
                                         onClick={() => setActiveStage(isActive ? null : i)}
                                         style={{
-                                            width: "44%", padding: "20px 24px", cursor: "pointer",
+                                            width: "44%", padding: "15px 18px", cursor: "pointer",
                                             background: isActive ? "white" : "rgba(255,255,255,0.6)",
-                                            borderRadius: 12, border: `1px solid ${isActive ? stage.color + "44" : "rgba(0,80,160,0.08)"}`,
+                                            borderRadius: 9, border: `1px solid ${isActive ? stage.color + "44" : "rgba(0,80,160,0.08)"}`,
                                             boxShadow: isActive ? `0 8px 32px ${stage.color}18` : "none",
-                                            transition: "all 0.3s ease", marginBottom: 20,
+                                            transition: "all 0.3s ease", marginBottom: 15,
                                         }}
                                     >
-                                        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-                                            <span style={{ fontSize: 16 }}>{stage.icon}</span>
-                                            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: stage.color, fontFamily: "'Inter', sans-serif" }}>{stage.label}</span>
+                                        <div style={{ display: "flex", alignItems: "center", gap: 7.5, marginBottom: 4.5 }}>
+                                            <span style={{ fontSize: 12 }}>{stage.icon}</span>
+                                            <span style={{ fontSize: 8.25, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: stage.color, fontFamily: "'Inter', sans-serif" }}>{stage.label}</span>
                                         </div>
                                         <AnimatePresence>
                                             {isActive && (
-                                                <motion.p initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} style={{ fontSize: 13, color: "rgba(15,45,90,0.6)", fontFamily: "'Inter', sans-serif", lineHeight: 1.65, margin: 0, overflow: "hidden" }}>
+                                                <motion.p initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} style={{ fontSize: 9.75, color: "rgba(15,45,90,0.6)", fontFamily: "'Inter', sans-serif", lineHeight: 1.65, margin: 0, overflow: "hidden" }}>
                                                     {stage.desc}
                                                 </motion.p>
                                             )}
@@ -651,8 +651,8 @@ function PipelineSection() {
                                     </div>
 
                                     <div style={{
-                                        position: "absolute", left: "calc(50% - 6px)", top: 22,
-                                        width: 12, height: 12, borderRadius: "50%",
+                                        position: "absolute", left: "calc(50% - 4.5px)", top: 16.5,
+                                        width: 9, height: 9, borderRadius: "50%",
                                         background: isActive ? stage.color : "white",
                                         border: `2px solid ${stage.color}`,
                                         boxShadow: isActive ? `0 0 12px ${stage.color}66` : "none",
@@ -704,12 +704,12 @@ function StatCard({ stat, inView, delay }) {
             initial={{ opacity: 0, y: 40, scale: 0.9 }}
             animate={inView ? { opacity: 1, y: 0, scale: 1 } : {}}
             transition={{ duration: 0.7, delay }}
-            style={{ textAlign: "center", padding: "36px 24px", background: "var(--color-bg-white)", borderRadius: 16, border: "1px solid rgba(0,80,160,0.1)", backdropFilter: "blur(10px)" }}>
-            <div style={{ fontSize: "clamp(40px, 5vw, 64px)", fontWeight: 900, color: "var(--color-primary)", fontFamily: "'Inter', sans-serif", lineHeight: 1, letterSpacing: "-0.04em" }}>
+            style={{ textAlign: "center", padding: "27px 18px", background: "var(--color-bg-white)", borderRadius: 12, border: "1px solid rgba(0,80,160,0.1)", backdropFilter: "blur(10px)" }}>
+            <div style={{ fontSize: "clamp(30px, 5vw, 48px)", fontWeight: 900, color: "var(--color-primary)", fontFamily: "'Inter', sans-serif", lineHeight: 1, letterSpacing: "-0.04em" }}>
                 {c.toLocaleString()}{stat.suffix}
             </div>
-            <p style={{ fontSize: 15, fontWeight: 700, color: "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", margin: "10px 0 4px" }}>{stat.label}</p>
-            <p style={{ fontSize: 12, color: "rgba(15,45,90,0.45)", fontFamily: "'Inter', sans-serif", margin: 0 }}>{stat.sublabel}</p>
+            <p style={{ fontSize: 11.25, fontWeight: 700, color: "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", margin: "7.5px 0 3px" }}>{stat.label}</p>
+            <p style={{ fontSize: 9, color: "rgba(15,45,90,0.45)", fontFamily: "'Inter', sans-serif", margin: 0 }}>{stat.sublabel}</p>
         </motion.div>
     );
 }
@@ -718,20 +718,20 @@ function ImpactSection() {
     const ref = useRef(null);
     const inView = useInView(ref, { once: false, margin: "-15%" });
     return (
-        <section id="impact" ref={ref} style={{ padding: "clamp(64px,10vw,120px) 6vw", background: "linear-gradient(135deg, #0a1628 0%, #0d2244 50%, #0a1e3a 100%)", position: "relative", zIndex: 1, overflow: "hidden" }}>
+        <section id="impact" ref={ref} style={{ padding: "clamp(48px, 10vw, 90px) 6vw", background: "linear-gradient(135deg, #0a1628 0%, #0d2244 50%, #0a1e3a 100%)", position: "relative", zIndex: 1, overflow: "hidden" }}>
             <div style={{ position: "absolute", inset: 0, opacity: 0.06, backgroundImage: "radial-gradient(circle at 20% 50%, #0088cc 0%, transparent 50%), radial-gradient(circle at 80% 50%, #0044aa 0%, transparent 50%)", pointerEvents: "none" }} />
 
-            <div style={{ maxWidth: 1100, margin: "0 auto", position: "relative" }}>
-                <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8 }} style={{ textAlign: "center", marginBottom: 64 }}>
-                    <p style={{ fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(100,180,255,0.7)", fontFamily: "'Inter', sans-serif", marginBottom: 12 }}>Our Reach</p>
-                    <h2 style={{ fontSize: "clamp(28px, 3.5vw, 48px)", fontWeight: 800, color: "#ffffff", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.025em" }}>
+            <div style={{ maxWidth: 825, margin: "0 auto", position: "relative" }}>
+                <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8 }} style={{ textAlign: "center", marginBottom: 48 }}>
+                    <p style={{ fontSize: 8.25, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(100,180,255,0.7)", fontFamily: "'Inter', sans-serif", marginBottom: 9 }}>Our Reach</p>
+                    <h2 style={{ fontSize: "clamp(21px, 3.5vw, 36px)", fontWeight: 800, color: "#ffffff", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.025em" }}>
                         Measurable Impact
                     </h2>
-                    <p style={{ fontSize: 16, color: "rgba(180,210,255,0.6)", fontFamily: "'Inter', sans-serif", marginTop: 14 }}>
+                    <p style={{ fontSize: 12, color: "rgba(180,210,255,0.6)", fontFamily: "'Inter', sans-serif", marginTop: 10.5 }}>
                         Numbers that reflect the depth and reach of Neanic's work in science and healthcare.
                     </p>
                 </motion.div>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 20 }}>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 15 }}>
                     {IMPACT_STATS.map((stat, i) => <StatCard key={stat.label} stat={stat} inView={inView} delay={i * 0.1} />)}
                 </div>
             </div>
@@ -748,21 +748,21 @@ function PartnershipSection({ setActiveModal }) {
     const activeItem = PARTNER_ITEMS[active];
 
     return (
-        <section id="partnership" ref={ref} style={{ padding: "clamp(64px,10vw,120px) 6vw", background: "var(--color-bg-blue-tint)", position: "relative", zIndex: 1, overflow: "hidden" }}>
-            <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-                <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8 }} style={{ textAlign: "center", marginBottom: 56 }}>
-                    <p style={{ fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-primary)", fontFamily: "'Inter', sans-serif", fontWeight: 700, marginBottom: 12 }}>Partner With Us</p>
-                    <h2 style={{ fontSize: "clamp(28px, 3.8vw, 52px)", fontWeight: 800, color: "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.025em", marginBottom: 16 }}>
+        <section id="partnership" ref={ref} style={{ padding: "clamp(48px, 10vw, 90px) 6vw", background: "var(--color-bg-blue-tint)", position: "relative", zIndex: 1, overflow: "hidden" }}>
+            <div style={{ maxWidth: 900, margin: "0 auto" }}>
+                <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8 }} style={{ textAlign: "center", marginBottom: 42 }}>
+                    <p style={{ fontSize: 8.25, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-primary)", fontFamily: "'Inter', sans-serif", fontWeight: 700, marginBottom: 9 }}>Partner With Us</p>
+                    <h2 style={{ fontSize: "clamp(21px, 3.8vw, 39px)", fontWeight: 800, color: "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.025em", marginBottom: 12 }}>
                         Partnership Opportunities
                     </h2>
-                    <p style={{ fontSize: 16, color: "rgba(15,45,90,0.55)", fontFamily: "'Inter', sans-serif", lineHeight: 1.7, maxWidth: 620, margin: "0 auto" }}>
+                    <p style={{ fontSize: 12, color: "rgba(15,45,90,0.55)", fontFamily: "'Inter', sans-serif", lineHeight: 1.7, maxWidth: 465, margin: "0 auto" }}>
                         Collaborate with Neanic Solutions to accelerate innovation in point-of-care diagnostics, biosensing technologies, and translational healthcare research.
                     </p>
                 </motion.div>
 
-                <div style={{ display: "grid", gridTemplateColumns: "minmax(280px, 460px) 1fr", gap: 24, alignItems: "stretch" }} className="partnership-grid">
+                <div style={{ display: "grid", gridTemplateColumns: "minmax(280px, 460px) 1fr", gap: 18, alignItems: "stretch" }} className="partnership-grid">
 
-                    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
                         {PARTNER_ITEMS.map((item, i) => {
                             const isActive = i === active;
                             return (
@@ -775,9 +775,9 @@ function PartnershipSection({ setActiveModal }) {
                                     style={{
                                         display: "flex",
                                         alignItems: "center",
-                                        gap: 18,
-                                        padding: "20px 22px",
-                                        borderRadius: 14,
+                                        gap: 13.5,
+                                        padding: "15px 16.5px",
+                                        borderRadius: 10.5,
                                         cursor: "pointer",
                                         background: isActive
                                             ? "linear-gradient(135deg, #2f6fed 0%, #7c3aed 100%)"
@@ -788,7 +788,7 @@ function PartnershipSection({ setActiveModal }) {
                                     }}
                                 >
                                     <div style={{
-                                        width: 46, height: 46, borderRadius: "50%", flexShrink: 0,
+                                        width: 34.5, height: 34.5, borderRadius: "50%", flexShrink: 0,
                                         display: "flex", alignItems: "center", justifyContent: "center",
                                         background: isActive ? "rgba(255,255,255,0.18)" : "rgba(0,102,204,0.08)",
                                         color: isActive ? "#ffffff" : "var(--color-primary)",
@@ -796,10 +796,10 @@ function PartnershipSection({ setActiveModal }) {
                                         {PARTNER_ICONS[item.icon]}
                                     </div>
                                     <div style={{ flex: 1 }}>
-                                        <p style={{ fontSize: 16, fontWeight: 700, color: isActive ? "#ffffff" : "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", marginBottom: 4 }}>
+                                        <p style={{ fontSize: 12, fontWeight: 700, color: isActive ? "#ffffff" : "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", marginBottom: 3 }}>
                                             {item.title}
                                         </p>
-                                        <p style={{ fontSize: 13, color: isActive ? "rgba(255,255,255,0.85)" : "rgba(15,45,90,0.55)", fontFamily: "'Inter', sans-serif", lineHeight: 1.6, margin: 0 }}>
+                                        <p style={{ fontSize: 9.75, color: isActive ? "rgba(255,255,255,0.85)" : "rgba(15,45,90,0.55)", fontFamily: "'Inter', sans-serif", lineHeight: 1.6, margin: 0 }}>
                                             {item.shortDesc}
                                         </p>
                                     </div>
@@ -815,14 +815,14 @@ function PartnershipSection({ setActiveModal }) {
 
                     <div style={{
                         position: "relative",
-                        borderRadius: 20,
+                        borderRadius: 15,
                         overflow: "hidden",
                         background: "linear-gradient(135deg, #0a1628 0%, #0d2244 55%, #060e1c 100%)",
-                        padding: "44px 40px",
+                        padding: "33px 30px",
                         display: "flex",
                         flexDirection: "column",
                         justifyContent: "space-between",
-                        minHeight: 480,
+                        minHeight: 360,
                     }}>
                         <AnimatePresence mode="wait">
                             <motion.div
@@ -851,29 +851,29 @@ function PartnershipSection({ setActiveModal }) {
                                 transition={{ duration: 0.35, ease: "easeOut" }}
                                 style={{ position: "relative", zIndex: 1 }}
                             >
-                                <div style={{ display: "flex", alignItems: "center", gap: 18, marginBottom: 20 }}>
-                                    <div style={{ width: 56, height: 56, borderRadius: "50%", background: "rgba(80,120,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center", color: "#7fa8ff" }}>
+                                <div style={{ display: "flex", alignItems: "center", gap: 13.5, marginBottom: 15 }}>
+                                    <div style={{ width: 42, height: 42, borderRadius: "50%", background: "rgba(80,120,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center", color: "#7fa8ff" }}>
                                         {PARTNER_ICONS[activeItem.icon]}
                                     </div>
-                                    <h3 style={{ fontSize: "clamp(22px,2.4vw,30px)", fontWeight: 800, color: "#ffffff", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.02em", margin: 0 }}>
+                                    <h3 style={{ fontSize: "clamp(16.5px, 2.4vw, 22.5px)", fontWeight: 800, color: "#ffffff", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.02em", margin: 0 }}>
                                         {activeItem.title}
                                     </h3>
                                 </div>
-                                <div style={{ width: 46, height: 3, background: "linear-gradient(90deg,#4d8dff,#8a5cf5)", borderRadius: 2, marginBottom: 22 }} />
+                                <div style={{ width: 34.5, height: 2.25, background: "linear-gradient(90deg,#4d8dff,#8a5cf5)", borderRadius: 1.5, marginBottom: 16.5 }} />
 
-                                <p style={{ fontSize: 15, color: "rgba(210,220,255,0.75)", fontFamily: "'Inter', sans-serif", lineHeight: 1.8, marginBottom: 26, maxWidth: 520 }}>
+                                <p style={{ fontSize: 11.25, color: "rgba(210,220,255,0.75)", fontFamily: "'Inter', sans-serif", lineHeight: 1.8, marginBottom: 19.5, maxWidth: 390 }}>
                                     {activeItem.longDesc}
                                 </p>
 
-                                <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 32 }}>
+                                <div style={{ display: "flex", flexDirection: "column", gap: 10.5, marginBottom: 24 }}>
                                     {activeItem.bullets.map((b) => (
-                                        <div key={b} style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                                            <div style={{ width: 20, height: 20, borderRadius: "50%", background: "linear-gradient(135deg,#2f6fed,#7c3aed)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                                        <div key={b} style={{ display: "flex", alignItems: "center", gap: 9 }}>
+                                            <div style={{ width: 15, height: 15, borderRadius: "50%", background: "linear-gradient(135deg,#2f6fed,#7c3aed)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                                                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                                                     <path d="M20 6L9 17l-5-5" />
                                                 </svg>
                                             </div>
-                                            <span style={{ fontSize: 14, color: "rgba(220,228,255,0.85)", fontFamily: "'Inter', sans-serif" }}>{b}</span>
+                                            <span style={{ fontSize: 10.5, color: "rgba(220,228,255,0.85)", fontFamily: "'Inter', sans-serif" }}>{b}</span>
                                         </div>
                                     ))}
                                 </div>
@@ -886,9 +886,9 @@ function PartnershipSection({ setActiveModal }) {
                 {/* Bottom CTA */}
                 <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8, delay: 0.4 }}
                     style={{
-                        marginTop: 56,
-                        borderRadius: 20,
-                        padding: "48px 40px",
+                        marginTop: 42,
+                        borderRadius: 15,
+                        padding: "36px 30px",
                         textAlign: "center",
                         background: "linear-gradient(135deg, #0a1628 0%, #0d2244 55%, #060e1c 100%)",
                         position: "relative",
@@ -896,16 +896,16 @@ function PartnershipSection({ setActiveModal }) {
                     }}
                 >
                     <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle at 30% 30%, rgba(60,120,255,0.12) 0%, transparent 55%), radial-gradient(circle at 80% 70%, rgba(130,60,220,0.12) 0%, transparent 55%)", pointerEvents: "none" }} />
-                    <div style={{ position: "relative", maxWidth: 640, margin: "0 auto" }}>
-                        <h3 style={{ fontSize: "clamp(22px,3vw,34px)", fontWeight: 800, color: "#ffffff", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.02em", marginBottom: 16, lineHeight: 1.25 }}>
+                    <div style={{ position: "relative", maxWidth: 480, margin: "0 auto" }}>
+                        <h3 style={{ fontSize: "clamp(16.5px, 3vw, 25.5px)", fontWeight: 800, color: "#ffffff", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.02em", marginBottom: 12, lineHeight: 1.25 }}>
                             Let's Build the Future of Healthcare Together
                         </h3>
-                        <p style={{ fontSize: 15, color: "rgba(200,215,255,0.7)", fontFamily: "'Inter', sans-serif", lineHeight: 1.8, marginBottom: 32 }}>
+                        <p style={{ fontSize: 11.25, color: "rgba(200,215,255,0.7)", fontFamily: "'Inter', sans-serif", lineHeight: 1.8, marginBottom: 24 }}>
                             Whether you're a research institution, healthcare provider, industry partner, or funding organization, we're always open to meaningful collaborations that advance accessible, affordable, and impactful healthcare innovation.
                         </p>
                         <button
                             onClick={() => setActiveModal && setActiveModal("contact")}
-                            style={{ padding: "14px 34px", background: "linear-gradient(135deg, #2f6fed 0%, #7c3aed 100%)", border: "none", borderRadius: 10, color: "#ffffff", fontSize: 14, fontWeight: 700, fontFamily: "'Inter', sans-serif", cursor: "pointer", boxShadow: "0 8px 26px rgba(60,60,220,0.35)", transition: "all 0.25s ease", letterSpacing: "0.02em" }}
+                            style={{ padding: "10.5px 25.5px", background: "linear-gradient(135deg, #2f6fed 0%, #7c3aed 100%)", border: "none", borderRadius: 7.5, color: "#ffffff", fontSize: 10.5, fontWeight: 700, fontFamily: "'Inter', sans-serif", cursor: "pointer", boxShadow: "0 8px 26px rgba(60,60,220,0.35)", transition: "all 0.25s ease", letterSpacing: "0.02em" }}
                             onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 12px 34px rgba(60,60,220,0.45)"; }}
                             onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 8px 26px rgba(60,60,220,0.35)"; }}
                         >
@@ -934,16 +934,16 @@ function WhyNeanicMattersSection() {
     const inView = useInView(ref, { once: false, margin: "-15%" });
 
     return (
-        <section id="why-neanic-matters" ref={ref} style={{ padding: "clamp(64px,10vw,120px) 6vw", background: "var(--color-bg-cream)", position: "relative", zIndex: 1, overflow: "hidden" }}>
-            <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-                <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8 }} style={{ textAlign: "center", marginBottom: 64 }}>
-                    <p style={{ fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-primary)", fontFamily: "'Inter', sans-serif", marginBottom: 12 }}>Core Philosophy</p>
-                    <h2 style={{ fontSize: "clamp(28px, 3.5vw, 48px)", fontWeight: 800, color: "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.025em" }}>
+        <section id="why-neanic-matters" ref={ref} style={{ padding: "clamp(48px, 10vw, 90px) 6vw", background: "var(--color-bg-cream)", position: "relative", zIndex: 1, overflow: "hidden" }}>
+            <div style={{ maxWidth: 825, margin: "0 auto" }}>
+                <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8 }} style={{ textAlign: "center", marginBottom: 48 }}>
+                    <p style={{ fontSize: 8.25, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-primary)", fontFamily: "'Inter', sans-serif", marginBottom: 9 }}>Core Philosophy</p>
+                    <h2 style={{ fontSize: "clamp(21px, 3.5vw, 36px)", fontWeight: 800, color: "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.025em" }}>
                         Why Neanic Matters
                     </h2>
                 </motion.div>
 
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 32 }}>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 24 }}>
                     {WHY_MATTERS_DATA.map((item, i) => (
                         <motion.div
                             key={item.label}
@@ -953,8 +953,8 @@ function WhyNeanicMattersSection() {
                             whileHover={{ y: -6, boxShadow: "0 16px 36px rgba(0,80,200,0.12)" }}
                             style={{
                                 background: "var(--color-bg-white)",
-                                borderRadius: 16,
-                                padding: "32px",
+                                borderRadius: 12,
+                                padding: "24px",
                                 border: "1px solid rgba(0,100,200,0.08)",
                                 boxShadow: "0 4px 14px rgba(0,80,200,0.04)",
                                 transition: "all 0.3s ease",
@@ -962,9 +962,9 @@ function WhyNeanicMattersSection() {
                                 flexDirection: "column",
                             }}
                         >
-                            <div style={{ fontSize: 32, marginBottom: 16, lineHeight: 1 }}>{item.icon}</div>
-                            <h3 style={{ fontSize: 18, fontWeight: 700, color: "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", marginBottom: 8 }}>{item.label}</h3>
-                            <p style={{ fontSize: 14, color: "rgba(15,45,90,0.6)", fontFamily: "'Inter', sans-serif", lineHeight: 1.6, margin: 0 }}>{item.desc}</p>
+                            <div style={{ fontSize: 24, marginBottom: 12, lineHeight: 1 }}>{item.icon}</div>
+                            <h3 style={{ fontSize: 13.5, fontWeight: 700, color: "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", marginBottom: 6 }}>{item.label}</h3>
+                            <p style={{ fontSize: 10.5, color: "rgba(15,45,90,0.6)", fontFamily: "'Inter', sans-serif", lineHeight: 1.6, margin: 0 }}>{item.desc}</p>
                         </motion.div>
                     ))}
                 </div>
@@ -987,28 +987,28 @@ function NewsSection() {
     const ref = useRef(null);
     const inView = useInView(ref, { once: false, margin: "-10%" });
     return (
-        <section id="news" ref={ref} style={{ padding: "clamp(64px,10vw,120px) 6vw", background: "var(--color-bg-blue-tint)", position: "relative", zIndex: 1 }}>
-            <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-                <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8 }} style={{ textAlign: "center", marginBottom: 56 }}>
-                    <p style={{ fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-primary)", fontFamily: "'Inter', sans-serif", marginBottom: 12 }}>Latest</p>
-                    <h2 style={{ fontSize: "clamp(28px, 3.5vw, 48px)", fontWeight: 800, color: "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.025em" }}>
+        <section id="news" ref={ref} style={{ padding: "clamp(48px, 10vw, 90px) 6vw", background: "var(--color-bg-blue-tint)", position: "relative", zIndex: 1 }}>
+            <div style={{ maxWidth: 825, margin: "0 auto" }}>
+                <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8 }} style={{ textAlign: "center", marginBottom: 42 }}>
+                    <p style={{ fontSize: 8.25, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-primary)", fontFamily: "'Inter', sans-serif", marginBottom: 9 }}>Latest</p>
+                    <h2 style={{ fontSize: "clamp(21px, 3.5vw, 36px)", fontWeight: 800, color: "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.025em" }}>
                         Latest Milestones
                     </h2>
                 </motion.div>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 24 }}>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 18 }}>
                     {NEWS_ITEMS.map((item, i) => (
                         <motion.div key={item.title}
                             initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: i * 0.12 }}
-                            style={{ padding: "28px 28px", background: "var(--color-bg-white)", borderRadius: 14, border: "1px solid rgba(0,80,160,0.08)", cursor: "default", transition: "all 0.25s ease" }}
+                            style={{ padding: "21px 21px", background: "var(--color-bg-white)", borderRadius: 10.5, border: "1px solid rgba(0,80,160,0.08)", cursor: "default", transition: "all 0.25s ease" }}
                             onMouseEnter={e => { e.currentTarget.style.boxShadow = "0 8px 32px rgba(0,80,160,0.1)"; e.currentTarget.style.transform = "translateY(-3px)"; }}
                             onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.transform = "translateY(0)"; }}
                         >
-                            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-                                <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-primary)", background: "rgba(0,100,200,0.08)", padding: "3px 8px", borderRadius: 4 }}>{item.tag}</span>
-                                <span style={{ fontSize: 11, color: "rgba(15,45,90,0.35)", fontFamily: "'Inter', sans-serif" }}>{item.date}</span>
+                            <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 12 }}>
+                                <span style={{ fontSize: 7.5, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-primary)", background: "rgba(0,100,200,0.08)", padding: "2.25px 6px", borderRadius: 3 }}>{item.tag}</span>
+                                <span style={{ fontSize: 8.25, color: "rgba(15,45,90,0.35)", fontFamily: "'Inter', sans-serif" }}>{item.date}</span>
                             </div>
-                            <h4 style={{ fontSize: 15, fontWeight: 700, color: "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", lineHeight: 1.4, marginBottom: 10 }}>{item.title}</h4>
-                            <p style={{ fontSize: 13, color: "rgba(15,45,90,0.55)", fontFamily: "'Inter', sans-serif", lineHeight: 1.7, margin: 0 }}>{item.excerpt}</p>
+                            <h4 style={{ fontSize: 11.25, fontWeight: 700, color: "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", lineHeight: 1.4, marginBottom: 7.5 }}>{item.title}</h4>
+                            <p style={{ fontSize: 9.75, color: "rgba(15,45,90,0.55)", fontFamily: "'Inter', sans-serif", lineHeight: 1.7, margin: 0 }}>{item.excerpt}</p>
                         </motion.div>
                     ))}
                 </div>
@@ -1023,19 +1023,19 @@ function PartnerWithUsSection() {
     const ref = useRef(null);
     const inView = useInView(ref, { once: false, margin: "-10%" });
     return (
-        <section id="partner-with-us" ref={ref} style={{ padding: "clamp(64px,10vw,120px) 6vw", background: "linear-gradient(135deg, #0a1e3a 0%, #0d2244 50%, #060e1c 100%)", position: "relative", zIndex: 1, overflow: "hidden" }}>
+        <section id="partner-with-us" ref={ref} style={{ padding: "clamp(48px, 10vw, 90px) 6vw", background: "linear-gradient(135deg, #0a1e3a 0%, #0d2244 50%, #060e1c 100%)", position: "relative", zIndex: 1, overflow: "hidden" }}>
             <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle at 70% 40%, rgba(0,100,200,0.08) 0%, transparent 55%)", pointerEvents: "none" }} />
-            <div style={{ maxWidth: 700, margin: "0 auto", textAlign: "center", position: "relative" }}>
+            <div style={{ maxWidth: 525, margin: "0 auto", textAlign: "center", position: "relative" }}>
                 <motion.div initial={{ opacity: 0, y: 40 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.9 }}>
-                    <p style={{ fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(100,180,255,0.55)", fontFamily: "'Inter', sans-serif", marginBottom: 20 }}>Collaborate With Neanic</p>
-                    <h2 style={{ fontSize: "clamp(30px, 4.5vw, 58px)", fontWeight: 800, color: "#ffffff", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.03em", lineHeight: 1.1, marginBottom: 20 }}>
+                    <p style={{ fontSize: 8.25, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(100,180,255,0.55)", fontFamily: "'Inter', sans-serif", marginBottom: 15 }}>Collaborate With Neanic</p>
+                    <h2 style={{ fontSize: "clamp(22.5px, 4.5vw, 43.5px)", fontWeight: 800, color: "#ffffff", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.03em", lineHeight: 1.1, marginBottom: 15 }}>
                         Partner With Us
                     </h2>
-                    <p style={{ fontSize: 16, color: "rgba(180,210,255,0.55)", fontFamily: "'Inter', sans-serif", lineHeight: 1.8, marginBottom: 40, maxWidth: 520, margin: "0 auto 40px" }}>
+                    <p style={{ fontSize: 12, color: "rgba(180,210,255,0.55)", fontFamily: "'Inter', sans-serif", lineHeight: 1.8, marginBottom: 30, maxWidth: 390, margin: "0 auto 30px" }}>
                         We collaborate with hospitals, universities, and healthcare institutions to validate, deploy, and scale diagnostic technologies. Join us in bringing lab-quality precision to the point of care.
                     </p>
                     <button
-                        style={{ padding: "14px 32px", background: "linear-gradient(135deg, #0066cc, #0044aa)", border: "none", borderRadius: 10, color: "#ffffff", fontSize: 14, fontWeight: 700, fontFamily: "'Inter', sans-serif", cursor: "pointer", boxShadow: "0 6px 28px rgba(0,80,200,0.35)", transition: "all 0.25s ease", letterSpacing: "0.02em" }}
+                        style={{ padding: "10.5px 24px", background: "linear-gradient(135deg, #0066cc, #0044aa)", border: "none", borderRadius: 7.5, color: "#ffffff", fontSize: 10.5, fontWeight: 700, fontFamily: "'Inter', sans-serif", cursor: "pointer", boxShadow: "0 6px 28px rgba(0,80,200,0.35)", transition: "all 0.25s ease", letterSpacing: "0.02em" }}
                         onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 12px 36px rgba(0,80,200,0.45)"; }}
                         onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 6px 28px rgba(0,80,200,0.35)"; }}
                     >
@@ -1054,19 +1054,19 @@ function CareersSection() {
     const ref = useRef(null);
     const inView = useInView(ref, { once: false, margin: "-10%" });
     return (
-        <section id="careers" ref={ref} style={{ padding: "clamp(64px,10vw,120px) 6vw", background: "linear-gradient(135deg, #060e1c 0%, #0a1e3a 60%, #091428 100%)", position: "relative", zIndex: 1, overflow: "hidden" }}>
+        <section id="careers" ref={ref} style={{ padding: "clamp(48px, 10vw, 90px) 6vw", background: "linear-gradient(135deg, #060e1c 0%, #0a1e3a 60%, #091428 100%)", position: "relative", zIndex: 1, overflow: "hidden" }}>
             <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle at 30% 60%, rgba(0,100,200,0.08) 0%, transparent 55%)", pointerEvents: "none" }} />
-            <div style={{ maxWidth: 700, margin: "0 auto", textAlign: "center", position: "relative" }}>
+            <div style={{ maxWidth: 525, margin: "0 auto", textAlign: "center", position: "relative" }}>
                 <motion.div initial={{ opacity: 0, y: 40 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.9 }}>
-                    <p style={{ fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(100,180,255,0.55)", fontFamily: "'Inter', sans-serif", marginBottom: 20 }}>Join Us</p>
-                    <h2 style={{ fontSize: "clamp(30px, 4.5vw, 58px)", fontWeight: 800, color: "#ffffff", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.03em", lineHeight: 1.1, marginBottom: 20 }}>
+                    <p style={{ fontSize: 8.25, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(100,180,255,0.55)", fontFamily: "'Inter', sans-serif", marginBottom: 15 }}>Join Us</p>
+                    <h2 style={{ fontSize: "clamp(22.5px, 4.5vw, 43.5px)", fontWeight: 800, color: "#ffffff", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.03em", lineHeight: 1.1, marginBottom: 15 }}>
                         Build Technologies<br />That Matter
                     </h2>
-                    <p style={{ fontSize: 16, color: "rgba(180,210,255,0.55)", fontFamily: "'Inter', sans-serif", lineHeight: 1.8, marginBottom: 40, maxWidth: 520, margin: "0 auto 40px" }}>
+                    <p style={{ fontSize: 12, color: "rgba(180,210,255,0.55)", fontFamily: "'Inter', sans-serif", lineHeight: 1.8, marginBottom: 30, maxWidth: 390, margin: "0 auto 30px" }}>
                         We're looking for scientists, engineers, designers, and dreamers who believe that better diagnostics mean better lives. Come shape the future of healthcare.
                     </p>
                     <button
-                        style={{ padding: "14px 32px", background: "linear-gradient(135deg, #0066cc, #0044aa)", border: "none", borderRadius: 10, color: "#ffffff", fontSize: 14, fontWeight: 700, fontFamily: "'Inter', sans-serif", cursor: "pointer", boxShadow: "0 6px 28px rgba(0,80,200,0.35)", transition: "all 0.25s ease", letterSpacing: "0.02em" }}
+                        style={{ padding: "10.5px 24px", background: "linear-gradient(135deg, #0066cc, #0044aa)", border: "none", borderRadius: 7.5, color: "#ffffff", fontSize: 10.5, fontWeight: 700, fontFamily: "'Inter', sans-serif", cursor: "pointer", boxShadow: "0 6px 28px rgba(0,80,200,0.35)", transition: "all 0.25s ease", letterSpacing: "0.02em" }}
                         onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 12px 36px rgba(0,80,200,0.45)"; }}
                         onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 6px 28px rgba(0,80,200,0.35)"; }}
                     >
@@ -1092,14 +1092,14 @@ export const NeanicSections = ({ scrollProgress, setActiveModal, selectedDomain,
             <PartnershipSection setActiveModal={setActiveModal} />
             <FoundersSection />
 
-            <section className="neanic-cta-section" style={{ padding: "clamp(64px,8vw,100px) 6vw", background: "linear-gradient(135deg,#0a1e3a 0%,#060e1c 100%)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", borderTop: "1px solid rgba(255,255,255,0.06)", position: "relative", zIndex: 1 }}>
-                <div style={{ maxWidth: 640, margin: "0 auto", position: "relative", zIndex: 2 }}>
-                    <p style={{ fontSize: 15, color: "rgba(180,210,255,0.6)", fontFamily: "'Inter',sans-serif", lineHeight: 1.7, marginBottom: 36, maxWidth: 540, marginLeft: "auto", marginRight: "auto" }}>
+            <section className="neanic-cta-section" style={{ padding: "clamp(48px, 8vw, 75px) 6vw", background: "linear-gradient(135deg,#0a1e3a 0%,#060e1c 100%)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", borderTop: "1px solid rgba(255,255,255,0.06)", position: "relative", zIndex: 1 }}>
+                <div style={{ maxWidth: 480, margin: "0 auto", position: "relative", zIndex: 2 }}>
+                    <p style={{ fontSize: 11.25, color: "rgba(180,210,255,0.6)", fontFamily: "'Inter',sans-serif", lineHeight: 1.7, marginBottom: 27, maxWidth: 405, marginLeft: "auto", marginRight: "auto" }}>
                         Whether you're a student, institution, or healthcare partner — we'd love to connect.
                     </p>
                     <button
                         onClick={() => setActiveModal("contact")}
-                        style={{ padding: "14px 36px", background: "linear-gradient(135deg,#0066cc 0%,#0044aa 100%)", border: "none", borderRadius: 10, color: "#ffffff", fontSize: 15, fontWeight: 700, fontFamily: "'Inter',sans-serif", cursor: "pointer", boxShadow: "0 6px 22px rgba(0,80,200,0.35)", transition: "all 0.25s ease" }}
+                        style={{ padding: "10.5px 27px", background: "linear-gradient(135deg,#0066cc 0%,#0044aa 100%)", border: "none", borderRadius: 7.5, color: "#ffffff", fontSize: 11.25, fontWeight: 700, fontFamily: "'Inter',sans-serif", cursor: "pointer", boxShadow: "0 6px 22px rgba(0,80,200,0.35)", transition: "all 0.25s ease" }}
                         onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 10px 32px rgba(0,80,200,0.45)"; }}
                         onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 6px 22px rgba(0,80,200,0.35)"; }}
                     >Get In Touch</button>

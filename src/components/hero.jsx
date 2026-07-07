@@ -650,7 +650,7 @@ function ScrollRevealContent({ scrollProgress, setActiveModal }) {
 
     return (
         <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", zIndex: 20, padding: "0 6vw", pointerEvents: opacity > 0.1 ? "auto" : "none", opacity, transition: "opacity 0.2s ease" }}>
-            <div style={{ maxWidth: 520 }}>
+            <div style={{ maxWidth: 390 }}>
                 <motion.img
                     src="/LOGO.png"
                     alt="Neanic Logo"
@@ -658,22 +658,22 @@ function ScrollRevealContent({ scrollProgress, setActiveModal }) {
                     animate={{ opacity: show("logo") ? 1 : 0, y: show("logo") ? 0 : 16, filter: show("logo") ? "blur(0px)" : "blur(10px)" }}
                     transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
                     style={{
-                        height: "220px",
-                        marginLeft: "-24px",
-                        marginBottom: "-60px",
+                        height: "165px",
+                        marginLeft: "-18px",
+                        marginBottom: "-45px",
                         transform: "translateY(50px)",
                         display: "block",
                         pointerEvents: "none",
                         objectFit: "contain"
                     }}
                 />
-                <motion.div initial={{ opacity: 0, y: 12, filter: "blur(4px)" }} animate={{ opacity: show("eyebrow") ? 1 : 0, y: show("eyebrow") ? 0 : 12, filter: show("eyebrow") ? "blur(0px)" : "blur(4px)" }} transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }} style={{ display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 18, pointerEvents: "none" }}>
-                    <span style={{ width: 7, height: 7, borderRadius: "50%", display: "inline-block", background: "#0088cc", boxShadow: "0 0 8px #0088cc99", animation: "pulseDot 2.2s ease-in-out infinite" }} />
-                    <span style={{ fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--color-primary)", fontFamily: "'Inter',sans-serif", fontWeight: 500 }}>Biotechnology · Diagnostics · Innovation</span>
+                <motion.div initial={{ opacity: 0, y: 12, filter: "blur(4px)" }} animate={{ opacity: show("eyebrow") ? 1 : 0, y: show("eyebrow") ? 0 : 12, filter: show("eyebrow") ? "blur(0px)" : "blur(4px)" }} transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }} style={{ display: "inline-flex", alignItems: "center", gap: 6, marginBottom: 13.5, pointerEvents: "none" }}>
+                    <span style={{ width: 5.25, height: 5.25, borderRadius: "50%", display: "inline-block", background: "#0088cc", boxShadow: "0 0 8px #0088cc99", animation: "pulseDot 2.2s ease-in-out infinite" }} />
+                    <span style={{ fontSize: 8.25, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--color-primary)", fontFamily: "'Inter',sans-serif", fontWeight: 500 }}>Biotechnology · Diagnostics · Innovation</span>
                 </motion.div>
-                <motion.h1 initial={{ opacity: 0, y: 16, filter: "blur(10px)" }} animate={{ opacity: show("title") ? 1 : 0, y: show("title") ? 0 : 16, filter: show("title") ? "blur(0px)" : "blur(10px)" }} transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }} style={{ fontSize: "clamp(38px,5vw,72px)", fontWeight: 800, letterSpacing: "-0.025em", lineHeight: 1.04, margin: "0 0 16px", fontFamily: "'Inter',sans-serif", background: "linear-gradient(135deg,#060e1c 30%,#003a88 68%,#0099cc 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", pointerEvents: "none" }}>Neanic Solutions</motion.h1>
-                <motion.p initial={{ opacity: 0, y: 14, filter: "blur(6px)" }} animate={{ opacity: show("subtitle") ? 1 : 0, y: show("subtitle") ? 0 : 14, filter: show("subtitle") ? "blur(0px)" : "blur(6px)" }} transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1] }} style={{ fontSize: "clamp(14px,1.45vw,20px)", color: "var(--color-primary)", fontWeight: 600, lineHeight: 1.4, margin: "0 0 14px", fontFamily: "'Inter',sans-serif", whiteSpace: "pre-line", pointerEvents: "none" }}>{"Redefining Healthcare Through\nAdvanced Diagnostic Technologies"}</motion.p>
-                <motion.p initial={{ opacity: 0, y: 12, filter: "blur(4px)" }} animate={{ opacity: show("body") ? 1 : 0, y: show("body") ? 0 : 12, filter: show("body") ? "blur(0px)" : "blur(4px)" }} transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }} style={{ fontSize: "clamp(13px,1vw,15px)", color: "rgba(15,45,90,0.6)", lineHeight: 1.8, margin: "0 0 30px", fontFamily: "'Inter',sans-serif", maxWidth: 420, pointerEvents: "none" }}>Empowering biotechnology innovation through advanced diagnostic devices, scientific education, and next-generation healthcare solutions.</motion.p>
+                <motion.h1 initial={{ opacity: 0, y: 16, filter: "blur(10px)" }} animate={{ opacity: show("title") ? 1 : 0, y: show("title") ? 0 : 16, filter: show("title") ? "blur(0px)" : "blur(10px)" }} transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }} style={{ fontSize: "clamp(28.5px, 5vw, 54px)", fontWeight: 800, letterSpacing: "-0.025em", lineHeight: 1.04, margin: "0 0 12px", fontFamily: "'Inter',sans-serif", background: "linear-gradient(135deg,#060e1c 30%,#003a88 68%,#0099cc 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", pointerEvents: "none" }}>Neanic Solutions</motion.h1>
+                <motion.p initial={{ opacity: 0, y: 14, filter: "blur(6px)" }} animate={{ opacity: show("subtitle") ? 1 : 0, y: show("subtitle") ? 0 : 14, filter: show("subtitle") ? "blur(0px)" : "blur(6px)" }} transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1] }} style={{ fontSize: "clamp(10.5px, 1.45vw, 15px)", color: "var(--color-primary)", fontWeight: 600, lineHeight: 1.4, margin: "0 0 10.5px", fontFamily: "'Inter',sans-serif", whiteSpace: "pre-line", pointerEvents: "none" }}>{"Redefining Healthcare Through\nAdvanced Diagnostic Technologies"}</motion.p>
+                <motion.p initial={{ opacity: 0, y: 12, filter: "blur(4px)" }} animate={{ opacity: show("body") ? 1 : 0, y: show("body") ? 0 : 12, filter: show("body") ? "blur(0px)" : "blur(4px)" }} transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }} style={{ fontSize: "clamp(9.75px, 1vw, 11.25px)", color: "rgba(15,45,90,0.6)", lineHeight: 1.8, margin: "0 0 22.5px", fontFamily: "'Inter',sans-serif", maxWidth: 315, pointerEvents: "none" }}>Empowering biotechnology innovation through advanced diagnostic devices, scientific education, and next-generation healthcare solutions.</motion.p>
 
             </div>
         </div>
@@ -684,9 +684,9 @@ function ScrollHint({ visible }) {
     return (
         <AnimatePresence>
             {visible && (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: 0.4 } }} transition={{ delay: 1.2, duration: 1 }} style={{ position: "absolute", bottom: 28, left: "50%", transform: "translateX(-50%)", display: "flex", flexDirection: "column", alignItems: "center", gap: 6, zIndex: 20, pointerEvents: "none" }}>
-                    <span style={{ fontSize: 10, color: "var(--color-text-muted)", letterSpacing: "0.18em", textTransform: "uppercase", fontFamily: "'Inter',sans-serif" }}>scroll to explore</span>
-                    <motion.div animate={{ scaleY: [1, 0.3, 1], opacity: [0.35, 0.85, 0.35] }} transition={{ repeat: Infinity, duration: 1.9, ease: "easeInOut" }} style={{ width: 1, height: 36, background: "linear-gradient(to bottom,rgba(0,120,200,0.45),transparent)" }} />
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: 0.4 } }} transition={{ delay: 1.2, duration: 1 }} style={{ position: "absolute", bottom: 21, left: "50%", transform: "translateX(-50%)", display: "flex", flexDirection: "column", alignItems: "center", gap: 4.5, zIndex: 20, pointerEvents: "none" }}>
+                    <span style={{ fontSize: 7.5, color: "var(--color-text-muted)", letterSpacing: "0.18em", textTransform: "uppercase", fontFamily: "'Inter',sans-serif" }}>scroll to explore</span>
+                    <motion.div animate={{ scaleY: [1, 0.3, 1], opacity: [0.35, 0.85, 0.35] }} transition={{ repeat: Infinity, duration: 1.9, ease: "easeInOut" }} style={{ width: 0.75, height: 27, background: "linear-gradient(to bottom,rgba(0,120,200,0.45),transparent)" }} />
                 </motion.div>
             )}
         </AnimatePresence>
@@ -696,11 +696,11 @@ function ScrollHint({ visible }) {
 const STAGES = ["Discover", "Exploring", "Inside", "Ascending", "Beyond"];
 function StageIndicator({ stage }) {
     return (
-        <div style={{ position: "fixed", right: 22, top: "50%", transform: "translateY(-50%)", zIndex: 50, display: "flex", flexDirection: "column", gap: 10, pointerEvents: "none" }}>
+        <div style={{ position: "fixed", right: 16.5, top: "50%", transform: "translateY(-50%)", zIndex: 50, display: "flex", flexDirection: "column", gap: 7.5, pointerEvents: "none" }}>
             {STAGES.map((s, i) => (
-                <div key={s} style={{ display: "flex", alignItems: "center", gap: 7, justifyContent: "flex-end" }}>
-                    {i === stage && <motion.span key={s} initial={{ opacity: 0, x: 6 }} animate={{ opacity: 1, x: 0 }} style={{ fontSize: 9, color: "var(--color-text-muted)", fontFamily: "'Inter',sans-serif", letterSpacing: "0.14em", textTransform: "uppercase" }}>{s}</motion.span>}
-                    <div style={{ height: 2, borderRadius: 1, width: i === stage ? 20 : 5, background: i === stage ? "#0088cc" : "rgba(0,120,200,0.18)", boxShadow: i === stage ? "0 0 5px #0088cc55" : "none", transition: "all 0.35s ease" }} />
+                <div key={s} style={{ display: "flex", alignItems: "center", gap: 5.25, justifyContent: "flex-end" }}>
+                    {i === stage && <motion.span key={s} initial={{ opacity: 0, x: 6 }} animate={{ opacity: 1, x: 0 }} style={{ fontSize: 6.75, color: "var(--color-text-muted)", fontFamily: "'Inter',sans-serif", letterSpacing: "0.14em", textTransform: "uppercase" }}>{s}</motion.span>}
+                    <div style={{ height: 1.5, borderRadius: 0.75, width: i === stage ? 20 : 5, background: i === stage ? "#0088cc" : "rgba(0,120,200,0.18)", boxShadow: i === stage ? "0 0 5px #0088cc55" : "none", transition: "all 0.35s ease" }} />
                 </div>
             ))}
         </div>
@@ -709,16 +709,16 @@ function StageIndicator({ stage }) {
 
 export function Navbar({ setActiveModal }) {
     return (
-        <motion.nav initial={{ opacity: 0, y: -14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.7 }} style={{ position: "absolute", top: 0, left: 0, right: 0, padding: "20px 6vw", display: "flex", justifyContent: "space-between", alignItems: "center", zIndex: 30, borderBottom: "1px solid rgba(0,80,160,0.07)", backdropFilter: "blur(10px)", background: "rgba(236,245,255,0.55)" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <div style={{ width: 28, height: 28, borderRadius: 7, background: "linear-gradient(135deg,#0066cc,#003388)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 10px rgba(0,80,200,0.2)" }}>
+        <motion.nav initial={{ opacity: 0, y: -14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.7 }} style={{ position: "absolute", top: 0, left: 0, right: 0, padding: "15px 6vw", display: "flex", justifyContent: "space-between", alignItems: "center", zIndex: 30, borderBottom: "1px solid rgba(0,80,160,0.07)", backdropFilter: "blur(10px)", background: "rgba(236,245,255,0.55)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <div style={{ width: 21, height: 21, borderRadius: 5.25, background: "linear-gradient(135deg,#0066cc,#003388)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 10px rgba(0,80,200,0.2)" }}>
                     <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1.5L7 12.5M3.5 4Q7 1.5 10.5 4M3.5 10Q7 12.5 10.5 10" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" /></svg>
                 </div>
-                <span style={{ fontSize: 15, fontWeight: 700, color: "var(--color-text-primary)", fontFamily: "'Inter',sans-serif" }}>Neanic</span>
+                <span style={{ fontSize: 11.25, fontWeight: 700, color: "var(--color-text-primary)", fontFamily: "'Inter',sans-serif" }}>Neanic</span>
             </div>
-            <div style={{ display: "flex", gap: 28 }}>
+            <div style={{ display: "flex", gap: 21 }}>
                 {[{ label: "About", id: "why-neanic-matters" }, { label: "Research", id: "pipeline" }, { label: "Education", id: "edtech" }, { label: "Milestones", id: "news" }, { label: "Contact", modal: "contact" }].map(({ label, id, modal }) => (
-                    <a key={label} style={{ fontSize: 12, color: "rgba(10,40,90,0.55)", textDecoration: "none", fontFamily: "'Inter',sans-serif", fontWeight: 450, cursor: "pointer", transition: "color 0.2s" }} onMouseEnter={e => e.currentTarget.style.color = "#0055bb"} onMouseLeave={e => e.currentTarget.style.color = "rgba(10,40,90,0.55)"} onClick={() => {
+                    <a key={label} style={{ fontSize: 9, color: "rgba(10,40,90,0.55)", textDecoration: "none", fontFamily: "'Inter',sans-serif", fontWeight: 450, cursor: "pointer", transition: "color 0.2s" }} onMouseEnter={e => e.currentTarget.style.color = "#0055bb"} onMouseLeave={e => e.currentTarget.style.color = "rgba(10,40,90,0.55)"} onClick={() => {
                         if (modal) {
                             setActiveModal(modal);
                         } else if (id === "edtech") {
@@ -736,15 +736,15 @@ export function Navbar({ setActiveModal }) {
 
 export function Footer({ setActiveModal }) {
     return (
-        <footer style={{ background: "#060e1c", padding: "80px 6vw 40px", position: "relative", overflow: "hidden" }}>
-            <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-                <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 48, marginBottom: 64 }}>
+        <footer style={{ background: "#060e1c", padding: "60px 6vw 30px", position: "relative", overflow: "hidden" }}>
+            <div style={{ maxWidth: 825, margin: "0 auto" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 36, marginBottom: 48 }}>
                     <div>
-                        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
-                            <img src="/LOGO.png" alt="Neanic Solutions" style={{ height: 100, objectFit: "contain", transform: "translateY(15px)" }} />
-                            <span style={{ fontSize: 17, fontWeight: 800, color: "white", fontFamily: "'Inter',sans-serif" }}>Neanic Solutions</span>
+                        <div style={{ display: "flex", alignItems: "center", gap: 7.5, marginBottom: 15 }}>
+                            <img src="/LOGO.png" alt="Neanic Solutions" style={{ height: 75, objectFit: "contain", transform: "translateY(15px)" }} />
+                            <span style={{ fontSize: 12.75, fontWeight: 800, color: "white", fontFamily: "'Inter',sans-serif" }}>Neanic Solutions</span>
                         </div>
-                        <p style={{ fontSize: 13, color: "rgba(180,200,240,0.5)", fontFamily: "'Inter',sans-serif", lineHeight: 1.8, maxWidth: 280 }}>Bridging molecular science and accessible healthcare.</p>
+                        <p style={{ fontSize: 9.75, color: "rgba(180,200,240,0.5)", fontFamily: "'Inter',sans-serif", lineHeight: 1.8, maxWidth: 210 }}>Bridging molecular science and accessible healthcare.</p>
                     </div>
                     {[
                         { title: "Solutions", links: ["MedTech", "EdTech", "Innovation Pipeline", "Partnership Opportunities"] },
@@ -752,9 +752,9 @@ export function Footer({ setActiveModal }) {
                         { title: "Connect", links: ["📧 nanoashish@gmail.com"] }
                     ].map(col => (
                         <div key={col.title}>
-                            <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(100,160,255,0.5)", fontFamily: "'Inter',sans-serif", marginBottom: 16 }}>{col.title}</p>
+                            <p style={{ fontSize: 8.25, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(100,160,255,0.5)", fontFamily: "'Inter',sans-serif", marginBottom: 12 }}>{col.title}</p>
                             {col.links.map(link => (
-                                <p key={link} style={{ fontSize: 13, color: "rgba(180,200,240,0.45)", fontFamily: "'Inter',sans-serif", marginBottom: 8, cursor: "pointer", transition: "color 0.2s" }} onMouseEnter={e => e.currentTarget.style.color = "rgba(180,200,240,0.85)"} onMouseLeave={e => e.currentTarget.style.color = "rgba(180,200,240,0.45)"} onClick={() => {
+                                <p key={link} style={{ fontSize: 9.75, color: "rgba(180,200,240,0.45)", fontFamily: "'Inter',sans-serif", marginBottom: 6, cursor: "pointer", transition: "color 0.2s" }} onMouseEnter={e => e.currentTarget.style.color = "rgba(180,200,240,0.85)"} onMouseLeave={e => e.currentTarget.style.color = "rgba(180,200,240,0.45)"} onClick={() => {
                                     if (link === "📧 nanoashish@gmail.com") {
                                         window.location.href = "mailto:nanoashish@gmail.com";
                                     } else if (["MedTech", "EdTech"].includes(link)) {
@@ -776,9 +776,9 @@ export function Footer({ setActiveModal }) {
                         </div>
                     ))}
                 </div>
-                <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)", paddingTop: 28, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
-                    <p style={{ fontSize: 12, color: "rgba(180,200,240,0.3)", fontFamily: "'Inter',sans-serif", margin: 0 }}>© 2025 Neanic Solutions. All rights reserved.</p>
-                    <div style={{ display: "flex", alignItems: "center", gap: 12, fontSize: 11, color: "rgba(180,200,240,0.4)", fontFamily: "'Inter',sans-serif", letterSpacing: "0.05em" }}>
+                <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)", paddingTop: 21, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 9 }}>
+                    <p style={{ fontSize: 9, color: "rgba(180,200,240,0.3)", fontFamily: "'Inter',sans-serif", margin: 0 }}>© 2025 Neanic Solutions. All rights reserved.</p>
+                    <div style={{ display: "flex", alignItems: "center", gap: 9, fontSize: 8.25, color: "rgba(180,200,240,0.4)", fontFamily: "'Inter',sans-serif", letterSpacing: "0.05em" }}>
                         <span style={{ cursor: "pointer", transition: "color 0.2s" }} onMouseEnter={e => e.currentTarget.style.color = "rgba(180,200,240,0.85)"} onMouseLeave={e => e.currentTarget.style.color = "rgba(180,200,240,0.4)"}>Privacy Policy</span>
                         <span>•</span>
                         <span style={{ cursor: "pointer", transition: "color 0.2s" }} onMouseEnter={e => e.currentTarget.style.color = "rgba(180,200,240,0.85)"} onMouseLeave={e => e.currentTarget.style.color = "rgba(180,200,240,0.4)"} onClick={() => document.getElementById("founders")?.scrollIntoView({ behavior: "smooth" })}>Careers</span>
@@ -855,7 +855,7 @@ export default function NeanicHero({ setActiveModal, scrollProgress: propScrollP
             <style>{`
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%;zoom:75%;}
+    html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
     body{background:var(--color-bg-white);overflow-x:hidden;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
         @keyframes pulseDot{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.6);opacity:0.55;}}
         ::-webkit-scrollbar{width:3px;}
@@ -867,7 +867,7 @@ export default function NeanicHero({ setActiveModal, scrollProgress: propScrollP
                 <div style={{ position: "sticky", top: 0, width: "100%", height: "100vh", overflow: "hidden", background: "transparent" }}>
 
                     <div style={{ position: "absolute", inset: 0, zIndex: 2, background: "linear-gradient(to right,rgba(232,242,252,0.97) 0%,rgba(232,242,252,0.72) 32%,rgba(232,242,252,0.1) 52%,transparent 68%)", pointerEvents: "none" }} />
-                    <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 130, zIndex: 2, background: "linear-gradient(to top,rgba(226,238,250,1),transparent)", pointerEvents: "none" }} />
+                    <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 97.5, zIndex: 2, background: "linear-gradient(to top,rgba(226,238,250,1),transparent)", pointerEvents: "none" }} />
 
                     {/* ── CANVAS: single DNAScene + OrbitalParticleSystem ── */}
                     <Canvas camera={{ position: [0, 0, 11], fov: 55 }} style={{ position: "absolute", inset: 0, zIndex: 1 }} gl={{ antialias: true, alpha: true }}>

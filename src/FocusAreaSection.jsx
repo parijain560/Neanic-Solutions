@@ -13,12 +13,11 @@ const FOCUS_AREAS = [
 ];
 
 const CARD_COUNT = FOCUS_AREAS.length;
-const ANGLE_STEP = (Math.PI * 2) / CARD_COUNT; // 60deg apart for 6 cards
-const RADIUS_XY = 2.3;   // how far cards spread horizontally/vertically
-const RADIUS_Z = 2.4;    // how far the ring recedes into depth as it goes "up"
-const ROT_Y_FACTOR = 0.85; // how much side cards angle open, like a book
+const ANGLE_STEP = (Math.PI * 2) / CARD_COUNT;
+const RADIUS_XY = 1.6;
+const RADIUS_Z = 1.7;
+const ROT_Y_FACTOR = 0.85;
 
-// Shortest signed offset so the ring always takes the short way around on click
 function shortestOffset(i, activeIndex) {
     let diff = i - activeIndex;
     const half = CARD_COUNT / 2;
@@ -33,15 +32,15 @@ function GlassCard({ index, activeIndex, data, onSelect }) {
 
     const target = useMemo(() => {
         const offset = shortestOffset(index, activeIndex);
-        const angle = offset * ANGLE_STEP; // 0 = front/bottom, PI = top/back
+        const angle = offset * ANGLE_STEP;
 
         const x = Math.sin(angle) * RADIUS_XY;
-        const y = -Math.cos(angle) * RADIUS_XY; // front(angle 0) => -R (low), top(angle PI) => +R (high)
-        const z = -(1 - Math.cos(angle)) * RADIUS_Z; // front => 0 (closest), top => -2*RADIUS_Z (farthest)
+        const y = -Math.cos(angle) * RADIUS_XY;
+        const z = -(1 - Math.cos(angle)) * RADIUS_Z;
         const rotY = -angle * ROT_Y_FACTOR;
 
         const dist = Math.abs(offset);
-        const scale = isActive ? 1.2 : Math.max(0.55, 1 - dist * 0.16);
+        const scale = isActive ? 0.9 : Math.max(0.41, 0.75 - dist * 0.12);
         const opacity = isActive ? 1 : Math.max(0.35, 1 - dist * 0.22);
 
         return { x, y, z, rotY, scale, opacity };
@@ -95,7 +94,7 @@ function GlassCard({ index, activeIndex, data, onSelect }) {
 
 function Wheel({ activeIndex, onSelect }) {
     return (
-        <group position={[0, 1.1, 0]}>
+        <group position={[0, 0.85, 0]}>
             {FOCUS_AREAS.map((data, i) => (
                 <GlassCard
                     key={data.id}
@@ -119,8 +118,8 @@ export default function FocusAreaSection() {
                 <span className="section-label">Focus Areas</span>
                 <h2>What We Focus On</h2>
 
-                <div style={{ height: "440px", position: "relative" }}>
-                    <Canvas camera={{ position: [0, -0.2, 6.5], fov: 40 }}>
+                <div style={{ height: "300px", position: "relative" }}>
+                    <Canvas camera={{ position: [0, 0, 4.9], fov: 40 }}>
                         <ambientLight intensity={0.8} />
                         <pointLight position={[4, 5, 5]} intensity={1} />
                         <pointLight position={[-3, -2, 4]} intensity={0.6} color="#ffffff" />
