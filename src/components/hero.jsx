@@ -854,8 +854,8 @@ export default function NeanicHero({ setActiveModal, scrollProgress: propScrollP
         <>
             <style>{`
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-    *,*::before,*::as{box-sizing:border-box;margin:0;padding:0;}
-    html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%;zoom:75%;}
     body{background:var(--color-bg-white);overflow-x:hidden;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
         @keyframes pulseDot{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.6);opacity:0.55;}}
         ::-webkit-scrollbar{width:3px;}
