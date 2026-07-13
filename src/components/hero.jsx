@@ -815,14 +815,14 @@ export function Footer({ setActiveModal }) {
                     {[
                         { title: "Solutions", links: ["MedTech", "EdTech", "Innovation Pipeline", "Partnership Opportunities"] },
                         { title: "Company", links: ["About", "Founders", "Latest Milestones", "Careers"] },
-                        { title: "Connect", links: ["📧 nanoashish@gmail.com"] }
+                        { title: "Connect", links: ["📧 neanicsolution@gmail.com"] }
                     ].map(col => (
                         <div key={col.title}>
                             <p style={{ fontSize: 8.25, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(100,160,255,0.5)", fontFamily: "'Inter',sans-serif", marginBottom: 12 }}>{col.title}</p>
                             {col.links.map(link => (
                                 <p key={link} style={{ fontSize: 9.75, color: "rgba(180,200,240,0.45)", fontFamily: "'Inter',sans-serif", marginBottom: 6, cursor: "pointer", transition: "color 0.2s" }} onMouseEnter={e => e.currentTarget.style.color = "rgba(180,200,240,0.85)"} onMouseLeave={e => e.currentTarget.style.color = "rgba(180,200,240,0.45)"} onClick={() => {
-                                    if (link === "📧 nanoashish@gmail.com") {
-                                        window.location.href = "mailto:nanoashish@gmail.com";
+                                    if (link === "📧 neanicsolution@gmail.com") {
+                                        window.location.href = "mailto:neanicsolution@gmail.com";
                                     } else if (["MedTech", "EdTech"].includes(link)) {
                                         const scrollH = document.documentElement.scrollHeight - window.innerHeight;
                                         window.scrollTo({ top: scrollH * 0.385, behavior: "smooth" });

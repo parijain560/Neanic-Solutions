@@ -145,7 +145,6 @@ export default function App() {
 
     const handleTouchMove = (e) => {
       if (activeModalRef.current) {
-        e.preventDefault();
         return;
       }
 
@@ -400,7 +399,7 @@ export default function App() {
                     <div className="info-item">
                       <span className="info-item-label">Email</span>
                       <span className="info-item-value">
-                        <a href="mailto:parijain4141@gmail.com">abc@gmail.com</a>
+                        <a href="mailto:neanicsolution@gmail.com">neanicsolution@gmail.com</a>
                       </span>
                     </div>
 
@@ -467,27 +466,7 @@ export default function App() {
                       </select>
                     </div>
 
-                    <div className="form-group">
-                      <span className="service-pills-label">Quick Select Service</span>
-                      <div className="service-pills-row">
-                        <button
-                          type="button"
-                          className={`service-pill ${contactSubject === "EdTech Programs" ? "service-pill--active" : ""}`}
-                          onClick={() => setContactSubject("EdTech Programs")}
-                          disabled={isSubmitting}
-                        >
-                          EdTech Programs
-                        </button>
-                        <button
-                          type="button"
-                          className={`service-pill ${contactSubject === "MedTech Diagnostics" ? "service-pill--active" : ""}`}
-                          onClick={() => setContactSubject("MedTech Diagnostics")}
-                          disabled={isSubmitting}
-                        >
-                          MedTech Diagnostics
-                        </button>
-                      </div>
-                    </div>
+
 
                     <div className="form-group">
                       <label htmlFor="modal-message">Message</label>
