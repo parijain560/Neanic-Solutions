@@ -50,6 +50,7 @@ export default function App() {
   const [contactMessage, setContactMessage] = useState("");
   const [showStickyNav, setShowStickyNav] = useState(false);
 
+  const INITIAL_PROGRESS = 0.18;
   const scrollProgress = useRef(0);
   const prevScrollY = useRef(0);
 
@@ -72,7 +73,11 @@ export default function App() {
       // Reset scrollProgress to actual scroll when exiting the domain
       const scrollH = document.documentElement.scrollHeight - window.innerHeight;
       if (scrollH > 0) {
-        scrollProgress.current = Math.min(window.scrollY / scrollH, 1);
+        const rawProgress = window.scrollY / scrollH;
+        scrollProgress.current = Math.min(
+          INITIAL_PROGRESS + rawProgress * (1 - INITIAL_PROGRESS),
+          1
+        );
       }
     }
   }, [selectedDomain]);
@@ -111,10 +116,15 @@ export default function App() {
       }
 
       // Feed the accumulated delta into scrollProgress so 3-D animations advance
-      const baseProgress = lockedScrollY.current / scrollH;
-      scrollProgress.current = Math.max(0, Math.min(1,
-        baseProgress + Math.max(0, virtualDelta.current)
-      ));
+      const rawBase = lockedScrollY.current / scrollH;
+      const baseProgress = INITIAL_PROGRESS + rawBase * (1 - INITIAL_PROGRESS);
+      scrollProgress.current = Math.max(
+        INITIAL_PROGRESS,
+        Math.min(
+          1,
+          baseProgress + Math.max(0, virtualDelta.current)
+        )
+      );
 
       // Keep the page frozen at the entry position
       window.scrollTo({ top: lockedScrollY.current, behavior: "instant" });
@@ -123,15 +133,81 @@ export default function App() {
     window.addEventListener("wheel", handleWheel, { passive: false });
     return () => window.removeEventListener("wheel", handleWheel);
   }, []); // intentionally empty — uses refs inside
+  // Touch equivalent of the wheel interceptor — makes domain selection work on mobile
+  useEffect(() => {
+    let touchStartY = null;
 
+    const handleTouchStart = (e) => {
+      if (e.touches && e.touches.length > 0) {
+        touchStartY = e.touches[0].clientY;
+      }
+    };
+
+    const handleTouchMove = (e) => {
+      if (activeModalRef.current) {
+        e.preventDefault();
+        return;
+      }
+
+      if (!selectedDomainRef.current || lockedScrollY.current === null || touchStartY === null) return;
+      e.preventDefault();
+
+      const touchY = e.touches[0].clientY;
+      const deltaY = (touchStartY - touchY) * 2.2; // scale to feel similar to wheel deltaY
+      touchStartY = touchY;
+
+      const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+      const scrollH = document.documentElement.scrollHeight - viewportHeight;
+      if (scrollH <= 0) return;
+
+      virtualDelta.current += deltaY / (scrollH * 2.5);
+
+      if (virtualDelta.current < 0 && virtualDelta.current < -0.018) {
+        setSelectedDomain(null);
+        virtualDelta.current = 0;
+        return;
+      }
+
+      const rawBase = lockedScrollY.current / scrollH;
+      const baseProgress = INITIAL_PROGRESS + rawBase * (1 - INITIAL_PROGRESS);
+      scrollProgress.current = Math.max(
+        INITIAL_PROGRESS,
+        Math.min(
+          1,
+          baseProgress + Math.max(0, virtualDelta.current)
+        )
+      );
+
+      window.scrollTo({ top: lockedScrollY.current, behavior: "instant" });
+    };
+
+    const handleTouchEnd = () => {
+      touchStartY = null;
+    };
+
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchmove", handleTouchMove, { passive: false });
+    window.addEventListener("touchend", handleTouchEnd, { passive: true });
+
+    return () => {
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, []);
   useEffect(() => {
     const handleScroll = () => {
       // While scroll-locked, the scroll handler must not override scrollProgress
       if (selectedDomainRef.current && lockedScrollY.current !== null) return;
 
-      const scrollH = document.documentElement.scrollHeight - window.innerHeight;
+      const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+      const scrollH = document.documentElement.scrollHeight - viewportHeight;
       if (scrollH > 0) {
-        scrollProgress.current = Math.min(window.scrollY / scrollH, 1);
+        const rawProgress = window.scrollY / scrollH;
+        scrollProgress.current = Math.min(
+          INITIAL_PROGRESS + rawProgress * (1 - INITIAL_PROGRESS),
+          1
+        );
       }
 
       // Auto-exit domain focus when scrolling back up past the split threshold

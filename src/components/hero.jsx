@@ -90,19 +90,42 @@ function OrbitalParticleSystem({
         if (!refs) return false;
         const cam = camera;
         const W = size.width;
-        const H = size.height;
+        
+        // Use visualViewport height if available, otherwise fallback to size.height
+        const H = window.visualViewport ? window.visualViewport.height : size.height;
+        
         let allReady = true;
         for (let i = 0; i < 6; i++) {
             const el = refs[i];
             if (!el) { anim.current.cardTargets[i] = null; continue; }
             const rect = el.getBoundingClientRect();
             if (rect.width === 0) { anim.current.cardTargets[i] = null; continue; }
+            
+            // Adjust top based on visualViewport offset (helps with iOS Safari address bar)
+            const visualOffsetTop = window.visualViewport ? window.visualViewport.offsetTop : 0;
             const cx = rect.left + rect.width / 2;
-            const cy = rect.top + rect.height / 2;
+            const cy = rect.top - visualOffsetTop + rect.height / 2;
+            
             anim.current.cardTargets[i] = screenToWorld(cx, cy, cam, W, H);
         }
         return allReady;
     }, [camera, size, cardDOMRefs, screenToWorld]);
+
+    // Handle viewport resizes to invalidate target cache
+    useEffect(() => {
+        const handleResize = () => {
+            anim.current.cardTargetsReady = false;
+        };
+        window.addEventListener("resize", handleResize);
+        window.visualViewport?.addEventListener("resize", handleResize);
+        window.visualViewport?.addEventListener("scroll", handleResize);
+        
+        return () => {
+            window.removeEventListener("resize", handleResize);
+            window.visualViewport?.removeEventListener("resize", handleResize);
+            window.visualViewport?.removeEventListener("scroll", handleResize);
+        };
+    }, []);
 
     // Reset when domain changes
     useEffect(() => {
@@ -275,10 +298,18 @@ export function DNAScene({
     const edGlowRef = useRef();
     const focus = useDomainFocus(selectedDomain);
 
-    const STRAND_PTS = 1400;
-    const BRIDGE_COUNT = 90;
-    const BOKEH_COUNT = 140;
-    const CORE_PTS = 500;
+    const isMobile = typeof window !== "undefined" && window.innerWidth <= 768;
+    // Better heuristic for low power device: few cores, coarse pointer, or mobile
+    const isLowPowerDevice = typeof navigator !== "undefined" && (
+        (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) ||
+        (window.matchMedia && window.matchMedia("(pointer: coarse)").matches) ||
+        isMobile
+    );
+
+    const STRAND_PTS = isLowPowerDevice ? 600 : 1400;
+    const BRIDGE_COUNT = isLowPowerDevice ? 40 : 90;
+    const BOKEH_COUNT = isLowPowerDevice ? 50 : 140;
+    const CORE_PTS = isLowPowerDevice ? 250 : 500;
     const HELIX_R = 1.65;
     const HELIX_H = 24;
     const TURNS = 6;
@@ -584,7 +615,7 @@ export function DNAScene({
 // CAMERA RIG
 // ─────────────────────────────────────────────────────────────────
 export function CameraRig({ scrollProgress, selectedDomain }) {
-    const { camera } = useThree();
+    const { camera, size } = useThree();
     const curr = useRef({ x: 0, y: 0, z: 11 });
     const mouse = useRef({ x: 0, y: 0 });
     const focus = useDomainFocus(selectedDomain);
@@ -595,18 +626,46 @@ export function CameraRig({ scrollProgress, selectedDomain }) {
         return () => window.removeEventListener("mousemove", fn);
     }, []);
 
+    useEffect(() => {
+        // Adjust FOV based on viewport width to ensure DNA doesn't clip
+        let targetFov = 55;
+        if (size.width <= 480) {
+            targetFov = 75; // Significantly wider FOV for phones
+        } else if (size.width <= 768) {
+            targetFov = 65; // Slightly wider for tablets
+        } else if (size.width <= 1024) {
+            targetFov = 60;
+        }
+        
+        if (camera.fov !== targetFov) {
+            camera.fov = targetFov;
+            camera.updateProjectionMatrix();
+        }
+    }, [size, camera]);
+
     useFrame((_, delta) => {
         const scroll = scrollProgress.current ?? 0;
-        let tz = 10.5;
-        if (scroll < 0.2) tz = 10.5 - scroll * 2;
-        else if (scroll < 0.52) tz = 9.9;
-        else tz = 9.9 + (scroll - 0.52) * 4;
+        const isMobile = size.width <= 768;
+        
+        // Base distance pushed back on mobile to fit the height of the helix
+        const baseTz = isMobile ? 14.5 : 10.5; 
+        
+        let tz = baseTz;
+        if (scroll < 0.2) tz = baseTz - scroll * 2;
+        else if (scroll < 0.52) tz = baseTz - 0.6;
+        else tz = baseTz - 0.6 + (scroll - 0.52) * 4;
         tz -= Math.abs(focus.current) * 1.2;
 
         const centerFactor = THREE.MathUtils.smoothstep(scroll, 0.2, 0.32);
-        const tx = THREE.MathUtils.lerp(1.5, 0.0, centerFactor) + mouse.current.x * 1.0 + focus.current * 0.6;
+        
+        // On desktop, DNA starts right-aligned (tx=1.5). On mobile, we keep it centered or slightly shifted.
+        const startTx = isMobile ? 0.0 : 1.5;
+        const tx = THREE.MathUtils.lerp(startTx, 0.0, centerFactor) + mouse.current.x * (isMobile ? 0.5 : 1.0) + focus.current * 0.6;
         const ty = -mouse.current.y * 0.7;
-        const lookX = THREE.MathUtils.lerp(2.5, 0.0, centerFactor) + focus.current * 0.8;
+        
+        // LookAt target
+        const startLookX = isMobile ? 0.0 : 2.5;
+        const lookX = THREE.MathUtils.lerp(startLookX, 0.0, centerFactor) + focus.current * 0.8;
 
         const lerp = 1 - Math.pow(0.028, delta);
         curr.current.x += (tx - curr.current.x) * lerp;

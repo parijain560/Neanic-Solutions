@@ -1,6 +1,16 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import FoundersSection from "./components/FoundersSection";
+
+function useIsMobile() {
+    const [isMobile, setIsMobile] = useState(typeof window !== "undefined" ? window.innerWidth <= 768 : false);
+    useEffect(() => {
+        const handler = () => setIsMobile(window.innerWidth <= 768);
+        window.addEventListener("resize", handler);
+        return () => window.removeEventListener("resize", handler);
+    }, []);
+    return isMobile;
+}
 import FocusAreaSection from "./FocusAreaSection";
 const APPLE_EASE = [0.65, 0, 0.35, 1];
 
@@ -214,16 +224,17 @@ export const EDTECH_CARDS = [
 // cardReveal: 0 = invisible particle placeholder, 1 = fully revealed
 // ─────────────────────────────────────────────────────────────────
 function DomainCard({ card, color, border, glow, cardReveal, cardRef, onCardClick, showContentInline }) {
+    const isMobile = useIsMobile();
     return (
         <div
             ref={cardRef}
             style={{
                 position: "relative",
-                width: 292.5,
-                minHeight: showContentInline ? 220 : 180,
+                width: isMobile ? "min(100%, 340px)" : 292.5,
+                minHeight: isMobile ? (showContentInline ? 140 : 110) : (showContentInline ? 220 : 180),
             }}
         >
-            <div style={{ width: "100%", height: "100%", minHeight: showContentInline ? 220 : 210 }} />
+            <div style={{ width: "100%", height: "100%", minHeight: isMobile ? (showContentInline ? 140 : 110) : (showContentInline ? 220 : 210) }} />
 
             <motion.div
                 initial={{ opacity: 0, scale: 0.75 }}
@@ -232,7 +243,7 @@ function DomainCard({ card, color, border, glow, cardReveal, cardRef, onCardClic
                 style={{
                     position: "absolute",
                     inset: 0,
-                    padding: "21px 19.5px",
+                    padding: isMobile ? "12px 16px" : "21px 19.5px",
                     borderRadius: 12,
                     background: "var(--color-bg-white)",
                     backdropFilter: "blur(18px)",
@@ -252,16 +263,16 @@ function DomainCard({ card, color, border, glow, cardReveal, cardRef, onCardClic
                 whileHover={onCardClick ? { y: -4, boxShadow: `0 12px 30px ${border}` } : {}}
             >
 
-                <p style={{ fontSize: 11.25, fontWeight: 700, color, letterSpacing: "0.02em", marginBottom: 6, lineHeight: 1.3 }}>
+                <p style={{ fontSize: isMobile ? 10.5 : 11.25, fontWeight: 700, color, letterSpacing: "0.02em", marginBottom: isMobile ? 4 : 6, lineHeight: 1.3 }}>
                     {card.label}
                 </p>
                 {card.detail && (
-                    <p style={{ fontSize: 9.375, fontWeight: 400, color: "rgba(15,45,90,0.6)", lineHeight: 1.6, margin: 0, marginBottom: showContentInline && card.content ? 16 : 0 }}>
+                    <p style={{ fontSize: isMobile ? 8.5 : 9.375, fontWeight: 400, color: "rgba(15,45,90,0.6)", lineHeight: isMobile ? 1.4 : 1.6, margin: 0, marginBottom: showContentInline && card.content ? (isMobile ? 8 : 16) : 0 }}>
                         {card.detail}
                     </p>
                 )}
                 {showContentInline && card.content && (
-                    <div style={{ marginTop: 0 }}>
+                    <div style={{ marginTop: 0, transform: isMobile ? "scale(0.9)" : "none", transformOrigin: "top left" }}>
                         {card.content}
                     </div>
                 )}
@@ -274,6 +285,7 @@ function DomainCard({ card, color, border, glow, cardReveal, cardRef, onCardClic
 // CARD GRID WRAPPER — lays out 2×2, exposes each card's ref
 // ─────────────────────────────────────────────────────────────────
 function DomainCardGrid({ cards, color, border, glow, show, cardReveals, cardRefs, onCardClick, showContentInline }) {
+    const isMobile = useIsMobile();
     return (
         <AnimatePresence>
             {show && (
@@ -285,9 +297,9 @@ function DomainCardGrid({ cards, color, border, glow, show, cardReveals, cardRef
                     transition={{ duration: 0.3 }}
                     style={{
                         display: "grid",
-                        gridTemplateColumns: "1fr 1fr",
-                        gap: 16.5,
-                        width: "min(615px, 92vw)",
+                        gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
+                        gap: isMobile ? 8 : 16.5,
+                        width: isMobile ? "100%" : "min(615px, 92vw)",
                         flexShrink: 0,
                     }}
                 >
@@ -314,24 +326,26 @@ function DomainCardGrid({ cards, color, border, glow, show, cardReveals, cardRef
 // MEDTECH COLUMN
 // ─────────────────────────────────────────────────────────────────
 function MedTechColumn({ inView, selectedDomain, onSelect, cardReveals, cardRefs, onCardClick }) {
+    const isMobile = useIsMobile();
     const isFocused = selectedDomain === "medtech";
     const isOther = selectedDomain === "edtech";
 
     return (
         <motion.div
             className="dna-column dna-column-med"
-            initial={{ opacity: 0, x: -40 }}
-            animate={inView ? { opacity: isOther ? 0 : 1, x: isOther ? -36 : 0, scale: isFocused ? 1.02 : 1 } : {}}
+            initial={{ opacity: 0, x: isMobile ? -10 : -40 }}
+            animate={inView ? { opacity: isOther ? 0 : 1, x: isOther ? (isMobile ? -10 : -36) : 0, scale: isFocused ? 1.02 : 1 } : {}}
             transition={{ duration: selectedDomain ? 1.5 : 1.0, delay: selectedDomain ? 0 : 0.2, ease: APPLE_EASE }}
             onClick={() => onSelect(isFocused ? null : "medtech")}
             style={{
-                display: "flex", flexDirection: "row", alignItems: "center", gap: 21,
+                display: "flex", flexDirection: isMobile ? "column" : "row", alignItems: "center", gap: 21,
                 cursor: isOther ? "default" : "pointer",
                 pointerEvents: isOther ? "none" : "auto",
-                justifyContent: "flex-start",
+                justifyContent: isMobile ? "center" : "flex-start",
+                width: isMobile ? "100%" : "auto",
             }}
         >
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", minWidth: 150 }}>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: isMobile ? "center" : "flex-start", textAlign: isMobile ? "center" : "left", minWidth: 150 }}>
                 {isFocused && (
                     <motion.button
                         initial={{ opacity: 0, y: -10 }}
@@ -394,6 +408,7 @@ function MedTechColumn({ inView, selectedDomain, onSelect, cardReveals, cardRefs
 // EDTECH COLUMN
 // ─────────────────────────────────────────────────────────────────
 function EdTechColumn({ inView, selectedDomain, onSelect, cardReveals, cardRefs, onCardClick }) {
+    const isMobile = useIsMobile();
     const isFocused = selectedDomain === "edtech";
     const isOther = selectedDomain === "medtech";
 
@@ -401,15 +416,16 @@ function EdTechColumn({ inView, selectedDomain, onSelect, cardReveals, cardRefs,
         <motion.div
             id="edtech"
             className="dna-column dna-column-ed"
-            initial={{ opacity: 0, x: 40 }}
-            animate={inView ? { opacity: isOther ? 0 : 1, x: isOther ? 36 : 0, scale: isFocused ? 1.02 : 1, y: isFocused ? 29 : 0 } : {}}
+            initial={{ opacity: 0, x: isMobile ? 10 : 40 }}
+            animate={inView ? { opacity: isOther ? 0 : 1, x: isOther ? (isMobile ? 10 : 36) : 0, scale: isFocused ? 1.02 : 1, y: isFocused ? 29 : 0 } : {}}
             transition={{ duration: selectedDomain ? 1.5 : 1.0, delay: selectedDomain ? 0 : 0.3, ease: APPLE_EASE }}
             onClick={() => onSelect(isFocused ? null : "edtech")}
             style={{
-                display: "flex", flexDirection: "row", alignItems: "center", gap: 21,
+                display: "flex", flexDirection: isMobile ? "column-reverse" : "row", alignItems: "center", gap: 21,
                 cursor: isOther ? "default" : "pointer",
                 pointerEvents: isOther ? "none" : "auto",
-                justifyContent: "flex-end"
+                justifyContent: isMobile ? "center" : "flex-end",
+                width: isMobile ? "100%" : "auto",
             }}
         >
             <DomainCardGrid
@@ -424,7 +440,7 @@ function EdTechColumn({ inView, selectedDomain, onSelect, cardReveals, cardRefs,
                 showContentInline={true}
             />
 
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", minWidth: 150 }}>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: isMobile ? "center" : "flex-end", textAlign: isMobile ? "center" : "right", minWidth: 150 }}>
                 {isFocused && (
                     <motion.button
                         initial={{ opacity: 0, y: -10 }}
@@ -509,6 +525,7 @@ export function DNASplitSection({
     }, [scrollProgress]);
 
     const showColumns = splitDone;
+    const isMobile = useIsMobile();
 
     return (
         <section
@@ -535,7 +552,13 @@ export function DNASplitSection({
                     <h2 style={{ fontSize: "clamp(12px, 2.2vw, 21px)", fontWeight: 800, color: "var(--color-text-primary)", fontFamily: "'Inter',sans-serif", letterSpacing: "-0.025em" }}>Our Training Programs</h2>
                 </motion.div>
 
-                <div className="dna-split-grid" style={{ display: "grid", gridTemplateColumns: "1fr 120px 1fr", gap: 0, alignItems: "center" }}>
+                <div className="dna-split-grid" style={{ 
+                    display: "grid", 
+                    gridTemplateColumns: isMobile ? "1fr" : "1fr 120px 1fr", 
+                    gap: isMobile ? 32 : 0, 
+                    alignItems: "center",
+                    justifyItems: "center"
+                }}>
                     <MedTechColumn
                         inView={showColumns}
                         selectedDomain={selectedDomain}
@@ -544,7 +567,7 @@ export function DNASplitSection({
                         cardRefs={selectedDomain === "medtech" ? cardDOMRefs : null}
                         onCardClick={(card) => setActiveModal({ type: "card", cardData: card })}
                     />
-                    <div style={{ width: "100%" }} />
+                    {!isMobile && <div style={{ width: "100%" }} />}
                     <EdTechColumn
                         inView={showColumns}
                         selectedDomain={selectedDomain}
