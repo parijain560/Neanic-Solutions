@@ -192,9 +192,10 @@ function OrbitalParticleSystem({
         }
 
         // Phase thresholds (scroll delta)
-        const spawnT = THREE.MathUtils.smoothstep(sd, 0.000, 0.035);
-        const orbitT = THREE.MathUtils.smoothstep(sd, 0.035, 0.095);
-        const flyT = THREE.MathUtils.smoothstep(sd, 0.095, 0.200);
+        // Reduced significantly to load cards with much less scrolling
+        const spawnT = THREE.MathUtils.smoothstep(sd, 0.000, 0.015);
+        const orbitT = THREE.MathUtils.smoothstep(sd, 0.015, 0.040);
+        const flyT = THREE.MathUtils.smoothstep(sd, 0.040, 0.085);
 
         // Orbit rotation: fast during orbit, slows as fly begins
         const orbitSpeed = 2.0 * (1 - flyT * 0.98);
