@@ -6,14 +6,23 @@ import "./components/Modal.css";
 // ─────────────────────────────────────────────────────────────────
 // STICKY NAVBAR COMPONENT
 // ─────────────────────────────────────────────────────────────────
-function Navbar({ showStickyNav, setActiveModal }) {
+function Navbar({ showStickyNav, setActiveModal, selectedDomain }) {
+  const [isMobile, setIsMobile] = useState(typeof window !== "undefined" ? window.innerWidth <= 768 : false);
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const isVisible = showStickyNav && !(isMobile && selectedDomain);
+
   return (
     <header
       className="header-nav"
       style={{
-        opacity: showStickyNav ? 1 : 0,
-        pointerEvents: showStickyNav ? "auto" : "none",
-        transform: showStickyNav ? "translateY(0)" : "translateY(-20px)",
+        opacity: isVisible ? 1 : 0,
+        pointerEvents: isVisible ? "auto" : "none",
+        transform: isVisible ? "translateY(0)" : "translateY(-20px)",
         transition: "opacity 0.4s ease, transform 0.4s ease",
       }}
     >
@@ -307,7 +316,7 @@ export default function App() {
       {/* ==================================================
            SECTION 1: NAVBAR
            ================================================== */}
-      <Navbar showStickyNav={showStickyNav} setActiveModal={setActiveModal} />
+      <Navbar showStickyNav={showStickyNav} setActiveModal={setActiveModal} selectedDomain={selectedDomain} />
 
       {/* ==================================================
            SECTION 2: HERO
