@@ -226,8 +226,13 @@ function DomainCard({ card, color, border, glow, cardReveal, cardRef, onCardClic
             <div style={{ width: "100%", height: "100%", minHeight: isMobile ? (showContentInline ? 140 : 110) : (showContentInline ? 220 : 210) }} />
 
             <motion.div
-                initial={{ opacity: 0, scale: 0.75 }}
-                animate={{ opacity: cardReveal, scale: 0.75 + cardReveal * 0.25 }}
+                initial={{ opacity: 0, scale: 0.75, backdropFilter: "blur(0px)", WebkitBackdropFilter: "blur(0px)" }}
+                animate={{ 
+                    opacity: cardReveal, 
+                    scale: 0.75 + cardReveal * 0.25,
+                    backdropFilter: `blur(${cardReveal * 18}px)`,
+                    WebkitBackdropFilter: `blur(${cardReveal * 18}px)`
+                }}
                 transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
                 style={{
                     position: "absolute",
@@ -235,8 +240,6 @@ function DomainCard({ card, color, border, glow, cardReveal, cardRef, onCardClic
                     padding: isMobile ? "12px 16px" : "21px 19.5px",
                     borderRadius: 12,
                     background: "var(--color-bg-white)",
-                    backdropFilter: "blur(18px)",
-                    WebkitBackdropFilter: "blur(18px)",
                     border: `1px solid ${border}`,
                     boxShadow: glow,
                     fontFamily: "'Inter', sans-serif",

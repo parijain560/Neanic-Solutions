@@ -216,11 +216,13 @@ function OrbitalParticleSystem({
             const glow = glowRefs.current[i];
             const target = a.cardTargets[i];
 
-            // If there's no target for this particle (e.g., MedTech only has 4 cards), hide it completely
             if (!target && a.cardTargetsReady) {
                 mesh.scale.setScalar(0);
                 if (glow) glow.scale.setScalar(0);
-                a.cardReveal[i] = 0;
+                if (a.cardReveal[i] !== 0) {
+                    a.cardReveal[i] = 0;
+                    onCardReveal(i, 0);
+                }
                 return;
             }
 
@@ -245,7 +247,10 @@ function OrbitalParticleSystem({
                 a.cardReveal[i] = THREE.MathUtils.lerp(a.cardReveal[i], arrival, 1 - Math.pow(0.01, delta));
                 onCardReveal(i, a.cardReveal[i]);
             } else {
-                a.cardReveal[i] = 0;
+                if (a.cardReveal[i] !== 0) {
+                    a.cardReveal[i] = 0;
+                    onCardReveal(i, 0);
+                }
             }
 
             mesh.position.set(finalX, finalY, finalZ);
