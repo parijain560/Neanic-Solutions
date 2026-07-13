@@ -404,10 +404,6 @@ export default function App() {
                       </span>
                     </div>
 
-                    <div className="info-item">
-                      <span className="info-item-label">Phone</span>
-                      <span className="info-item-value">+91 98xxxxxxxx</span>
-                    </div>
 
                     <div className="info-item">
                       <span className="info-item-label">Collaboration</span>

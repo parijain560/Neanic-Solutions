@@ -655,9 +655,18 @@ function PipelineSection() {
                                             transition: "all 0.3s ease", marginBottom: 15,
                                         }}
                                     >
-                                        <div style={{ display: "flex", alignItems: "center", gap: 7.5, marginBottom: 4.5 }}>
-                                            <span style={{ fontSize: 12 }}>{stage.icon}</span>
-                                            <span style={{ fontSize: 8.25, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: stage.color, fontFamily: "'Inter', sans-serif" }}>{stage.label}</span>
+                                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4.5 }}>
+                                            <div style={{ display: "flex", alignItems: "center", gap: 7.5 }}>
+                                                <span style={{ fontSize: 12 }}>{stage.icon}</span>
+                                                <span style={{ fontSize: 8.25, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: stage.color, fontFamily: "'Inter', sans-serif" }}>{stage.label}</span>
+                                            </div>
+                                            <motion.span
+                                                animate={{ rotate: isActive ? 180 : 0 }}
+                                                transition={{ duration: 0.3 }}
+                                                style={{ display: "inline-block", fontSize: 10, color: stage.color, marginLeft: 8, opacity: 0.6 }}
+                                            >
+                                                ▼
+                                            </motion.span>
                                         </div>
                                         <AnimatePresence>
                                             {isActive && (
