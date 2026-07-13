@@ -514,7 +514,7 @@ export function DNASplitSection({
         let raf;
         const tick = () => {
             const s = scrollProgress?.current ?? 0;
-            setSplitDone(s >= 0.38);
+            setSplitDone(s >= 0.30);
             prevScroll.current = s;
             raf = requestAnimationFrame(tick);
         };

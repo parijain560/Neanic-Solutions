@@ -421,11 +421,11 @@ export function DNAScene({
     useFrame((state, delta) => {
         const t = state.clock.getElapsedTime();
         const scroll = scrollProgress.current ?? 0;
-        const splitFactor = THREE.MathUtils.smoothstep(scroll, 0.32, 0.38);
+        const splitFactor = THREE.MathUtils.smoothstep(scroll, 0.25, 0.30);
 
         let targetX = 3.2, targetY = 0.0, baseScale = 1.0;
-        if (scroll < 0.2) { targetX = 3.2; targetY = 0.0; baseScale = 1.0; }
-        else if (scroll < 0.32) { const b = (scroll - 0.2) / 0.12; targetX = THREE.MathUtils.lerp(3.2, 0.0, b); targetY = THREE.MathUtils.lerp(0.0, 0.5, b); baseScale = THREE.MathUtils.lerp(1.0, 0.35, b); }
+        if (scroll < 0.185) { targetX = 3.2; targetY = 0.0; baseScale = 1.0; }
+        else if (scroll < 0.25) { const b = (scroll - 0.185) / 0.065; targetX = THREE.MathUtils.lerp(3.2, 0.0, b); targetY = THREE.MathUtils.lerp(0.0, 0.5, b); baseScale = THREE.MathUtils.lerp(1.0, 0.35, b); }
         else if (scroll < 0.52) { targetX = 0.0; targetY = 0.5; baseScale = 0.35; }
         else { const b = Math.min(1, (scroll - 0.52) / 0.18); targetX = 0.0; targetY = THREE.MathUtils.lerp(0.5, 6.0, b); baseScale = THREE.MathUtils.lerp(0.35, 0.2, b); }
 
@@ -464,7 +464,7 @@ export function DNAScene({
                 g.rotation.z = THREE.MathUtils.lerp(0.58, 0.0, splitFactor);
                 g.rotation.x = mouseRef.current.y * 0.03;
                 g.rotation.y = mouseRef.current.x * 0.03;
-                g.position.x = THREE.MathUtils.lerp(g.position.x, targetX, 0.04);
+                g.position.x = THREE.MathUtils.lerp(g.position.x, targetX, 1 - Math.pow(0.000001, delta));
                 g.position.y = targetY + Math.sin(t * 0.3) * 0.15;
                 g.scale.setScalar(baseScale);
             }
@@ -658,12 +658,12 @@ export function CameraRig({ scrollProgress, selectedDomain }) {
         const baseTz = isMobile ? 14.5 : 10.5; 
         
         let tz = baseTz;
-        if (scroll < 0.2) tz = baseTz - scroll * 2;
+        if (scroll < 0.185) tz = baseTz - scroll * 2;
         else if (scroll < 0.52) tz = baseTz - 0.6;
         else tz = baseTz - 0.6 + (scroll - 0.52) * 4;
         tz -= Math.abs(focus.current) * 1.2;
 
-        const centerFactor = THREE.MathUtils.smoothstep(scroll, 0.2, 0.32);
+        const centerFactor = THREE.MathUtils.smoothstep(scroll, 0.185, 0.25);
         
         // On desktop, DNA starts right-aligned (tx=1.5). On mobile, we keep it centered or slightly shifted.
         const startTx = isMobile ? 0.0 : 1.5;
@@ -674,7 +674,7 @@ export function CameraRig({ scrollProgress, selectedDomain }) {
         const startLookX = isMobile ? 0.0 : 2.5;
         const lookX = THREE.MathUtils.lerp(startLookX, 0.0, centerFactor) + focus.current * 0.8;
 
-        const lerp = 1 - Math.pow(0.028, delta);
+        const lerp = 1 - Math.pow(0.000001, delta);
         curr.current.x += (tx - curr.current.x) * lerp;
         curr.current.y += (ty - curr.current.y) * lerp;
         curr.current.z += (tz - curr.current.z) * lerp;
@@ -704,8 +704,8 @@ function ScrollRevealContent({ scrollProgress, setActiveModal }) {
         const tick = () => {
             const s = scrollProgress.current ?? 0;
             setVisible(CONTENT_BLOCKS.filter(b => s >= b.threshold).map(b => b.type));
-            if (s < 0.25) setOpacity(1);
-            else if (s < 0.32) setOpacity(1 - (s - 0.25) / 0.07);
+            if (s < 0.185) setOpacity(1);
+            else if (s < 0.25) setOpacity(1 - (s - 0.185) / 0.065);
             else setOpacity(0);
             rafRef.current = requestAnimationFrame(tick);
         };
@@ -931,7 +931,7 @@ export default function NeanicHero({ setActiveModal, scrollProgress: propScrollP
         ::-webkit-scrollbar-thumb{background:#aac8ee;border-radius:2px;}
       `}</style>
 
-            <div id="about" style={{ height: "800vh", background: "transparent" }}>
+            <div id="about" style={{ height: "300vh", background: "transparent" }}>
                 <div style={{ position: "sticky", top: 0, width: "100%", height: "100vh", overflow: "hidden", background: "transparent" }}>
 
                     <div style={{ position: "absolute", inset: 0, zIndex: 2, background: "linear-gradient(to right,rgba(232,242,252,0.97) 0%,rgba(232,242,252,0.72) 32%,rgba(232,242,252,0.1) 52%,transparent 68%)", pointerEvents: "none" }} />

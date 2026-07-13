@@ -14,7 +14,7 @@ function Navbar({ showStickyNav, setActiveModal, selectedDomain }) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const isVisible = showStickyNav && !(isMobile && selectedDomain);
+  const isVisible = showStickyNav && !selectedDomain;
 
   return (
     <header
@@ -37,7 +37,7 @@ function Navbar({ showStickyNav, setActiveModal, selectedDomain }) {
           <li><a href="#edtech" onClick={(e) => {
             e.preventDefault();
             const scrollH = document.documentElement.scrollHeight - window.innerHeight;
-            window.scrollTo({ top: scrollH * 0.385, behavior: "smooth" });
+            window.scrollTo({ top: scrollH * 0.20, behavior: "smooth" });
           }}>Education</a></li>
           <li><a href="#news">Milestones</a></li>
           <li><a href="#contact" onClick={(e) => { e.preventDefault(); setActiveModal('contact'); }}>Contact</a></li>
@@ -220,12 +220,12 @@ export default function App() {
 
       // Auto-exit domain focus when scrolling back up past the split threshold
       const isScrollingUp = window.scrollY < prevScrollY.current;
-      if (isScrollingUp && scrollProgress.current < 0.42) {
+      if (isScrollingUp && scrollProgress.current < 0.32) {
         setSelectedDomain(null);
       }
       prevScrollY.current = window.scrollY;
 
-      if (window.scrollY > window.innerHeight * 5.8) {
+      if (scrollProgress.current >= 0.25) {
         setShowStickyNav(true);
       } else {
         setShowStickyNav(false);
