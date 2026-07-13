@@ -157,18 +157,7 @@ export const EDTECH_CARDS = [
             </div>
         )
     },
-    {
-        icon: "🏗️", label: "Biotechnology", detail: "Understand living systems and their applications. Gain knowledge in genetic engineering, bioinformatics, and bioprocess technologies.",
-        content: (
-            <div>
-                <ul style={{ paddingLeft: "15px", fontSize: "10.5px", color: "rgba(15,45,90,0.65)", display: "flex", flexDirection: "column", gap: "4.5px" }}>
-                    <li>12 Hour Program</li>
-                    <li>4 Weekend Sessions</li>
-                    <li>Industry-Relevant Concepts</li>
-                </ul>
-            </div>
-        )
-    },
+
     {
         icon: "🎓", label: "Intellectual Property Rights", detail: "Learn about patents, trademarks, copyrights, and IP laws. Protect your innovations and understand the legal framework around intellectual property.",
         content: (
@@ -418,16 +407,18 @@ function EdTechColumn({ inView, selectedDomain, onSelect, cardReveals, cardRefs,
         <motion.div
             id="edtech"
             className="dna-column dna-column-ed"
-            initial={{ opacity: 0, x: isMobile ? 10 : 40 }}
-            animate={inView ? { opacity: isOther ? 0 : 1, x: isOther ? (isMobile ? 10 : 36) : 0, scale: isFocused ? 1.02 : 1, y: isFocused ? 29 : 0 } : {}}
+            initial={{ opacity: 0, x: isMobile ? 10 : 10, y: isMobile ? 15 : 25 }}
+            animate={inView ? { opacity: isOther ? 0 : 1, x: isOther ? (isMobile ? 10 : 36) : 0, scale: isFocused ? 1.02 : 1, y: isFocused ? (isMobile ? 170 : 54) : (isMobile ? 15 : 25) } : {}}
             transition={{ duration: selectedDomain ? 1.5 : 1.0, delay: selectedDomain ? 0 : 0.3, ease: APPLE_EASE }}
             onClick={() => onSelect(isFocused ? null : "edtech")}
             style={{
-                display: "flex", flexDirection: isMobile ? "column-reverse" : "row", alignItems: "center", gap: 21,
+                display: "flex", flexDirection: isMobile ? "column-reverse" : "row", alignItems: "center", gap: isMobile ? 8 : 21,
                 cursor: isOther ? "default" : "pointer",
                 pointerEvents: isOther ? "none" : "auto",
                 justifyContent: isMobile ? "center" : "flex-end",
                 width: isMobile ? "100%" : "auto",
+                gridRow: (isMobile && selectedDomain) ? 1 : "auto",
+                gridColumn: (isMobile && selectedDomain) ? 1 : "auto",
             }}
         >
             <DomainCardGrid
@@ -536,7 +527,7 @@ export function DNASplitSection({
             id="dna-split"
             ref={ref}
             style={{
-                position: "absolute", inset: 0, padding: "60px 6vw 0",
+                position: "absolute", inset: 0, padding: isMobile ? "110px 6vw 0" : "60px 6vw 0",
                 background: "transparent", zIndex: 3,
                 display: "flex", flexDirection: "column", justifyContent: "flex-end",
                 opacity: showColumns ? 1 : 0,
@@ -545,7 +536,7 @@ export function DNASplitSection({
                 height: "100vh",
             }}
         >
-            <div style={{ maxWidth: 900, margin: "0 auto", width: "100%", paddingBottom: "27px" }}>
+            <div style={{ maxWidth: 900, margin: "0 auto", width: "100%", paddingBottom: "50px" }}>
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     animate={showColumns ? { opacity: 1, y: 0 } : {}}
@@ -556,10 +547,10 @@ export function DNASplitSection({
                     <h2 style={{ fontSize: "clamp(12px, 2.2vw, 21px)", fontWeight: 800, color: "var(--color-text-primary)", fontFamily: "'Inter',sans-serif", letterSpacing: "-0.025em" }}>Our Training Programs</h2>
                 </motion.div>
 
-                <div className="dna-split-grid" style={{ 
-                    display: "grid", 
-                    gridTemplateColumns: isMobile ? "1fr" : "1fr 120px 1fr", 
-                    gap: isMobile ? 32 : 0, 
+                <div className="dna-split-grid" style={{
+                    display: "grid",
+                    gridTemplateColumns: isMobile ? "1fr" : "1fr 120px 1fr",
+                    gap: isMobile ? 32 : 0,
                     alignItems: "center",
                     justifyItems: "center"
                 }}>
