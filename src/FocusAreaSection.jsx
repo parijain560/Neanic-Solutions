@@ -4,7 +4,6 @@ import { Html, RoundedBox, Environment, Text } from "@react-three/drei";
 import * as THREE from "three";
 
 const FOCUS_AREAS = [
-    { id: "robotics", icon: "🌸", title: "Women's Health Diagnostics", short: "Reproductive Health Monitoring", detail: "Quantitative biosensing solutions for ovulation detection, fertility monitoring, and PCOS diagnosis. Designed to provide fast, accurate results that support informed reproductive healthcare decisions." },
     { id: "vlsi", icon: "💉", title: "Drug Screening", short: "Accelerated Preclinical Testing", detail: "Innovative screening platforms that support drug efficacy and safety evaluation through advanced biosensing technologies. Built to accelerate research while improving the reliability of preclinical studies." },
     { id: "nanotech", icon: "🩺", title: "Point-of-Care Diagnostics", short: "Rapid Healthcare, Anywhere", detail: "Affordable, portable, and easy-to-use diagnostic devices designed for hospitals, primary healthcare centers, and community settings. Enabling early diagnosis, timely clinical decision-making, and improved patient outcomes." },
     { id: "biosensing", icon: "⚗️", title: "Biosensors", short: "Advanced Biosensing Technologies", detail: "Development of highly sensitive electrochemical and paper-based biosensors for rapid, accurate, and quantitative biomarker detection. Focused on delivering reliable diagnostic performance for clinical and point-of-care applications." },

@@ -102,7 +102,7 @@ export default function App() {
       if (scrollH <= 0) return;
 
       // Accumulate normalised delta (scale down raw pixels)
-      virtualDelta.current += e.deltaY / (scrollH * 2.5);
+      virtualDelta.current += e.deltaY / (scrollH * 0.7);
 
       // Clamp: never let the virtual position go below the lock point
       if (virtualDelta.current < 0) {
@@ -160,7 +160,7 @@ export default function App() {
       const scrollH = document.documentElement.scrollHeight - viewportHeight;
       if (scrollH <= 0) return;
 
-      virtualDelta.current += deltaY / (scrollH * 2.5);
+      virtualDelta.current += deltaY / (scrollH * 0.7);
 
       if (virtualDelta.current < 0 && virtualDelta.current < -0.018) {
         setSelectedDomain(null);

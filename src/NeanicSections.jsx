@@ -322,8 +322,8 @@ function MedTechColumn({ inView, selectedDomain, onSelect, cardReveals, cardRefs
     return (
         <motion.div
             className="dna-column dna-column-med"
-            initial={{ opacity: 0, x: isMobile ? -10 : -40 }}
-            animate={inView ? { opacity: isOther ? 0 : 1, x: isOther ? (isMobile ? -10 : -36) : 0, scale: isFocused ? 1.02 : 1 } : {}}
+            initial={{ opacity: 0, x: isMobile ? -10 : -40, y: isMobile ? 15 : 25 }}
+            animate={inView ? { opacity: isOther ? 0 : 1, x: isOther ? (isMobile ? -10 : -36) : 0, scale: isFocused ? 1.02 : 1, y: isFocused ? (isMobile ? 35 : 54) : (isMobile ? 15 : 25) } : {}}
             transition={{ duration: selectedDomain ? 1.5 : 1.0, delay: selectedDomain ? 0 : 0.2, ease: APPLE_EASE }}
             onClick={() => onSelect(isFocused ? null : "medtech")}
             style={{
@@ -374,7 +374,7 @@ function MedTechColumn({ inView, selectedDomain, onSelect, cardReveals, cardRefs
                 )}
                 {!isFocused && (
                     <motion.span initial={{ opacity: 0 }} animate={{ opacity: inView ? 0.5 : 0 }}
-                        style={{ marginTop: 9, fontSize: 8.25, color: "var(--color-primary)", fontFamily: "'Inter',sans-serif", letterSpacing: "0.08em" }}>
+                        style={{ marginTop: 9, fontSize: 12, color: "var(--color-primary)", fontFamily: "'Inter',sans-serif", letterSpacing: "0.08em" }}>
                         tap to explore →
                     </motion.span>
                 )}
@@ -473,7 +473,7 @@ function EdTechColumn({ inView, selectedDomain, onSelect, cardReveals, cardRefs,
                 )}
                 {!isFocused && (
                     <motion.span initial={{ opacity: 0 }} animate={{ opacity: inView ? 0.5 : 0 }}
-                        style={{ marginTop: 9, fontSize: 8.25, color: "var(--color-primary)", fontFamily: "'Inter',sans-serif", letterSpacing: "0.08em" }}>
+                        style={{ marginTop: 9, fontSize: 12, color: "var(--color-primary)", fontFamily: "'Inter',sans-serif", letterSpacing: "0.08em" }}>
                         ← tap to explore
                     </motion.span>
                 )}

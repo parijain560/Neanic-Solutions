@@ -183,8 +183,9 @@ function OrbitalParticleSystem({
         if (nodeRef?.current) nodeRef.current.getWorldPosition(a.nodeWorldPos);
         const { x: cx, y: cy, z: cz } = a.nodeWorldPos;
 
-        const scroll = scrollProgress.current ?? 0;
-        const sd = Math.max(0, scroll - a.scrollBaseline);
+        const targetScroll = scrollProgress.current ?? 0;
+        a.smoothScroll = a.smoothScroll === undefined ? targetScroll : THREE.MathUtils.lerp(a.smoothScroll, targetScroll, 1 - Math.pow(0.001, delta));
+        const sd = Math.max(0, a.smoothScroll - a.scrollBaseline);
 
         // Compute card targets lazily once refs are painted
         if (!a.cardTargetsReady) {
@@ -864,6 +865,7 @@ export default function NeanicHero({ setActiveModal, scrollProgress: propScrollP
     const scrollProgress = propScrollProgress || localScrollProgress;
     const [stage, setStage] = useState(0);
     const [scrolled, setScrolled] = useState(false);
+    const [splitRevealed, setSplitRevealed] = useState(false);
 
     // Card DOM refs — populated by DNASplitSection once it mounts
     const cardDOMRefs = useRef([null, null, null, null]);
@@ -900,6 +902,7 @@ export default function NeanicHero({ setActiveModal, scrollProgress: propScrollP
             const p = Math.min(window.scrollY / scrollH, 1);
             scrollProgress.current = p;
             setScrolled(window.scrollY > 20);
+            setSplitRevealed(p >= 0.38);
             if (p < 0.2) setStage(0);
             else if (p < 0.4) setStage(1);
             else if (p < 0.6) setStage(2);
@@ -955,7 +958,7 @@ export default function NeanicHero({ setActiveModal, scrollProgress: propScrollP
                     />
 
                     <StageIndicator stage={stage} />
-                    <ScrollHint visible={!scrolled} />
+                    <ScrollHint visible={!splitRevealed && !selectedDomain} />
                 </div>
             </div>
         </>
