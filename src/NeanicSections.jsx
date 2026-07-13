@@ -378,9 +378,11 @@ function MedTechColumn({ inView, selectedDomain, onSelect, cardReveals, cardRefs
                 <h2 style={{ fontSize: "clamp(24px, 4vw, 45px)", fontWeight: 900, fontFamily: "'Inter',sans-serif", letterSpacing: "-0.04em", lineHeight: 1.0, marginBottom: 10.5, background: "linear-gradient(135deg,#060e1c 0%,#003399 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
                     Med<br />Tech
                 </h2>
-                <p style={{ fontSize: 9.75, color: "rgba(15,45,90,0.55)", fontFamily: "'Inter',sans-serif", lineHeight: 1.7, maxWidth: 157.5 }}>
-                    Advanced diagnostic technologies bridging molecular science and clinical practice.
-                </p>
+                {!(isMobile && isFocused) && (
+                    <p style={{ fontSize: 9.75, color: "rgba(15,45,90,0.55)", fontFamily: "'Inter',sans-serif", lineHeight: 1.7, maxWidth: 157.5 }}>
+                        Advanced diagnostic technologies bridging molecular science and clinical practice.
+                    </p>
+                )}
                 {!isFocused && (
                     <motion.span initial={{ opacity: 0 }} animate={{ opacity: inView ? 0.5 : 0 }}
                         style={{ marginTop: 9, fontSize: 8.25, color: "var(--color-primary)", fontFamily: "'Inter',sans-serif", letterSpacing: "0.08em" }}>
@@ -473,9 +475,11 @@ function EdTechColumn({ inView, selectedDomain, onSelect, cardReveals, cardRefs,
                 <h2 style={{ fontSize: "clamp(24px, 4vw, 45px)", fontWeight: 900, fontFamily: "'Inter',sans-serif", letterSpacing: "-0.04em", lineHeight: 1.0, marginBottom: 10.5, textAlign: "right", background: "linear-gradient(135deg,#6622bb 0%,#060e1c 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
                     Ed<br />Tech
                 </h2>
-                <p style={{ fontSize: 9.75, color: "rgba(15,45,90,0.55)", fontFamily: "'Inter',sans-serif", lineHeight: 1.7, maxWidth: 157.5, textAlign: "right" }}>
-                    Building the next generation of scientists, innovators, and healthcare entrepreneurs.
-                </p>
+                {!(isMobile && isFocused) && (
+                    <p style={{ fontSize: 9.75, color: "rgba(15,45,90,0.55)", fontFamily: "'Inter',sans-serif", lineHeight: 1.7, maxWidth: 157.5, textAlign: "right" }}>
+                        Building the next generation of scientists, innovators, and healthcare entrepreneurs.
+                    </p>
+                )}
                 {!isFocused && (
                     <motion.span initial={{ opacity: 0 }} animate={{ opacity: inView ? 0.5 : 0 }}
                         style={{ marginTop: 9, fontSize: 8.25, color: "var(--color-primary)", fontFamily: "'Inter',sans-serif", letterSpacing: "0.08em" }}>
