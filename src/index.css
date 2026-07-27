@@ -170,8 +170,11 @@ h3 {
    SECTION 1: NAVBAR
    -------------------------------------------------- */
 .header-nav {
-  position: sticky;
+  position: fixed;
   top: 15px;
+  left: 0;
+  right: 0;
+  width: 100%;
   z-index: 100;
   background: transparent;
   display: flex;
@@ -2423,27 +2426,24 @@ h3 {
 }
 
 .focus-area-section .focus-info-panel {
-  max-width: 480px;
-  /* 640px × 0.75 */
+  max-width: 640px;
   margin: 24px auto 0;
-  padding: 21px 24px;
+  padding: 27px 33px;
 }
 
 .focus-area-section .focus-info-panel h3 {
-  font-size: 16.5px;
-  /* 22px × 0.75 */
-  margin-bottom: 12px;
+  font-size: 19.5px;
+  margin-bottom: 13.5px;
 }
 
 .focus-area-section .focus-info-short {
-  font-size: 11.25px;
-  /* 15px × 0.75 */
-  margin-bottom: 7.5px;
+  font-size: 13.5px;
+  margin-bottom: 9px;
 }
 
 .focus-area-section .focus-info-detail {
-  font-size: 10.5px;
-  /* 14px × 0.75 */
+  font-size: 12.5px;
+  line-height: 1.65;
 }
 
 #partnership {

@@ -4,6 +4,54 @@ import { NeanicSections } from "./NeanicSections";
 import "./components/Modal.css";
 // FormspreeProvider removed per instructions to use Fetch API
 // ─────────────────────────────────────────────────────────────────
+// SCROLL-PROGRESS DENOMINATOR — the DNA hero's own local scrollable
+// range (its pinned region minus one viewport), NOT the whole page.
+// Using the whole document here would dilute scroll progress across
+// every section below the hero, making the DNA take far more
+// scrolling to reach its split/zoom-out state than it should.
+// ─────────────────────────────────────────────────────────────────
+function getHeroScrollableHeight(viewportHeight) {
+  if (typeof document === "undefined") return 0;
+  const aboutEl = document.getElementById("about");
+  if (aboutEl) return Math.max(aboutEl.offsetHeight - viewportHeight, 1);
+  return Math.max(document.documentElement.scrollHeight - viewportHeight, 1);
+}
+
+// ─────────────────────────────────────────────────────────────────
+// SCROLL-PROGRESS MAPPING — piecewise, not uniform. The first stretch
+// of the hero's local scroll range carries progress from
+// INITIAL_PROGRESS up to REVEAL_PROGRESS (homepage → DNA split). The
+// rest of that range is intentionally short — once EdTech/MedTech are
+// revealed, only a small remaining scroll is needed to finish (reach
+// progress 1) and release into the next section.
+// ─────────────────────────────────────────────────────────────────
+const INITIAL_PROGRESS = 0.18;
+const REVEAL_PROGRESS = 0.36; // must match the split-reveal threshold used in hero.jsx / NeanicSections.jsx
+const PRE_REVEAL_SCROLL_FRACTION = 0.6; // share of the local scroll range spent reaching the reveal
+
+function computeScrollProgress(scrollY, scrollH) {
+  if (scrollH <= 0 || scrollY <= 0) return INITIAL_PROGRESS;
+  const breakPx = scrollH * PRE_REVEAL_SCROLL_FRACTION;
+  if (scrollY < breakPx) {
+    const t = scrollY / breakPx;
+    return INITIAL_PROGRESS + t * (REVEAL_PROGRESS - INITIAL_PROGRESS);
+  }
+  const t2 = Math.min(1, (scrollY - breakPx) / (scrollH - breakPx));
+  return Math.min(1, REVEAL_PROGRESS + t2 * (1 - REVEAL_PROGRESS));
+}
+
+function scrollYForProgress(targetProgress, scrollH) {
+  const breakPx = scrollH * PRE_REVEAL_SCROLL_FRACTION;
+  if (targetProgress <= INITIAL_PROGRESS) return 0;
+  if (targetProgress <= REVEAL_PROGRESS) {
+    const t = (targetProgress - INITIAL_PROGRESS) / (REVEAL_PROGRESS - INITIAL_PROGRESS);
+    return t * breakPx;
+  }
+  const t2 = (targetProgress - REVEAL_PROGRESS) / (1 - REVEAL_PROGRESS);
+  return breakPx + t2 * (scrollH - breakPx);
+}
+
+// ─────────────────────────────────────────────────────────────────
 // STICKY NAVBAR COMPONENT
 // ─────────────────────────────────────────────────────────────────
 function Navbar({ showStickyNav, setActiveModal, selectedDomain }) {
@@ -36,8 +84,8 @@ function Navbar({ showStickyNav, setActiveModal, selectedDomain }) {
           <li><a href="#pipeline">Research</a></li>
           <li><a href="#edtech" onClick={(e) => {
             e.preventDefault();
-            const scrollH = document.documentElement.scrollHeight - window.innerHeight;
-            window.scrollTo({ top: scrollH * 0.20, behavior: "smooth" });
+            const scrollH = getHeroScrollableHeight(window.innerHeight);
+            window.scrollTo({ top: scrollYForProgress(0.42, scrollH), behavior: "smooth" });
           }}>Education</a></li>
           <li><a href="#news">Milestones</a></li>
           <li><a href="#contact" onClick={(e) => { e.preventDefault(); setActiveModal('contact'); }}>Contact</a></li>
@@ -59,7 +107,6 @@ export default function App() {
   const [contactMessage, setContactMessage] = useState("");
   const [showStickyNav, setShowStickyNav] = useState(false);
 
-  const INITIAL_PROGRESS = 0.18;
   const scrollProgress = useRef(0);
   const prevScrollY = useRef(0);
 
@@ -77,17 +124,19 @@ export default function App() {
       // Snapshot the scroll position at the moment of entry
       lockedScrollY.current = window.scrollY;
       virtualDelta.current = 0;
+      // Immediately align scrollProgress with the SAME capped base the wheel/
+      // touch handlers will use going forward. Without this, scrollProgress
+      // could sit at whatever the natural (uncapped) pre-lock value was —
+      // possibly already near 1 — while the locked handlers start from a
+      // capped ~0.75. That mismatch made the card-reveal animation's scroll
+      // delta come out negative (clamped to 0) and never advance.
+      const scrollH = getHeroScrollableHeight(window.innerHeight);
+      scrollProgress.current = Math.min(computeScrollProgress(window.scrollY, scrollH), 0.75);
     } else {
       lockedScrollY.current = null;
       // Reset scrollProgress to actual scroll when exiting the domain
-      const scrollH = document.documentElement.scrollHeight - window.innerHeight;
-      if (scrollH > 0) {
-        const rawProgress = window.scrollY / scrollH;
-        scrollProgress.current = Math.min(
-          INITIAL_PROGRESS + rawProgress * (1 - INITIAL_PROGRESS),
-          1
-        );
-      }
+      const scrollH = getHeroScrollableHeight(window.innerHeight);
+      scrollProgress.current = computeScrollProgress(window.scrollY, scrollH);
     }
   }, [selectedDomain]);
 
@@ -107,7 +156,7 @@ export default function App() {
       if (!selectedDomainRef.current || lockedScrollY.current === null) return;
       e.preventDefault();
 
-      const scrollH = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollH = getHeroScrollableHeight(window.innerHeight);
       if (scrollH <= 0) return;
 
       // Accumulate normalised delta (scale down raw pixels)
@@ -124,9 +173,13 @@ export default function App() {
         }
       }
 
-      // Feed the accumulated delta into scrollProgress so 3-D animations advance
-      const rawBase = lockedScrollY.current / scrollH;
-      const baseProgress = INITIAL_PROGRESS + rawBase * (1 - INITIAL_PROGRESS);
+      // Feed the accumulated delta into scrollProgress so 3-D animations advance.
+      // Cap the base at a point that always leaves enough headroom below 1
+      // for the card-reveal animation to play out via virtualDelta — otherwise,
+      // if the user had scrolled deep into the (short) post-reveal segment
+      // before clicking a domain, baseProgress could already be pinned near 1
+      // and further scrolling would do nothing (cards never finish revealing).
+      const baseProgress = Math.min(computeScrollProgress(lockedScrollY.current, scrollH), 0.75);
       scrollProgress.current = Math.max(
         INITIAL_PROGRESS,
         Math.min(
@@ -165,7 +218,7 @@ export default function App() {
       touchStartY = touchY;
 
       const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-      const scrollH = document.documentElement.scrollHeight - viewportHeight;
+      const scrollH = getHeroScrollableHeight(viewportHeight);
       if (scrollH <= 0) return;
 
       virtualDelta.current += deltaY / (scrollH * 0.7);
@@ -176,8 +229,7 @@ export default function App() {
         return;
       }
 
-      const rawBase = lockedScrollY.current / scrollH;
-      const baseProgress = INITIAL_PROGRESS + rawBase * (1 - INITIAL_PROGRESS);
+      const baseProgress = Math.min(computeScrollProgress(lockedScrollY.current, scrollH), 0.75);
       scrollProgress.current = Math.max(
         INITIAL_PROGRESS,
         Math.min(
@@ -209,14 +261,8 @@ export default function App() {
       if (selectedDomainRef.current && lockedScrollY.current !== null) return;
 
       const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-      const scrollH = document.documentElement.scrollHeight - viewportHeight;
-      if (scrollH > 0) {
-        const rawProgress = window.scrollY / scrollH;
-        scrollProgress.current = Math.min(
-          INITIAL_PROGRESS + rawProgress * (1 - INITIAL_PROGRESS),
-          1
-        );
-      }
+      const scrollH = getHeroScrollableHeight(viewportHeight);
+      scrollProgress.current = computeScrollProgress(window.scrollY, scrollH);
 
       // Auto-exit domain focus when scrolling back up past the split threshold
       const isScrollingUp = window.scrollY < prevScrollY.current;

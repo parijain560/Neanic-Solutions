@@ -214,16 +214,35 @@ export const EDTECH_CARDS = [
 // ─────────────────────────────────────────────────────────────────
 function DomainCard({ card, color, border, glow, cardReveal, cardRef, onCardClick, showContentInline }) {
     const isMobile = useIsMobile();
+    const cardPadding = isMobile ? "10px 16px" : "13px 22px";
     return (
         <div
             ref={cardRef}
             style={{
                 position: "relative",
-                width: isMobile ? "min(100%, 340px)" : 292.5,
-                minHeight: isMobile ? (showContentInline ? 140 : 110) : (showContentInline ? 220 : 180),
+                width: isMobile ? "min(100%, 340px)" : 355,
+                minHeight: isMobile ? 78 : 78,
             }}
         >
-            <div style={{ width: "100%", height: "100%", minHeight: isMobile ? (showContentInline ? 140 : 110) : (showContentInline ? 220 : 210) }} />
+            {/* Invisible spacer that mirrors the real card content below —
+                this makes the grid cell reserve exactly the height the
+                revealed card needs (no more, no less), instead of a fixed
+                height that leaves blank space under shorter cards. */}
+            <div aria-hidden="true" style={{ visibility: "hidden", padding: cardPadding, fontFamily: "'Inter', sans-serif" }}>
+                <p style={{ fontSize: isMobile ? 12 : 13.5, fontWeight: 700, letterSpacing: "0.02em", marginBottom: isMobile ? 4 : 6, lineHeight: 1.3, overflowWrap: "break-word", wordBreak: "break-word" }}>
+                    {card.label}
+                </p>
+                {card.detail && (
+                    <p style={{ fontSize: isMobile ? 9.5 : 10.5, fontWeight: 400, lineHeight: isMobile ? 1.4 : 1.6, margin: 0, marginBottom: showContentInline && card.content ? (isMobile ? 8 : 16) : 0, overflowWrap: "break-word", wordBreak: "break-word" }}>
+                        {card.detail}
+                    </p>
+                )}
+                {showContentInline && card.content && (
+                    <div style={{ marginTop: 0, transform: isMobile ? "scale(0.9)" : "none", transformOrigin: "top left" }}>
+                        {card.content}
+                    </div>
+                )}
+            </div>
 
             <motion.div
                 initial={{ opacity: 0, scale: 0.75, backdropFilter: "blur(0px)", WebkitBackdropFilter: "blur(0px)" }}
@@ -233,11 +252,11 @@ function DomainCard({ card, color, border, glow, cardReveal, cardRef, onCardClic
                     backdropFilter: `blur(${cardReveal * 18}px)`,
                     WebkitBackdropFilter: `blur(${cardReveal * 18}px)`
                 }}
-                transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 0 }}
                 style={{
                     position: "absolute",
                     inset: 0,
-                    padding: isMobile ? "12px 16px" : "21px 19.5px",
+                    padding: isMobile ? "10px 16px" : "13px 22px",
                     borderRadius: 12,
                     background: "var(--color-bg-white)",
                     border: `1px solid ${border}`,
@@ -247,6 +266,7 @@ function DomainCard({ card, color, border, glow, cardReveal, cardRef, onCardClic
                     cursor: cardReveal > 0.5 && onCardClick ? "pointer" : "default",
                     display: "flex",
                     flexDirection: "column",
+                    overflow: "hidden",
                 }}
                 onClick={(e) => {
                     e.stopPropagation();
@@ -255,11 +275,11 @@ function DomainCard({ card, color, border, glow, cardReveal, cardRef, onCardClic
                 whileHover={onCardClick ? { y: -4, boxShadow: `0 12px 30px ${border}` } : {}}
             >
 
-                <p style={{ fontSize: isMobile ? 10.5 : 11.25, fontWeight: 700, color, letterSpacing: "0.02em", marginBottom: isMobile ? 4 : 6, lineHeight: 1.3 }}>
+                <p style={{ fontSize: isMobile ? 12 : 13.5, fontWeight: 700, color, letterSpacing: "0.02em", marginBottom: isMobile ? 4 : 6, lineHeight: 1.3, overflowWrap: "break-word", wordBreak: "break-word" }}>
                     {card.label}
                 </p>
                 {card.detail && (
-                    <p style={{ fontSize: isMobile ? 8.5 : 9.375, fontWeight: 400, color: "rgba(15,45,90,0.6)", lineHeight: isMobile ? 1.4 : 1.6, margin: 0, marginBottom: showContentInline && card.content ? (isMobile ? 8 : 16) : 0 }}>
+                    <p style={{ fontSize: isMobile ? 9.5 : 10.5, fontWeight: 400, color: "rgba(15,45,90,0.6)", lineHeight: isMobile ? 1.4 : 1.6, margin: 0, marginBottom: showContentInline && card.content ? (isMobile ? 8 : 16) : 0, overflowWrap: "break-word", wordBreak: "break-word" }}>
                         {card.detail}
                     </p>
                 )}
@@ -272,6 +292,7 @@ function DomainCard({ card, color, border, glow, cardReveal, cardRef, onCardClic
         </div>
     );
 }
+
 
 // ─────────────────────────────────────────────────────────────────
 // CARD GRID WRAPPER — lays out 2×2, exposes each card's ref
@@ -290,29 +311,130 @@ function DomainCardGrid({ cards, color, border, glow, show, cardReveals, cardRef
                     style={{
                         display: "grid",
                         gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
-                        gap: isMobile ? 8 : 16.5,
-                        width: isMobile ? "100%" : "min(615px, 92vw)",
+                        gap: isMobile ? 8 : 12,
+                        width: isMobile ? "100%" : "min(730px, 94vw)",
                         flexShrink: 0,
                     }}
                 >
-                    {cards.map((card, i) => (
-                        <DomainCard
-                            key={card.label}
-                            card={card}
-                            color={color}
-                            border={border}
-                            glow={glow}
-                            cardReveal={cardReveals ? cardReveals[i] : 0}
-                            cardRef={cardRefs ? el => { cardRefs.current[i] = el; } : undefined}
-                            onCardClick={onCardClick}
-                            showContentInline={showContentInline}
-                        />
-                    ))}
+                    {cards.map((card, i) => {
+                        const cardEl = (
+                            <DomainCard
+                                key={card.label}
+                                card={card}
+                                color={color}
+                                border={border}
+                                glow={glow}
+                                cardReveal={cardReveals ? cardReveals[i] : 0}
+                                cardRef={cardRefs ? el => { cardRefs.current[i] = el; } : undefined}
+                                onCardClick={onCardClick}
+                                showContentInline={showContentInline}
+                            />
+                        );
+                        if (card.label === "Orientation Program") {
+                            return (
+                                <div key={card.label} style={{ transform: "translate(167px, 0px)" }}>
+                                    {cardEl}
+                                </div>
+                            );
+                        }
+                        return cardEl;
+                    })}
                 </motion.div>
             )}
         </AnimatePresence>
     );
 }
+
+// ─────────────────────────────────────────────────────────────────
+// EXIT ICON — door + arrow "log out" glyph used on the Exit buttons
+// ─────────────────────────────────────────────────────────────────
+function ExitIcon({ size = 22, color = "#cc1414" }) {
+    return (
+        <svg width={size} height={size} viewBox="0 0 16 16" fill={color} xmlns="http://www.w3.org/2000/svg">
+            <path fillRule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z" />
+            <path fillRule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z" />
+        </svg>
+    );
+}
+
+const MEDTECH_HEADING_SCALE = 1.38;
+const MEDTECH_HEADING_OFFSET = { x: -138, y: -28 };
+const MEDTECH_FOCUSED_HEADING_SCALE = 1;
+const MEDTECH_FOCUSED_HEADING_OFFSET = { x: -26, y: -241 };
+const MEDTECH_CARDS_SCALE = 1.56;
+const MEDTECH_CARDS_OFFSET = { x: -94, y: -248 };
+
+// ─────────────────────────────────────────────────────────────────
+// MEDTECH HEADING — isolated + memoized so the high-frequency
+// cardReveals updates (during orbital reveal) don't re-render it
+// and stutter its Framer transition.
+// ─────────────────────────────────────────────────────────────────
+const MedTechHeading = React.memo(function MedTechHeading({ inView, isFocused, isOther, isMobile, onSelect }) {
+    const headingScale = isFocused ? MEDTECH_FOCUSED_HEADING_SCALE : MEDTECH_HEADING_SCALE;
+    const headingBaseX = isFocused ? -363 : -257;
+    const headingBaseY = isFocused ? 58 : -55;
+    const headingOffset = isFocused ? MEDTECH_FOCUSED_HEADING_OFFSET : MEDTECH_HEADING_OFFSET;
+    const headingX = headingBaseX + headingOffset.x;
+    const headingY = headingBaseY + headingOffset.y;
+    const headingTransition = {
+        default: { duration: 1.3, ease: APPLE_EASE },
+        scale: { duration: 1.3, ease: "easeInOut" },
+    };
+
+    return (
+        <motion.div
+            animate={{ x: headingX, y: headingY, scale: headingScale }}
+            transition={headingTransition}
+            style={{ transformOrigin: "top left" }}
+        >
+            <div style={{ display: "flex", flexDirection: "column", alignItems: isMobile ? "center" : "flex-start", textAlign: isMobile ? "center" : "left", minWidth: 150 }}>
+                {isFocused && (
+                    <motion.button
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        onClick={(e) => { e.stopPropagation(); onSelect(null); }}
+                        aria-label="Exit MedTech"
+                        title="Exit MedTech"
+                        style={{
+                            marginBottom: 15,
+                            width: 36,
+                            height: 36,
+                            borderRadius: "50%",
+                            border: "none",
+                            background: "none",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            cursor: "pointer",
+                            pointerEvents: "auto",
+                        }}
+                    >
+                        <ExitIcon />
+                    </motion.button>
+                )}
+                <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 13.5 }}>
+                    <div style={{ width: 27, height: 2, background: "linear-gradient(90deg,#0055aa,#0088ee)" }} />
+                    <span style={{ fontSize: 9.75, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-primary)", fontFamily: "'Inter',sans-serif", fontWeight: 700 }}>Neanic MedTech</span>
+                </div>
+                <h2 style={{ fontSize: "clamp(34px, 6vw, 68px)", fontWeight: 900, fontFamily: "'Inter',sans-serif", letterSpacing: "-0.04em", lineHeight: 0.98, marginBottom: 13.5, background: "linear-gradient(135deg,#060e1c 0%,#003399 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+                    Med<br />Tech
+                </h2>
+                {!(isMobile && isFocused) && (
+                    <p style={{ fontSize: 13, color: "rgba(15,45,90,0.6)", fontFamily: "'Inter',sans-serif", lineHeight: 1.65, maxWidth: 240 }}>
+                        Advanced diagnostic technologies bridging molecular science and clinical practice.
+                    </p>
+                )}
+                {!isFocused && (
+                    <motion.span initial={{ opacity: 0 }} animate={{ opacity: inView ? 0.9 : 0 }}
+                        style={{ marginTop: 13.5, fontSize: 13.5, fontWeight: 600, color: "var(--color-primary)", fontFamily: "'Inter',sans-serif", letterSpacing: "0.04em" }}>
+                        Tap to explore →
+                    </motion.span>
+                )}
+            </div>
+        </motion.div>
+    );
+});
 
 // ─────────────────────────────────────────────────────────────────
 // MEDTECH COLUMN
@@ -327,76 +449,121 @@ function MedTechColumn({ inView, selectedDomain, onSelect, cardReveals, cardRefs
             className="dna-column dna-column-med"
             initial={{ opacity: 0, x: isMobile ? -10 : -40, y: isMobile ? 15 : 25 }}
             animate={inView ? { opacity: isOther ? 0 : 1, x: isOther ? (isMobile ? -10 : -36) : 0, scale: isFocused ? 1.02 : 1, y: isFocused ? (isMobile ? 35 : 54) : (isMobile ? 15 : 25) } : {}}
-            transition={{ duration: selectedDomain ? 1.5 : 1.0, delay: selectedDomain ? 0 : 0.2, ease: APPLE_EASE }}
+            transition={{
+                default: { duration: 1.3, ease: APPLE_EASE },
+                scale: { duration: 1.3, ease: "easeInOut" },
+                opacity: { duration: 1.5, delay: 0, ease: "easeInOut" },
+            }}
             onClick={() => onSelect(isFocused ? null : "medtech")}
             style={{
-                display: "flex", flexDirection: isMobile ? "column" : "row", alignItems: "center", gap: 21,
+                display: "flex", flexDirection: "column", alignItems: isMobile ? "center" : "flex-start", gap: 0,
                 cursor: isOther ? "default" : "pointer",
                 pointerEvents: isOther ? "none" : "auto",
-                justifyContent: isMobile ? "center" : "flex-start",
+                justifyContent: "flex-start",
                 width: isMobile ? "100%" : "auto",
             }}
         >
-            <div style={{ display: "flex", flexDirection: "column", alignItems: isMobile ? "center" : "flex-start", textAlign: isMobile ? "center" : "left", minWidth: 150 }}>
+            <MedTechHeading inView={inView} isFocused={isFocused} isOther={isOther} isMobile={isMobile} onSelect={onSelect} />
+
+            <div style={{ marginTop: isFocused ? 24 : 0 }}>
+                <div style={{ transform: "translate(13px, -76px)" }}>
+                    <div style={{ transform: `translate(${MEDTECH_CARDS_OFFSET.x}px, ${MEDTECH_CARDS_OFFSET.y}px) scale(${MEDTECH_CARDS_SCALE})`, transformOrigin: "top left" }}>
+                            <DomainCardGrid
+                                cards={MEDTECH_CARDS}
+                                color="#0066cc"
+                                border="rgba(0,102,204,0.28)"
+                                glow="0 0 30px rgba(0,102,204,0.18)"
+                                show={isFocused}
+                                cardReveals={cardReveals}
+                                cardRefs={cardRefs}
+                                onCardClick={undefined}
+                                showContentInline={true}
+                            />
+                        </div>
+                    </div>
+                </div>
+        </motion.div>
+    );
+}
+
+const EDTECH_HEADING_SCALE = 1.38;
+const EDTECH_HEADING_OFFSET = { x: 137, y: -27 };
+const EDTECH_FOCUSED_HEADING_SCALE = 1;
+const EDTECH_FOCUSED_HEADING_OFFSET = { x: -19, y: -74 };
+const EDTECH_CARDS_SCALE = 1.36;
+const EDTECH_CARDS_OFFSET = { x: -25, y: -135 };
+
+// ─────────────────────────────────────────────────────────────────
+// EDTECH HEADING — isolated + memoized so the high-frequency
+// cardReveals updates (during orbital reveal) don't re-render it
+// and stutter its Framer transition.
+// ─────────────────────────────────────────────────────────────────
+const EdTechHeading = React.memo(function EdTechHeading({ inView, isFocused, isOther, isMobile, onSelect }) {
+    const headingScale = isFocused ? EDTECH_FOCUSED_HEADING_SCALE : EDTECH_HEADING_SCALE;
+    const headingBaseX = isFocused ? 296 : 255;
+    const headingBaseY = isFocused ? 248 : -55;
+    const headingOffset = isFocused ? EDTECH_FOCUSED_HEADING_OFFSET : EDTECH_HEADING_OFFSET;
+    const headingX = headingBaseX + headingOffset.x;
+    const headingY = headingBaseY + headingOffset.y;
+    const headingTransition = {
+        default: { duration: 1.3, ease: APPLE_EASE },
+        scale: { duration: 1.3, ease: "easeInOut" },
+    };
+
+    return (
+        <motion.div
+            animate={{ x: headingX, y: headingY, scale: headingScale }}
+            transition={headingTransition}
+            style={{ transformOrigin: "top right" }}
+        >
+            <div style={{ display: "flex", flexDirection: "column", alignItems: isMobile ? "center" : "flex-end", textAlign: isMobile ? "center" : "right", minWidth: 150 }}>
                 {isFocused && (
                     <motion.button
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
                         onClick={(e) => { e.stopPropagation(); onSelect(null); }}
+                        aria-label="Exit EdTech"
+                        title="Exit EdTech"
                         style={{
-                            marginBottom: 12,
-                            padding: "3px 10.5px",
-                            borderRadius: 15,
-                            border: "1px solid rgba(0,136,238,0.3)",
-                            background: "rgba(255,255,255,0.8)",
-                            color: "var(--color-primary)",
-                            fontSize: 7.5,
-                            fontWeight: 600,
+                            marginBottom: 15,
+                            width: 36,
+                            height: 36,
+                            borderRadius: "50%",
+                            border: "none",
+                            background: "none",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
                             cursor: "pointer",
-                            letterSpacing: "0.05em",
-                            textTransform: "uppercase",
-                            boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
                             pointerEvents: "auto",
                         }}
                     >
-                        ✕ Exit MedTech
+                        <ExitIcon />
                     </motion.button>
                 )}
-                <div style={{ display: "flex", alignItems: "center", gap: 7.5, marginBottom: 10.5 }}>
-                    <div style={{ width: 21, height: 1.5, background: "linear-gradient(90deg,#0055aa,#0088ee)" }} />
-                    <span style={{ fontSize: 7.5, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-primary)", fontFamily: "'Inter',sans-serif", fontWeight: 700 }}>Neanic MedTech</span>
+                <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 13.5 }}>
+                    <span style={{ fontSize: 9.75, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-primary)", fontFamily: "'Inter',sans-serif", fontWeight: 700 }}>Neanic EdTech</span>
+                    <div style={{ width: 27, height: 2, background: "linear-gradient(90deg,#aa44ee,#6622bb)" }} />
                 </div>
-                <h2 style={{ fontSize: "clamp(24px, 4vw, 45px)", fontWeight: 900, fontFamily: "'Inter',sans-serif", letterSpacing: "-0.04em", lineHeight: 1.0, marginBottom: 10.5, background: "linear-gradient(135deg,#060e1c 0%,#003399 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-                    Med<br />Tech
+                <h2 style={{ fontSize: "clamp(34px, 6vw, 68px)", fontWeight: 900, fontFamily: "'Inter',sans-serif", letterSpacing: "-0.04em", lineHeight: 0.98, marginBottom: 13.5, textAlign: "right", background: "linear-gradient(135deg,#6622bb 0%,#060e1c 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+                    Ed<br />Tech
                 </h2>
                 {!(isMobile && isFocused) && (
-                    <p style={{ fontSize: 9.75, color: "rgba(15,45,90,0.55)", fontFamily: "'Inter',sans-serif", lineHeight: 1.7, maxWidth: 157.5 }}>
-                        Advanced diagnostic technologies bridging molecular science and clinical practice.
+                    <p style={{ fontSize: 13, color: "rgba(15,45,90,0.6)", fontFamily: "'Inter',sans-serif", lineHeight: 1.65, maxWidth: 240, textAlign: "right" }}>
+                        Building the next generation of scientists, innovators, and healthcare entrepreneurs.
                     </p>
                 )}
                 {!isFocused && (
-                    <motion.span initial={{ opacity: 0 }} animate={{ opacity: inView ? 0.5 : 0 }}
-                        style={{ marginTop: 9, fontSize: 12, color: "var(--color-primary)", fontFamily: "'Inter',sans-serif", letterSpacing: "0.08em" }}>
-                        tap to explore →
+                    <motion.span initial={{ opacity: 0 }} animate={{ opacity: inView ? 0.9 : 0 }}
+                        style={{ marginTop: 13.5, fontSize: 13.5, fontWeight: 600, color: "var(--color-primary)", fontFamily: "'Inter',sans-serif", letterSpacing: "0.04em" }}>
+                        ← Tap to explore
                     </motion.span>
                 )}
             </div>
-
-            <DomainCardGrid
-                cards={MEDTECH_CARDS}
-                color="#0066cc"
-                border="rgba(0,102,204,0.28)"
-                glow="0 0 30px rgba(0,102,204,0.18)"
-                show={isFocused}
-                cardReveals={cardReveals}
-                cardRefs={cardRefs}
-                onCardClick={undefined}
-                showContentInline={true}
-            />
         </motion.div>
     );
-}
+});
 
 // ─────────────────────────────────────────────────────────────────
 // EDTECH COLUMN
@@ -412,75 +579,41 @@ function EdTechColumn({ inView, selectedDomain, onSelect, cardReveals, cardRefs,
             className="dna-column dna-column-ed"
             initial={{ opacity: 0, x: isMobile ? 10 : 10, y: isMobile ? 15 : 25 }}
             animate={inView ? { opacity: isOther ? 0 : 1, x: isOther ? (isMobile ? 10 : 36) : 0, scale: isFocused ? 1.02 : 1, y: isFocused ? (isMobile ? 170 : 54) : (isMobile ? 15 : 25) } : {}}
-            transition={{ duration: selectedDomain ? 1.5 : 1.0, delay: selectedDomain ? 0 : 0.3, ease: APPLE_EASE }}
+            transition={{
+                default: { duration: 1.3, ease: APPLE_EASE },
+                scale: { duration: 1.3, ease: "easeInOut" },
+                opacity: { duration: 1.5, delay: 0, ease: "easeInOut" },
+            }}
             onClick={() => onSelect(isFocused ? null : "edtech")}
             style={{
-                display: "flex", flexDirection: isMobile ? "column-reverse" : "row", alignItems: "center", gap: isMobile ? 8 : 21,
+                display: "flex", flexDirection: "column", alignItems: isMobile ? "center" : "flex-end", gap: 0,
                 cursor: isOther ? "default" : "pointer",
                 pointerEvents: isOther ? "none" : "auto",
-                justifyContent: isMobile ? "center" : "flex-end",
+                justifyContent: "flex-start",
                 width: isMobile ? "100%" : "auto",
                 gridRow: (isMobile && selectedDomain) ? 1 : "auto",
                 gridColumn: (isMobile && selectedDomain) ? 1 : "auto",
             }}
         >
-            <DomainCardGrid
-                cards={EDTECH_CARDS}
-                color="#7733cc"
-                border="rgba(119,51,204,0.28)"
-                glow="0 0 30px rgba(119,51,204,0.18)"
-                show={isFocused}
-                cardReveals={cardReveals}
-                cardRefs={cardRefs}
-                onCardClick={undefined}
-                showContentInline={true}
-            />
+            <EdTechHeading inView={inView} isFocused={isFocused} isOther={isOther} isMobile={isMobile} onSelect={onSelect} />
 
-            <div style={{ display: "flex", flexDirection: "column", alignItems: isMobile ? "center" : "flex-end", textAlign: isMobile ? "center" : "right", minWidth: 150 }}>
-                {isFocused && (
-                    <motion.button
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        onClick={(e) => { e.stopPropagation(); onSelect(null); }}
-                        style={{
-                            marginBottom: 12,
-                            padding: "3px 10.5px",
-                            borderRadius: 15,
-                            border: "1px solid rgba(170,68,238,0.3)",
-                            background: "rgba(255,255,255,0.8)",
-                            color: "var(--color-primary)",
-                            fontSize: 7.5,
-                            fontWeight: 600,
-                            cursor: "pointer",
-                            letterSpacing: "0.05em",
-                            textTransform: "uppercase",
-                            boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
-                            pointerEvents: "auto",
-                        }}
-                    >
-                        ✕ Exit EdTech
-                    </motion.button>
-                )}
-                <div style={{ display: "flex", alignItems: "center", gap: 7.5, marginBottom: 10.5 }}>
-                    <span style={{ fontSize: 7.5, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-primary)", fontFamily: "'Inter',sans-serif", fontWeight: 700 }}>Neanic EdTech</span>
-                    <div style={{ width: 21, height: 1.5, background: "linear-gradient(90deg,#aa44ee,#6622bb)" }} />
+            <div style={{ marginTop: isFocused ? 24 : 0 }}>
+                <div style={{ transform: "translate(-31px, -86px)" }}>
+                    <div style={{ transform: `translate(${EDTECH_CARDS_OFFSET.x}px, ${EDTECH_CARDS_OFFSET.y}px) scale(${EDTECH_CARDS_SCALE})`, transformOrigin: "top right" }}>
+                            <DomainCardGrid
+                                cards={EDTECH_CARDS}
+                                color="#7733cc"
+                                border="rgba(119,51,204,0.28)"
+                                glow="0 0 30px rgba(119,51,204,0.18)"
+                                show={isFocused}
+                                cardReveals={cardReveals}
+                                cardRefs={cardRefs}
+                                onCardClick={undefined}
+                                showContentInline={true}
+                            />
+                        </div>
+                    </div>
                 </div>
-                <h2 style={{ fontSize: "clamp(24px, 4vw, 45px)", fontWeight: 900, fontFamily: "'Inter',sans-serif", letterSpacing: "-0.04em", lineHeight: 1.0, marginBottom: 10.5, textAlign: "right", background: "linear-gradient(135deg,#6622bb 0%,#060e1c 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-                    Ed<br />Tech
-                </h2>
-                {!(isMobile && isFocused) && (
-                    <p style={{ fontSize: 9.75, color: "rgba(15,45,90,0.55)", fontFamily: "'Inter',sans-serif", lineHeight: 1.7, maxWidth: 157.5, textAlign: "right" }}>
-                        Building the next generation of scientists, innovators, and healthcare entrepreneurs.
-                    </p>
-                )}
-                {!isFocused && (
-                    <motion.span initial={{ opacity: 0 }} animate={{ opacity: inView ? 0.5 : 0 }}
-                        style={{ marginTop: 9, fontSize: 12, color: "var(--color-primary)", fontFamily: "'Inter',sans-serif", letterSpacing: "0.08em" }}>
-                        ← tap to explore
-                    </motion.span>
-                )}
-            </div>
         </motion.div>
     );
 }
@@ -514,7 +647,7 @@ export function DNASplitSection({
         let raf;
         const tick = () => {
             const s = scrollProgress?.current ?? 0;
-            setSplitDone(s >= 0.30);
+            setSplitDone(s >= 0.36);
             prevScroll.current = s;
             raf = requestAnimationFrame(tick);
         };
@@ -524,6 +657,7 @@ export function DNASplitSection({
 
     const showColumns = splitDone;
     const isMobile = useIsMobile();
+    const cardsRevealing = Array.isArray(cardReveals) && cardReveals.some((r) => r > 0.03);
 
     return (
         <section
@@ -576,6 +710,41 @@ export function DNASplitSection({
                     />
                 </div>
             </div>
+
+            <AnimatePresence>
+                {selectedDomain === "edtech" && !cardsRevealing && (
+                    <motion.span
+                        key="scroll-hint-edtech"
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -10 }}
+                        transition={{ duration: 0.5 }}
+                        style={{
+                            position: "absolute", left: isMobile ? "6vw" : "4vw", bottom: isMobile ? "5vh" : "8vh",
+                            fontSize: 17, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase",
+                            color: "var(--color-primary)", fontFamily: "'Inter',sans-serif", pointerEvents: "none", zIndex: 10,
+                        }}
+                    >
+                        scroll to explore
+                    </motion.span>
+                )}
+                {selectedDomain === "medtech" && !cardsRevealing && (
+                    <motion.span
+                        key="scroll-hint-medtech"
+                        initial={{ opacity: 0, x: 10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 10 }}
+                        transition={{ duration: 0.5 }}
+                        style={{
+                            position: "absolute", right: isMobile ? "6vw" : "4vw", bottom: isMobile ? "5vh" : "8vh",
+                            fontSize: 17, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase",
+                            color: "var(--color-primary)", fontFamily: "'Inter',sans-serif", pointerEvents: "none", zIndex: 10,
+                        }}
+                    >
+                        scroll to explore
+                    </motion.span>
+                )}
+            </AnimatePresence>
         </section>
     );
 }
@@ -591,6 +760,9 @@ const PIPELINE_STAGES = [
     { label: "Deployment & Partnerships", desc: "Collaborate with universities, hospitals, industries, and institutions for implementation and adoption.", color: "#005588", icon: "🏥" },
     { label: "Impact & Scale", desc: "Deliver accessible technologies that improve healthcare outcomes, education quality, and societal well-being.", color: "#003366", icon: "🏢" },
 ];
+
+// Baked shape scale for the Innovation Pipeline cards (width, height).
+const PIPELINE_CARD_SCALE = { x: 1.42, y: 1.35 };
 
 function PipelineSection() {
     const ref = useRef(null);
@@ -655,7 +827,10 @@ function PipelineSection() {
                                             background: isActive ? "white" : "rgba(255,255,255,0.6)",
                                             borderRadius: 9, border: `1px solid ${isActive ? stage.color + "44" : "rgba(0,80,160,0.08)"}`,
                                             boxShadow: isActive ? `0 8px 32px ${stage.color}18` : "none",
-                                            transition: "all 0.3s ease", marginBottom: 15,
+                                            transition: "transform 0.15s ease, background 0.3s ease, box-shadow 0.3s ease, border 0.3s ease",
+                                            marginBottom: 15,
+                                            transform: `scale(${PIPELINE_CARD_SCALE.x}, ${PIPELINE_CARD_SCALE.y})`,
+                                            transformOrigin: isLeft ? "right center" : "left center",
                                         }}
                                     >
                                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4.5 }}>
@@ -744,6 +919,9 @@ function StatCard({ stat, inView, delay }) {
     );
 }
 
+// Baked shape scale for the Measurable Impact stat cards.
+const IMPACT_CARD_SCALE = { x: 1.00, y: 1.15 };
+
 function ImpactSection() {
     const ref = useRef(null);
     const inView = useInView(ref, { once: false, margin: "-15%" });
@@ -762,7 +940,11 @@ function ImpactSection() {
                     </p>
                 </motion.div>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 15 }}>
-                    {IMPACT_STATS.map((stat, i) => <StatCard key={stat.label} stat={stat} inView={inView} delay={i * 0.1} />)}
+                    {IMPACT_STATS.map((stat, i) => (
+                        <div key={stat.label} style={{ transform: `scale(${IMPACT_CARD_SCALE.x}, ${IMPACT_CARD_SCALE.y})`, transformOrigin: "center" }}>
+                            <StatCard stat={stat} inView={inView} delay={i * 0.1} />
+                        </div>
+                    ))}
                 </div>
             </div>
         </section>
@@ -771,6 +953,13 @@ function ImpactSection() {
 // ─────────────────────────────────────────────────────────────────
 // SECTION: PARTNERSHIP OPPORTUNITIES
 // ─────────────────────────────────────────────────────────────────
+// Baked shape scales for the Partnership section.
+const PARTNER_CARD_SCALE = { x: 1.10, y: 1.06 };
+const PARTNER_PANEL_SCALE = { x: 1.20, y: 1.43 };
+
+// Baked position offset for the Partnership section's content block.
+const PARTNERSHIP_CONTENT_OFFSET = { x: -1, y: -23 };
+
 function PartnershipSection({ setActiveModal }) {
     const ref = useRef(null);
     const inView = useInView(ref, { once: false, margin: "-10%" });
@@ -790,14 +979,16 @@ function PartnershipSection({ setActiveModal }) {
                     </p>
                 </motion.div>
 
+                <div style={{ transform: `translate(${PARTNERSHIP_CONTENT_OFFSET.x}px, ${PARTNERSHIP_CONTENT_OFFSET.y}px)` }}>
+
                 <div style={{ display: "grid", gridTemplateColumns: "minmax(280px, 460px) 1fr", gap: 18, alignItems: "stretch" }} className="partnership-grid">
 
                     <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
                         {PARTNER_ITEMS.map((item, i) => {
                             const isActive = i === active;
                             return (
+                              <div key={item.title} style={{ transform: `scale(${PARTNER_CARD_SCALE.x}, ${PARTNER_CARD_SCALE.y})`, transformOrigin: "top right" }}>
                                 <motion.div
-                                    key={item.title}
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={inView ? { opacity: 1, y: 0 } : {}}
                                     transition={{ duration: 0.5, delay: i * 0.06 }}
@@ -839,10 +1030,12 @@ function PartnershipSection({ setActiveModal }) {
                                         </svg>
                                     </div>
                                 </motion.div>
+                              </div>
                             );
                         })}
                     </div>
 
+                    <div style={{ transform: `scale(${PARTNER_PANEL_SCALE.x}, ${PARTNER_PANEL_SCALE.y})`, transformOrigin: "top left" }}>
                     <div style={{
                         position: "relative",
                         borderRadius: 15,
@@ -911,6 +1104,7 @@ function PartnershipSection({ setActiveModal }) {
                         </AnimatePresence>
 
                     </div>
+                    </div>
                 </div>
 
                 {/* Bottom CTA */}
@@ -927,10 +1121,10 @@ function PartnershipSection({ setActiveModal }) {
                 >
                     <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle at 30% 30%, rgba(60,120,255,0.12) 0%, transparent 55%), radial-gradient(circle at 80% 70%, rgba(130,60,220,0.12) 0%, transparent 55%)", pointerEvents: "none" }} />
                     <div style={{ position: "relative", maxWidth: 480, margin: "0 auto" }}>
-                        <h3 style={{ fontSize: "clamp(16.5px, 3vw, 25.5px)", fontWeight: 800, color: "#ffffff", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.02em", marginBottom: 12, lineHeight: 1.25 }}>
+                        <h3 style={{ fontSize: "clamp(19px, 3.6vw, 30px)", fontWeight: 800, color: "#ffffff", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.02em", marginBottom: 12, lineHeight: 1.25 }}>
                             Let's Build the Future of Healthcare Together
                         </h3>
-                        <p style={{ fontSize: 11.25, color: "rgba(200,215,255,0.7)", fontFamily: "'Inter', sans-serif", lineHeight: 1.8, marginBottom: 24 }}>
+                        <p style={{ fontSize: 13.5, color: "rgba(200,215,255,0.7)", fontFamily: "'Inter', sans-serif", lineHeight: 1.8, marginBottom: 24 }}>
                             Whether you're a research institution, healthcare provider, industry partner, or funding organization, we're always open to meaningful collaborations that advance accessible, affordable, and impactful healthcare innovation.
                         </p>
                         <button
@@ -943,6 +1137,7 @@ function PartnershipSection({ setActiveModal }) {
                         </button>
                     </div>
                 </motion.div>
+                </div>
             </div>
         </section>
     );
@@ -950,14 +1145,45 @@ function PartnershipSection({ setActiveModal }) {
 // ─────────────────────────────────────────────────────────────────
 // SECTION: WHY NEANIC MATTERS
 // ─────────────────────────────────────────────────────────────────
+const WHY_MATTERS_CARDS_SCALE = 1.32;
+const WHY_MATTERS_CARDS_OFFSET = { x: -3, y: -80 };
+
+
 const WHY_MATTERS_DATA = [
-    { label: "Rapid Diagnostics", desc: "Results in under 5 minutes.", icon: "⏱️" },
-    { label: "Accessible Healthcare", desc: "Designed for rural and resource-limited regions.", icon: "🌍" },
-    { label: "Indigenous Innovation", desc: "Built in India through advanced research.", icon: "🇮🇳" },
-    { label: "Point-of-Care Technology", desc: "Healthcare delivered closer to patients.", icon: "🎯" },
-    { label: "Affordable Solutions", desc: "Scalable and cost-effective deployment.", icon: "💎" },
-    { label: "Translational Research", desc: "Converting science into real-world products.", icon: "🔄" },
+    { label: "Rapid Diagnostics", desc: "Results in under 5 minutes.", bg: "#E6E3FB", stroke: "#8B7FE8" },
+    { label: "Accessible Healthcare", desc: "Designed for rural and resource-limited regions.", bg: "#DCEEFB", stroke: "#5FA8E0" },
+    { label: "Indigenous Innovation", desc: "Built in India through advanced research.", bg: "#EBE2FA", stroke: "#9B7FE0" },
+    { label: "Point-of-Care Technology", desc: "Healthcare delivered closer to patients.", bg: "#FBE3EC", stroke: "#E07FA8" },
+    { label: "Affordable Solutions", desc: "Scalable and cost-effective deployment.", bg: "#DFF5E7", stroke: "#5FBE85" },
+    { label: "Translational Research", desc: "Converting science into real-world products.", bg: "#DCEEFB", stroke: "#5FA8E0" },
 ];
+
+// Subtle DNA-helix watermark used inside each Why Neanic Matters card.
+function WhyMattersDnaWatermark({ stroke, scale = 1 }) {
+    return (
+        <svg
+            width={130 * scale} height={150 * scale} viewBox="0 0 130 150"
+            style={{ position: "absolute", top: 0, right: 0, opacity: 0.28, pointerEvents: "none" }}
+        >
+            <path d="M100 0 C60 25, 60 45, 100 70 C140 95, 140 115, 100 140" fill="none" stroke={stroke} strokeWidth="2" />
+            <path d="M40 0 C80 25, 80 45, 40 70 C0 95, 0 115, 40 140" fill="none" stroke={stroke} strokeWidth="2" />
+            {[10, 32, 54, 76, 98, 120].map((y, idx) => {
+                const t = (y % 44) / 44;
+                const x1 = idx % 2 === 0 ? 40 + t * 60 : 100 - t * 60;
+                const x2 = idx % 2 === 0 ? 100 - t * 60 : 40 + t * 60;
+                return <line key={y} x1={x1} y1={y} x2={x2} y2={y} stroke={stroke} strokeWidth="1.5" />;
+            })}
+            {[10, 32, 54, 76, 98, 120].map((y) => (
+                <circle key={`c1-${y}`} cx={40} cy={y} r="2.5" fill={stroke} />
+            ))}
+            {[10, 32, 54, 76, 98, 120].map((y) => (
+                <circle key={`c2-${y}`} cx={100} cy={y} r="2.5" fill={stroke} />
+            ))}
+        </svg>
+    );
+}
+
+const WHY_MATTERS_HEADING_OFFSET = { x: -12, y: -88 };
 
 function WhyNeanicMattersSection() {
     const ref = useRef(null);
@@ -966,37 +1192,43 @@ function WhyNeanicMattersSection() {
     return (
         <section id="why-neanic-matters" ref={ref} style={{ padding: "clamp(48px, 10vw, 90px) 6vw", background: "var(--color-bg-cream)", position: "relative", zIndex: 1, overflow: "hidden" }}>
             <div style={{ maxWidth: 825, margin: "0 auto" }}>
-                <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8 }} style={{ textAlign: "center", marginBottom: 48 }}>
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={inView ? { opacity: 1, x: WHY_MATTERS_HEADING_OFFSET.x, y: WHY_MATTERS_HEADING_OFFSET.y } : {}}
+                    transition={{ duration: 0.8 }}
+                    style={{ textAlign: "center", marginBottom: 48 }}
+                >
                     <p style={{ fontSize: 8.25, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-primary)", fontFamily: "'Inter', sans-serif", marginBottom: 9 }}>Core Philosophy</p>
                     <h2 style={{ fontSize: "clamp(21px, 3.5vw, 36px)", fontWeight: 800, color: "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.025em" }}>
                         Why Neanic Matters
                     </h2>
                 </motion.div>
 
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 24 }}>
-                    {WHY_MATTERS_DATA.map((item, i) => (
-                        <motion.div
-                            key={item.label}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={inView ? { opacity: 1, y: 0 } : {}}
-                            transition={{ duration: 0.6, delay: i * 0.1 }}
-                            whileHover={{ y: -6, boxShadow: "0 16px 36px rgba(0,80,200,0.12)" }}
-                            style={{
-                                background: "var(--color-bg-white)",
-                                borderRadius: 12,
-                                padding: "24px",
-                                border: "1px solid rgba(0,100,200,0.08)",
-                                boxShadow: "0 4px 14px rgba(0,80,200,0.04)",
-                                transition: "all 0.3s ease",
-                                display: "flex",
-                                flexDirection: "column",
-                            }}
-                        >
-                            <div style={{ fontSize: 24, marginBottom: 12, lineHeight: 1 }}>{item.icon}</div>
-                            <h3 style={{ fontSize: 13.5, fontWeight: 700, color: "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", marginBottom: 6 }}>{item.label}</h3>
-                            <p style={{ fontSize: 10.5, color: "rgba(15,45,90,0.6)", fontFamily: "'Inter', sans-serif", lineHeight: 1.6, margin: 0 }}>{item.desc}</p>
-                        </motion.div>
-                    ))}
+                <div style={{ transform: `translate(${WHY_MATTERS_CARDS_OFFSET.x}px, ${WHY_MATTERS_CARDS_OFFSET.y}px) scale(${WHY_MATTERS_CARDS_SCALE})`, transformOrigin: "top center" }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 20 }}>
+                        {WHY_MATTERS_DATA.map((item, i) => (
+                            <motion.div
+                                key={item.label}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={inView ? { opacity: 1, y: 0 } : {}}
+                                transition={{ duration: 0.6, delay: i * 0.1 }}
+                                style={{
+                                    position: "relative",
+                                    overflow: "hidden",
+                                    background: item.bg,
+                                    borderRadius: 16,
+                                    padding: "26px 24px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    minHeight: 110,
+                                }}
+                            >
+                                <WhyMattersDnaWatermark stroke={item.stroke} />
+                                <h3 style={{ position: "relative", fontSize: 15, fontWeight: 700, color: "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", marginBottom: 8 }}>{item.label}</h3>
+                                <p style={{ position: "relative", fontSize: 12, color: "rgba(15,45,90,0.6)", fontFamily: "'Inter', sans-serif", lineHeight: 1.6, margin: 0 }}>{item.desc}</p>
+                            </motion.div>
+                        ))}
+                    </div>
                 </div>
             </div>
         </section>
@@ -1013,6 +1245,9 @@ const NEWS_ITEMS = [
     { tag: "RESEARCH TEAM", date: "2026", title: "Built by Leading Researchers", excerpt: "Neanic's interdisciplinary research team brings decades of expertise in biosensors, materials science, microfluidics, patents, and scientific publications to accelerate healthcare innovation." },
 ];
 
+// Baked shape scale for the Latest Milestones cards.
+const NEWS_CARD_SCALE = { x: 1.24, y: 1.03 };
+
 function NewsSection() {
     const ref = useRef(null);
     const inView = useInView(ref, { once: false, margin: "-10%" });
@@ -1026,21 +1261,26 @@ function NewsSection() {
                     </h2>
                 </motion.div>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 18 }}>
-                    {NEWS_ITEMS.map((item, i) => (
-                        <motion.div key={item.title}
-                            initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: i * 0.12 }}
-                            style={{ padding: "21px 21px", background: "var(--color-bg-white)", borderRadius: 10.5, border: "1px solid rgba(0,80,160,0.08)", cursor: "default", transition: "all 0.25s ease" }}
-                            onMouseEnter={e => { e.currentTarget.style.boxShadow = "0 8px 32px rgba(0,80,160,0.1)"; e.currentTarget.style.transform = "translateY(-3px)"; }}
-                            onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.transform = "translateY(0)"; }}
-                        >
-                            <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 12 }}>
-                                <span style={{ fontSize: 7.5, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-primary)", background: "rgba(0,100,200,0.08)", padding: "2.25px 6px", borderRadius: 3 }}>{item.tag}</span>
-                                <span style={{ fontSize: 8.25, color: "rgba(15,45,90,0.35)", fontFamily: "'Inter', sans-serif" }}>{item.date}</span>
-                            </div>
-                            <h4 style={{ fontSize: 11.25, fontWeight: 700, color: "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", lineHeight: 1.4, marginBottom: 7.5 }}>{item.title}</h4>
-                            <p style={{ fontSize: 9.75, color: "rgba(15,45,90,0.55)", fontFamily: "'Inter', sans-serif", lineHeight: 1.7, margin: 0 }}>{item.excerpt}</p>
-                        </motion.div>
-                    ))}
+                    {NEWS_ITEMS.map((item, i) => {
+                        const isLeft = i % 2 === 0;
+                        return (
+                        <div key={item.title} style={{ transform: `scale(${NEWS_CARD_SCALE.x}, ${NEWS_CARD_SCALE.y})`, transformOrigin: isLeft ? "right center" : "left center", height: "100%" }}>
+                            <motion.div
+                                initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: i * 0.12 }}
+                                style={{ height: "100%", display: "flex", flexDirection: "column", padding: "21px 21px", background: "var(--color-bg-white)", borderRadius: 10.5, border: "1px solid rgba(0,80,160,0.08)", cursor: "default", transition: "all 0.25s ease" }}
+                                onMouseEnter={e => { e.currentTarget.style.boxShadow = "0 8px 32px rgba(0,80,160,0.1)"; e.currentTarget.style.transform = "translateY(-3px)"; }}
+                                onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.transform = "translateY(0)"; }}
+                            >
+                                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 12 }}>
+                                    <span style={{ fontSize: 8.5, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-primary)", background: "rgba(0,100,200,0.08)", padding: "2.25px 6px", borderRadius: 3 }}>{item.tag}</span>
+                                    <span style={{ fontSize: 9.25, color: "rgba(15,45,90,0.35)", fontFamily: "'Inter', sans-serif" }}>{item.date}</span>
+                                </div>
+                                <h4 style={{ fontSize: 13, fontWeight: 700, color: "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", lineHeight: 1.4, marginBottom: 7.5 }}>{item.title}</h4>
+                                <p style={{ fontSize: 11.25, color: "rgba(15,45,90,0.55)", fontFamily: "'Inter', sans-serif", lineHeight: 1.7, margin: 0, flex: 1 }}>{item.excerpt}</p>
+                            </motion.div>
+                        </div>
+                        );
+                    })}
                 </div>
             </div>
         </section>
@@ -1109,17 +1349,302 @@ function CareersSection() {
 }
 
 // ─────────────────────────────────────────────────────────────────
+// SUPPORTED BY SECTION (auto-sliding logo carousel)
+// ─────────────────────────────────────────────────────────────────
+const SUPPORTERS = [
+    {
+        id: "startup-uk",
+        render: (
+            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <span style={{ fontSize: 30 }}>🌱</span>
+                <div style={{ display: "flex", flexDirection: "column", lineHeight: 1.05, fontFamily: "'Comic Sans MS', 'Segoe UI', sans-serif", fontWeight: 700, color: "#e8622c" }}>
+                    <span style={{ fontSize: 19 }}>Startup</span>
+                    <span style={{ fontSize: 19 }}>Uttarakhand</span>
+                </div>
+            </div>
+        ),
+    },
+    {
+        id: "runway",
+        render: (
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                <div style={{ display: "flex", alignItems: "baseline", gap: 5 }}>
+                    <span style={{ fontFamily: "'Segoe UI', sans-serif", fontWeight: 800, fontSize: 30, background: "linear-gradient(90deg,#f7941d,#a83fd6,#1a5fd6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+                        runway
+                    </span>
+                    <span style={{ fontStyle: "italic", color: "#e8622c", fontSize: 11, fontWeight: 600 }}>incubator</span>
+                </div>
+                <span style={{ fontSize: 7.5, letterSpacing: "0.14em", color: "#666", fontWeight: 700, marginTop: 2 }}>
+                    START YOUR START-UP JOURNEY
+                </span>
+            </div>
+        ),
+    },
+    {
+        id: "awadh",
+        render: (
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#0d9488" strokeWidth="1.6">
+                    <path d="M12 2C8 2 5 5 5 9s3 7 7 13c4-6 7-9 7-13s-3-7-7-7z" />
+                    <circle cx="12" cy="9" r="2.1" />
+                </svg>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", lineHeight: 1.15 }}>
+                    <span style={{ fontWeight: 800, fontSize: 18, color: "#0d9488", letterSpacing: "0.02em" }}>AWaDH</span>
+                    <span style={{ fontWeight: 600, fontSize: 9.5, color: "#0d9488" }}>IIT Ropar-TIF</span>
+                </div>
+            </div>
+        ),
+    },
+];
+
+const SUPPORTED_BY_HEADING_SCALE = 2.13;
+const SUPPORTED_BY_HEADING_OFFSET = { x: 8, y: -104 };
+const SUPPORTED_BY_DIVIDER_OFFSET = { x: 0, y: 0 };
+const SUPPORTED_BY_CONTENT_SCALE = 2.2;
+const SUPPORTED_BY_CONTENT_OFFSET = { x: 572, y: -98 };
+const SUPPORTED_BY_TRACK_OFFSET = { x: 9, y: 21 };
+
+function SupportedBySection() {
+    const track = [...SUPPORTERS, ...SUPPORTERS, ...SUPPORTERS];
+
+    return (
+        <section style={{ padding: "clamp(150px, 18vw, 190px) 6vw clamp(42px, 7vw, 66px)", background: "var(--color-bg-blue-tint)", textAlign: "center", overflow: "hidden" }}>
+            <div style={{ transform: `translate(${SUPPORTED_BY_HEADING_OFFSET.x}px, ${SUPPORTED_BY_HEADING_OFFSET.y}px) scale(${SUPPORTED_BY_HEADING_SCALE})`, transformOrigin: "top center" }}>
+                <h2 style={{ fontSize: "clamp(19px, 3vw, 27px)", fontWeight: 800, color: "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", margin: 0 }}>
+                    Supported by
+                </h2>
+                <div style={{ width: 42, height: 3, borderRadius: 2, background: "rgba(15,45,90,0.2)", margin: "13px auto 0", transform: `translate(${SUPPORTED_BY_DIVIDER_OFFSET.x}px, ${SUPPORTED_BY_DIVIDER_OFFSET.y}px)` }} />
+            </div>
+
+            <div style={{ height: 20 }} />
+
+            <div style={{ transform: `translate(${SUPPORTED_BY_CONTENT_OFFSET.x}px, ${SUPPORTED_BY_CONTENT_OFFSET.y}px) scale(${SUPPORTED_BY_CONTENT_SCALE})`, transformOrigin: "top center" }}>
+                <div className="supported-by-track-wrap" style={{ position: "relative", overflow: "hidden", transform: `translate(${SUPPORTED_BY_TRACK_OFFSET.x}px, ${SUPPORTED_BY_TRACK_OFFSET.y}px)` }}>
+                    <div className="supported-by-fade supported-by-fade-l" style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 60, background: "linear-gradient(90deg,#EDF6FA,rgba(237,246,250,0))", zIndex: 2, pointerEvents: "none" }} />
+                    <div className="supported-by-fade supported-by-fade-r" style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: 60, background: "linear-gradient(270deg,#EDF6FA,rgba(237,246,250,0))", zIndex: 2, pointerEvents: "none" }} />
+                    <div className="supported-by-track" style={{ display: "flex", alignItems: "center", gap: 90, width: "max-content" }}>
+                        {track.map((s, i) => (
+                            <div key={`${s.id}-${i}`} style={{ flexShrink: 0 }}>
+                                {s.render}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            <style>{`
+                .supported-by-track {
+                    animation: supportedByScroll 20s linear infinite;
+                }
+                .supported-by-track-wrap:hover .supported-by-track {
+                    animation-play-state: paused;
+                }
+                @keyframes supportedByScroll {
+                    from { transform: translateX(0); }
+                    to { transform: translateX(-33.3333%); }
+                }
+            `}</style>
+        </section>
+    );
+}
+
+// ─────────────────────────────────────────────────────────────────
+// SECTION: SYNCHER OVUWISE (flagship product showcase)
+// ─────────────────────────────────────────────────────────────────
+const SYNCHER_KEY_FEATURES = [
+    { icon: "⚡", title: "Quantitative Digital LH Results", desc: "Precise hormone concentration, not just a Yes/No line." },
+    { icon: "⏱️", title: "Results in Less Than 5 Minutes", desc: "Fast electrochemical readout at the point of care." },
+    { icon: "🎒", title: "Portable & Point-of-Care", desc: "Reusable digital reader with disposable biosensor strips." },
+    { icon: "🎯", title: "High Sensitivity & Clinical Accuracy", desc: "Affordable, scalable, and easy for anyone to operate." },
+];
+
+const SYNCHER_APPLICATIONS = [
+    "Ovulation Tracking",
+    "PCOS Monitoring",
+    "Fertility & IVF Clinics",
+    "Women's Reproductive Health",
+    "Hospitals & Diagnostic Centres",
+    "Rural & Primary Healthcare",
+    "Community Health Screening",
+];
+
+const SYNCHER_STATS = [
+    { value: "<5 min", label: "Analysis Time" },
+    { value: "Digital", label: "Quantitative Readout" },
+    { value: "Portable", label: "Point-of-Care Device" },
+    { value: "Reusable", label: "Reader + Disposable Strips" },
+];
+
+const SYNCHER_IMAGE_SCALE = 1.35;
+const SYNCHER_IMAGE_OFFSET = { x: -14, y: -20 };
+
+function SyncHerOvuWiseSection() {
+    const ref = useRef(null);
+    const inView = useInView(ref, { once: false, margin: "-10%" });
+    const isMobile = useIsMobile();
+
+    return (
+        <section
+            ref={ref}
+            id="syncher-ovuwise"
+            style={{
+                padding: "clamp(56px, 10vw, 110px) 6vw",
+                background: "#ffffff",
+                position: "relative",
+                overflow: "hidden",
+            }}
+        >
+            <div style={{
+                position: "absolute", inset: 0, pointerEvents: "none",
+                backgroundImage: "radial-gradient(circle at 20% 30%, rgba(0,180,216,0.06) 0%, transparent 45%), radial-gradient(circle at 85% 70%, rgba(0,119,182,0.05) 0%, transparent 50%)",
+            }} />
+
+            <div style={{
+                maxWidth: 1180, margin: "0 auto", position: "relative", zIndex: 1,
+                display: "flex", flexDirection: isMobile ? "column" : "row",
+                alignItems: "center", gap: isMobile ? 44 : "5vw",
+            }}>
+                {/* LEFT — all copy flows directly on the page, no card/box */}
+                <motion.div
+                    initial={{ opacity: 0, x: -40 }}
+                    animate={inView ? { opacity: 1, x: 0 } : {}}
+                    transition={{ duration: 1, ease: APPLE_EASE }}
+                    style={{ flex: "1 1 50%", textAlign: isMobile ? "center" : "left" }}
+                >
+                    <p style={{ fontSize: 8.25, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-primary)", fontFamily: "'Inter', sans-serif", fontWeight: 700, marginBottom: 12 }}>
+                        Flagship Product
+                    </p>
+                    <h2 style={{ fontSize: "clamp(28px, 4.4vw, 46px)", fontWeight: 800, color: "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.025em", lineHeight: 1.1, margin: 0 }}>
+                        SyncHer OvuWise
+                    </h2>
+                    <h3 style={{ fontSize: "clamp(16px, 2.2vw, 22px)", fontWeight: 800, color: "var(--color-primary)", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.01em", lineHeight: 1.2, margin: "6px 0 22px" }}>
+                        Portable Point-of-Care LH Biosensor
+                    </h3>
+
+                    <p style={{ fontSize: 13, lineHeight: 1.85, color: "var(--color-text-secondary)", fontFamily: "'Inter', sans-serif", marginBottom: 8, maxWidth: 500, marginLeft: isMobile ? "auto" : 0, marginRight: isMobile ? "auto" : 0 }}>
+                        A portable point-of-care LH biosensor delivering precise digital hormone measurements in under 5 minutes for ovulation tracking, PCOS monitoring, and fertility care.
+                    </p>
+
+                    {/* Key features — plain icon + text rows, no boxes */}
+                    <div style={{ marginTop: 26, display: "flex", flexDirection: "column", gap: 26 }}>
+                        {SYNCHER_KEY_FEATURES.map((f) => (
+                            <div key={f.title} style={{ display: "flex", alignItems: "flex-start", gap: 16, justifyContent: isMobile ? "center" : "flex-start" }}>
+                                <span style={{
+                                    width: 50, height: 50, borderRadius: "50%", flexShrink: 0,
+                                    background: "rgba(0,180,216,0.12)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 21,
+                                }}>{f.icon}</span>
+                                <div style={{ textAlign: "left" }}>
+                                    <div style={{ fontSize: 16, fontWeight: 700, color: "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", marginBottom: 3 }}>{f.title}</div>
+                                    <div style={{ fontSize: 13, lineHeight: 1.55, color: "var(--color-text-secondary)", fontFamily: "'Inter', sans-serif" }}>{f.desc}</div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Highlight stats — plain text row, no boxes */}
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "8px 22px", marginTop: 30, justifyContent: isMobile ? "center" : "flex-start" }}>
+                        {SYNCHER_STATS.map((s) => (
+                            <div key={s.label}>
+                                <span style={{ fontSize: 13.5, fontWeight: 800, color: "var(--color-primary)", fontFamily: "'Inter', sans-serif" }}>{s.value}</span>
+                                <span style={{ fontSize: 10.5, color: "var(--color-text-muted)", fontFamily: "'Inter', sans-serif", marginLeft: 6 }}>{s.label}</span>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Applications — plain text, no pills */}
+                    <p style={{ fontSize: 11.5, lineHeight: 1.9, color: "var(--color-text-secondary)", fontFamily: "'Inter', sans-serif", marginTop: 26, marginBottom: 0 }}>
+                        <span style={{ fontWeight: 700, color: "var(--color-text-primary)" }}>Applications: </span>
+                        {SYNCHER_APPLICATIONS.join(" · ")}
+                    </p>
+                </motion.div>
+
+                {/* RIGHT — floating device render, no card */}
+                <motion.div
+                    initial={{ opacity: 0, x: 40 }}
+                    animate={inView ? { opacity: 1, x: 0 } : {}}
+                    transition={{ duration: 1, ease: APPLE_EASE, delay: 0.12 }}
+                    style={{ flex: "1 1 50%", position: "relative", display: "flex", flexDirection: "column", justifyContent: "flex-start", alignItems: "center", minHeight: isMobile ? 380 : 560 }}
+                >
+                    <div style={{
+                        position: "relative", display: "flex", justifyContent: "center", alignItems: "center", width: "100%", flex: 1,
+                        transform: `translate(${SYNCHER_IMAGE_OFFSET.x}px, ${SYNCHER_IMAGE_OFFSET.y}px) scale(${SYNCHER_IMAGE_SCALE})`, transformOrigin: "center",
+                    }}>
+                        <div className="syncher-glow" style={{
+                            position: "absolute", width: "78%", height: "78%", borderRadius: "50%",
+                            background: "radial-gradient(circle, rgba(0,180,216,0.22) 0%, rgba(0,119,182,0.08) 45%, transparent 72%)",
+                            filter: "blur(10px)", zIndex: 0,
+                        }} />
+
+                        {[...Array(6)].map((_, i) => (
+                            <span key={i} className={`syncher-particle syncher-particle-${i}`} />
+                        ))}
+
+                        <img
+                            src="/syncher-ovuwise-v2.png"
+                            alt="SyncHer OvuWise portable LH biosensor device"
+                            className="syncher-device-float"
+                            style={{
+                                width: "min(120%, 560px)", height: "auto", position: "relative", zIndex: 1,
+                                filter: "drop-shadow(0 35px 55px rgba(10,40,80,0.22))",
+                            }}
+                        />
+                    </div>
+                </motion.div>
+            </div>
+
+            <style>{`
+                @keyframes syncherFloat {
+                    0%, 100% { transform: translateY(0px); }
+                    50% { transform: translateY(-16px); }
+                }
+                .syncher-device-float {
+                    animation: syncherFloat 5.5s ease-in-out infinite;
+                }
+                @keyframes syncherGlowPulse {
+                    0%, 100% { opacity: 0.7; transform: scale(1); }
+                    50% { opacity: 1; transform: scale(1.06); }
+                }
+                .syncher-glow {
+                    animation: syncherGlowPulse 6s ease-in-out infinite;
+                }
+                .syncher-particle {
+                    position: absolute;
+                    width: 5px; height: 5px;
+                    border-radius: 50%;
+                    background: rgba(0,180,216,0.55);
+                    filter: blur(0.5px);
+                    z-index: 0;
+                    animation: syncherParticleDrift 7s ease-in-out infinite;
+                }
+                .syncher-particle-0 { top: 15%; left: 12%; animation-delay: 0s; }
+                .syncher-particle-1 { top: 65%; left: 8%; animation-delay: 1.1s; width: 4px; height: 4px; }
+                .syncher-particle-2 { top: 30%; left: 88%; animation-delay: 2.2s; }
+                .syncher-particle-3 { top: 75%; left: 82%; animation-delay: 3.3s; width: 6px; height: 6px; }
+                .syncher-particle-4 { top: 8%; left: 60%; animation-delay: 4.1s; width: 4px; height: 4px; }
+                .syncher-particle-5 { top: 85%; left: 45%; animation-delay: 5s; }
+                @keyframes syncherParticleDrift {
+                    0%, 100% { transform: translate(0,0); opacity: 0.4; }
+                    50% { transform: translate(8px,-14px); opacity: 0.9; }
+                }
+            `}</style>
+        </section>
+    );
+}
+
+// ─────────────────────────────────────────────────────────────────
 // ROOT SECTIONS EXPORT
 // ─────────────────────────────────────────────────────────────────
 export const NeanicSections = ({ scrollProgress, setActiveModal, selectedDomain, setSelectedDomain }) => {
     return (
         <>
             <FocusAreaSection />
+            <SyncHerOvuWiseSection />
             <PipelineSection />
             <ImpactSection />
             <WhyNeanicMattersSection />
             <NewsSection />
             <PartnershipSection setActiveModal={setActiveModal} />
+            <SupportedBySection />
             <FoundersSection />
 
             <section className="neanic-cta-section" style={{ padding: "clamp(48px, 8vw, 75px) 6vw", background: "linear-gradient(135deg,#0a1e3a 0%,#060e1c 100%)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", borderTop: "1px solid rgba(255,255,255,0.06)", position: "relative", zIndex: 1 }}>

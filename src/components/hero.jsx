@@ -6,6 +6,46 @@ import { motion, AnimatePresence } from "framer-motion";
 import { DNASplitSection } from "../NeanicSections";
 
 // ─────────────────────────────────────────────────────────────────
+// SCROLL-PROGRESS DENOMINATOR — see matching helper in App.jsx. Uses
+// the hero's own local scrollable range (#about), not the whole page,
+// so the DNA reaches its split/zoom-out state in far less scrolling.
+// ─────────────────────────────────────────────────────────────────
+function getHeroScrollableHeight(viewportHeight) {
+    if (typeof document === "undefined") return 0;
+    const aboutEl = document.getElementById("about");
+    if (aboutEl) return Math.max(aboutEl.offsetHeight - viewportHeight, 1);
+    return Math.max(document.documentElement.scrollHeight - viewportHeight, 1);
+}
+
+// Matches the piecewise mapping in App.jsx — see that file for the
+// rationale (short "one more scroll" from reveal to next section).
+const INITIAL_PROGRESS = 0.18;
+const REVEAL_PROGRESS = 0.36;
+const PRE_REVEAL_SCROLL_FRACTION = 0.6;
+
+function computeScrollProgress(scrollY, scrollH) {
+    if (scrollH <= 0 || scrollY <= 0) return INITIAL_PROGRESS;
+    const breakPx = scrollH * PRE_REVEAL_SCROLL_FRACTION;
+    if (scrollY < breakPx) {
+        const t = scrollY / breakPx;
+        return INITIAL_PROGRESS + t * (REVEAL_PROGRESS - INITIAL_PROGRESS);
+    }
+    const t2 = Math.min(1, (scrollY - breakPx) / (scrollH - breakPx));
+    return Math.min(1, REVEAL_PROGRESS + t2 * (1 - REVEAL_PROGRESS));
+}
+
+function scrollYForProgress(targetProgress, scrollH) {
+    const breakPx = scrollH * PRE_REVEAL_SCROLL_FRACTION;
+    if (targetProgress <= INITIAL_PROGRESS) return 0;
+    if (targetProgress <= REVEAL_PROGRESS) {
+        const t = (targetProgress - INITIAL_PROGRESS) / (REVEAL_PROGRESS - INITIAL_PROGRESS);
+        return t * breakPx;
+    }
+    const t2 = (targetProgress - REVEAL_PROGRESS) / (1 - REVEAL_PROGRESS);
+    return breakPx + t2 * (scrollH - breakPx);
+}
+
+// ─────────────────────────────────────────────────────────────────
 // DOMAIN FOCUS HOOK
 // ─────────────────────────────────────────────────────────────────
 function useDomainFocus(selectedDomain) {
@@ -133,7 +173,13 @@ function OrbitalParticleSystem({
         if (selectedDomain) {
             const nodeRef = selectedDomain === "medtech" ? medNodeRef : edNodeRef;
             if (nodeRef?.current) nodeRef.current.getWorldPosition(a.nodeWorldPos);
-            a.scrollBaseline = scrollProgress.current ?? 0;
+            // Don't sample scrollBaseline here — this effect can commit before
+            // App.jsx's own lock effect has aligned scrollProgress to the same
+            // capped base the wheel/touch handlers will use. Sampling too early
+            // risks a stale (uncapped) value that desyncs the reveal delta.
+            // Instead, flag it unset and capture it on the first useFrame tick
+            // below, which always runs after every effect has committed.
+            a.scrollBaselineSet = false;
             a.phase = "orbit";
             a.orbitRadius = 0;
             a.particleScale = 0;
@@ -183,8 +229,21 @@ function OrbitalParticleSystem({
         if (nodeRef?.current) nodeRef.current.getWorldPosition(a.nodeWorldPos);
         const { x: cx, y: cy, z: cz } = a.nodeWorldPos;
 
+        // Capture the reveal-delta baseline on the first frame after
+        // selection, once every effect (including App.jsx's scroll-lock
+        // effect) has definitely committed.
+        if (!a.scrollBaselineSet) {
+            a.scrollBaseline = scrollProgress.current ?? 0;
+            a.smoothScroll = a.scrollBaseline;
+            a.scrollBaselineSet = true;
+        }
+
+        // Light, fast smoothing — enough to keep the reveal animation visible
+        // instead of an instant jump, but far quicker than the old 0.001
+        // factor (which trailed real scroll input by several hundred ms).
         const targetScroll = scrollProgress.current ?? 0;
-        a.smoothScroll = a.smoothScroll === undefined ? targetScroll : THREE.MathUtils.lerp(a.smoothScroll, targetScroll, 1 - Math.pow(0.001, delta));
+        const smoothFactor = Math.min(1, delta * 10);
+        a.smoothScroll = THREE.MathUtils.lerp(a.smoothScroll, targetScroll, smoothFactor);
         const sd = Math.max(0, a.smoothScroll - a.scrollBaseline);
 
         // Compute card targets lazily once refs are painted
@@ -337,9 +396,11 @@ export function DNAScene({
                 pos[idx + 1] = y;
                 pos[idx + 2] = Math.sin(ang) * HELIX_R;
                 const heat = Math.max(0, 1 - Math.abs(t - 0.48) * 2.6);
-                col[idx] = 0.5 + heat * 0.5;
-                col[idx + 1] = 0.75 - heat * 0.6;
-                col[idx + 2] = 1.0 - heat * 0.7;
+                const sh = Math.sin(ang * 1.5);
+                const DARK = 1.0;
+                col[idx] = (0.90 + 0.07 * sh + heat * 0.03) * DARK;
+                col[idx + 1] = (0.92 + 0.05 * Math.cos(ang * 1.5 + 2.1)) * DARK;
+                col[idx + 2] = (0.97 + 0.03 * Math.sin(ang * 1.5 + 4.2)) * DARK;
             }
         }
         baseStrandPos.current = new Float32Array(pos);
@@ -362,18 +423,40 @@ export function DNAScene({
                     pos[idx] = Math.cos(ang) * HELIX_R + (Math.cos(ang + Math.PI) * HELIX_R - Math.cos(ang) * HELIX_R) * f;
                     pos[idx + 1] = y;
                     pos[idx + 2] = Math.sin(ang) * HELIX_R + (Math.sin(ang + Math.PI) * HELIX_R - Math.sin(ang) * HELIX_R) * f;
-                    col[idx] = 0.45 + heat * 0.55;
-                    col[idx + 1] = 0.75 - heat * 0.55;
-                    col[idx + 2] = 1.0 - heat * 0.65;
+                    col[idx] = (0.88 + 0.08 * Math.sin(ang * 1.5 + 1.0)) * 0.95;
+                    col[idx + 1] = (0.90 + 0.05 * Math.cos(ang * 1.5 + 1.0)) * 0.95;
+                    col[idx + 2] = (0.96 + 0.04 * Math.sin(ang * 1.5 + 3.0)) * 0.95;
                 }
             }
         }
         return { pos, col };
     }, []);
 
+    const CORE_PALETTE = useMemo(() => ([
+        [0.0, 0.47, 0.71], // brand blue    #0077B6
+        [0.0, 0.71, 0.85], // brand cyan    #00B4D8
+        [0.88, 0.68, 0.16], // brand amber  #DFAC28
+        [0.08, 0.72, 0.65], // brand teal-green #14B8A6
+    ]), []);
+
     const coreData = useMemo(() => {
         const pos = new Float32Array(CORE_PTS * 3);
         const col = new Float32Array(CORE_PTS * 3);
+        // Per-particle base params kept around (untouched by the per-frame
+        // loop) so position/color can be recomputed from scratch each frame
+        // as the DNA splits — mirrors the strand's own fork math.
+        const ang0 = new Float32Array(CORE_PTS);
+        const yBase = new Float32Array(CORE_PTS);
+        const rBase = new Float32Array(CORE_PTS);
+        const tBase = new Float32Array(CORE_PTS);
+        const side = new Float32Array(CORE_PTS);
+        const baseCol = new Float32Array(CORE_PTS * 3);
+        // Random point on/inside a sphere per particle — used once split, so
+        // the swarm fills evenly all around each node instead of biasing
+        // toward wherever the helix angle happened to put it.
+        const jx = new Float32Array(CORE_PTS);
+        const jy = new Float32Array(CORE_PTS);
+        const jz = new Float32Array(CORE_PTS);
         for (let i = 0; i < CORE_PTS; i++) {
             const t = 0.28 + (i / CORE_PTS) * 0.42;
             const ang = t * Math.PI * 2 * TURNS + (Math.random() - 0.5) * 0.8;
@@ -381,12 +464,24 @@ export function DNAScene({
             const r = HELIX_R * (0.3 + Math.random() * 0.9);
             const idx = i * 3;
             pos[idx] = Math.cos(ang) * r; pos[idx + 1] = y; pos[idx + 2] = Math.sin(ang) * r;
-            col[idx] = 0.85 + Math.random() * 0.15;
-            col[idx + 1] = 0.08 + Math.random() * 0.22;
-            col[idx + 2] = 0.12 + Math.random() * 0.2;
+            ang0[i] = ang; yBase[i] = y; rBase[i] = r; tBase[i] = t;
+            side[i] = i % 2 === 0 ? -1 : 1; // alternate med(-1)/ed(+1) so both sides get particles
+
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos(2 * Math.random() - 1);
+            const rad = 0.35 + Math.random() * 1.55;
+            jx[i] = Math.sin(phi) * Math.cos(theta) * rad;
+            jy[i] = Math.cos(phi) * rad * 0.85;
+            jz[i] = Math.sin(phi) * Math.sin(theta) * rad;
+
+            const p = CORE_PALETTE[Math.floor(Math.random() * CORE_PALETTE.length)];
+            const jitter = 0.92 + Math.random() * 0.08;
+            col[idx] = baseCol[idx] = p[0] * jitter;
+            col[idx + 1] = baseCol[idx + 1] = p[1] * jitter;
+            col[idx + 2] = baseCol[idx + 2] = p[2] * jitter;
         }
-        return { pos, col };
-    }, []);
+        return { pos, col, ang0, yBase, rBase, tBase, side, baseCol, jx, jy, jz };
+    }, [CORE_PALETTE]);
 
     const bokehData = useMemo(() => {
         const pos = new Float32Array(BOKEH_COUNT * 3);
@@ -397,9 +492,10 @@ export function DNAScene({
             pos[idx + 1] = (Math.random() - 0.5) * HELIX_H * 1.3;
             pos[idx + 2] = -3 - Math.random() * 9;
             const v = Math.random();
-            if (v < 0.55) { col[idx] = 0.04; col[idx + 1] = 0.58; col[idx + 2] = 1.0; }
-            else if (v < 0.82) { col[idx] = 0.12; col[idx + 1] = 0.32; col[idx + 2] = 0.92; }
-            else { col[idx] = 0.5; col[idx + 1] = 0.08; col[idx + 2] = 0.82; }
+            if (v < 0.4) { col[idx] = 0.20; col[idx + 1] = 0.55; col[idx + 2] = 0.80; } // brand blue
+            else if (v < 0.7) { col[idx] = 0.20; col[idx + 1] = 0.78; col[idx + 2] = 0.90; } // brand cyan
+            else if (v < 0.88) { col[idx] = 0.90; col[idx + 1] = 0.73; col[idx + 2] = 0.32; } // brand amber
+            else { col[idx] = 0.25; col[idx + 1] = 0.78; col[idx + 2] = 0.72; } // brand teal-green
         }
         return { pos, col };
     }, []);
@@ -413,21 +509,43 @@ export function DNAScene({
 
     const frozenGroupTransform = useRef(null);
 
-    const strandMat = useMemo(() => new THREE.PointsMaterial({ size: 0.058, vertexColors: true, transparent: true, opacity: 0.94, sizeAttenuation: true, blending: THREE.AdditiveBlending, depthWrite: false }), []);
-    const coreMat = useMemo(() => new THREE.PointsMaterial({ size: 0.085, vertexColors: true, transparent: true, opacity: 0.88, sizeAttenuation: true, blending: THREE.AdditiveBlending, depthWrite: false }), []);
-    const bridgeMat = useMemo(() => new THREE.PointsMaterial({ size: 0.038, vertexColors: true, transparent: true, opacity: 0.52, sizeAttenuation: true, blending: THREE.AdditiveBlending, depthWrite: false }), []);
-    const bokehMat = useMemo(() => new THREE.PointsMaterial({ size: 0.38, vertexColors: true, transparent: true, opacity: 0.4, sizeAttenuation: true, blending: THREE.AdditiveBlending, depthWrite: false }), []);
+    // Neon glow for the strand: built as EXTRA point layers that share the
+    // exact same live geometry (strandGeo) as the core strand points, so
+    // the glow is driven by the same per-frame split/fork/focus math below
+    // instead of a separate static curve — it moves and splits in lockstep
+    // with the strand automatically because it's literally the same buffer.
+    const strandGeo = useMemo(() => {
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute("position", new THREE.BufferAttribute(strandData.pos, 3));
+        geo.setAttribute("color", new THREE.BufferAttribute(strandData.col, 3));
+        return geo;
+    }, [strandData]);
+    strandGeoRef.current = strandGeo;
+
+    const strandGlowMats = useMemo(() => ([
+        new THREE.PointsMaterial({ size: 0.34, color: "#bfe0ff", transparent: true, opacity: 0.14, sizeAttenuation: true, blending: THREE.AdditiveBlending, depthWrite: false }),
+        new THREE.PointsMaterial({ size: 0.18, color: "#eaf6ff", transparent: true, opacity: 0.28, sizeAttenuation: true, blending: THREE.AdditiveBlending, depthWrite: false }),
+        new THREE.PointsMaterial({ size: 0.095, color: "#ffffff", transparent: true, opacity: 0.55, sizeAttenuation: true, blending: THREE.AdditiveBlending, depthWrite: false }),
+    ]), []);
+
+    const strandMat = useMemo(() => new THREE.PointsMaterial({ size: 0.06, vertexColors: true, transparent: true, opacity: 0.95, sizeAttenuation: true, blending: THREE.NormalBlending, depthWrite: false }), []);
+    const coreMat = useMemo(() => new THREE.PointsMaterial({ size: 0.09, vertexColors: true, transparent: true, opacity: 0.85, sizeAttenuation: true, blending: THREE.NormalBlending, depthWrite: false }), []);
+    const bridgeMat = useMemo(() => new THREE.PointsMaterial({ size: 0.048, vertexColors: true, transparent: true, opacity: 0.58, sizeAttenuation: true, blending: THREE.NormalBlending, depthWrite: false }), []);
+    const bokehMat = useMemo(() => new THREE.PointsMaterial({ size: 0.38, vertexColors: true, transparent: true, opacity: 0.32, sizeAttenuation: true, blending: THREE.AdditiveBlending, depthWrite: false }), []);
 
     useFrame((state, delta) => {
         const t = state.clock.getElapsedTime();
         const scroll = scrollProgress.current ?? 0;
-        const splitFactor = THREE.MathUtils.smoothstep(scroll, 0.25, 0.30);
+        const splitFactor = THREE.MathUtils.smoothstep(scroll, 0.30, 0.36);
 
         let targetX = 3.2, targetY = 0.0, baseScale = 1.0;
-        if (scroll < 0.185) { targetX = 3.2; targetY = 0.0; baseScale = 1.0; }
-        else if (scroll < 0.25) { const b = (scroll - 0.185) / 0.065; targetX = THREE.MathUtils.lerp(3.2, 0.0, b); targetY = THREE.MathUtils.lerp(0.0, 0.5, b); baseScale = THREE.MathUtils.lerp(1.0, 0.35, b); }
-        else if (scroll < 0.52) { targetX = 0.0; targetY = 0.5; baseScale = 0.35; }
-        else { const b = Math.min(1, (scroll - 0.52) / 0.18); targetX = 0.0; targetY = THREE.MathUtils.lerp(0.5, 6.0, b); baseScale = THREE.MathUtils.lerp(0.35, 0.2, b); }
+        if (scroll < 0.22) { targetX = 3.2; targetY = 0.0; baseScale = 1.0; }
+        else if (scroll < 0.30) { const b = (scroll - 0.22) / 0.08; targetX = THREE.MathUtils.lerp(3.2, 0.0, b); targetY = THREE.MathUtils.lerp(0.0, 0.5, b); baseScale = THREE.MathUtils.lerp(1.0, 0.35, b); }
+        // After the split completes, hold the DNA steady here — it should
+        // not keep drifting upward/shrinking on its own as the user keeps
+        // scrolling. It only moves again if something else (e.g. the
+        // focused-domain freeze below) explicitly repositions it.
+        else { targetX = 0.0; targetY = 0.5; baseScale = 0.35; }
 
         const focusAbs = Math.abs(focus.current);
         baseScale *= 1 - 0.12 * focusAbs;
@@ -501,7 +619,10 @@ export function DNAScene({
                     fx += focusShift * splitFactor;
                     pa.setXYZ(s * STRAND_PTS + i, fx, THREE.MathUtils.lerp(9999, fy, sideFade), fz);
                     const heat = Math.max(0, 1 - Math.abs(tN - 0.48) * 2.6);
-                    const rB = 0.5 + heat * 0.5, gB = 0.75 - heat * 0.6, bB = 1.0 - heat * 0.7;
+                    const shR = Math.sin(ang * 1.5 + t * 0.35);
+                    const shG = Math.cos(ang * 1.5 + t * 0.35 + 2.1);
+                    const shB = Math.sin(ang * 1.5 + t * 0.35 + 4.2);
+                    const rB = (0.90 + 0.07 * shR + heat * 0.03) * 0.55, gB = (0.92 + 0.05 * shG) * 0.55, bB = (0.97 + 0.03 * shB) * 0.55;
                     let rT, gT, bT;
                     if (sideSign === -1) { rT = 0.05 + heat * 0.1; gT = 0.45 - heat * 0.15; bT = 1.0; }
                     else { rT = 0.55 + heat * 0.25; gT = 0.2 - heat * 0.15; bT = 0.9; }
@@ -509,6 +630,48 @@ export function DNAScene({
                 }
             }
             pa.needsUpdate = true; ca.needsUpdate = true;
+        }
+
+        // ── Core (floating) particles — split + recolor per side ───────
+        if (coreGeoRef.current) {
+            const cpa = coreGeoRef.current.attributes.position;
+            const cca = coreGeoRef.current.attributes.color;
+            const scrollSpin = scroll * Math.PI * 4;
+            for (let i = 0; i < CORE_PTS; i++) {
+                const tN = coreData.tBase[i];
+                const sideSign = coreData.side[i];
+                const ang = coreData.ang0[i] + scrollSpin;
+                const r = coreData.rBase[i];
+                const sideFade = sideSign === -1 ? 1 - Math.max(0, focus.current) : 1 - Math.max(0, -focus.current);
+                const focusShift = sideSign === -1 ? medFocusShiftLocal : edFocusShiftLocal;
+
+                // Original (unsplit) position — orbiting the helix.
+                const origX = Math.cos(ang) * r;
+                const origY = coreData.yBase[i];
+                const origZ = Math.sin(ang) * r;
+
+                // Target: a small cloud swarming all around this particle's
+                // node (medtech at x=-17.5, edtech at x=+17.5) — using a
+                // pre-randomized point on/inside a sphere so coverage is
+                // even in every direction, not just at the arc's ends.
+                const nodeX = sideSign * 17.5;
+                const clusterX = nodeX + coreData.jx[i];
+                const clusterY = coreData.jy[i];
+                const clusterZ = coreData.jz[i];
+
+                const fx = THREE.MathUtils.lerp(origX, clusterX, splitFactor) + focusShift * splitFactor;
+                const fy = THREE.MathUtils.lerp(origY, clusterY, splitFactor);
+                const fz = THREE.MathUtils.lerp(origZ, clusterZ, splitFactor);
+                cpa.setXYZ(i, fx, THREE.MathUtils.lerp(9999, fy, sideFade), fz);
+
+                const idx = i * 3;
+                const baseR = coreData.baseCol[idx], baseG = coreData.baseCol[idx + 1], baseB = coreData.baseCol[idx + 2];
+                let tR, tG, tB;
+                if (sideSign === -1) { tR = 0.05; tG = 0.45; tB = 1.0; } // blue, matches medtech strand
+                else { tR = 0.62; tG = 0.18; tB = 0.85; } // purple, matches edtech strand
+                cca.setXYZ(i, THREE.MathUtils.lerp(baseR, tR, splitFactor), THREE.MathUtils.lerp(baseG, tG, splitFactor), THREE.MathUtils.lerp(baseB, tB, splitFactor));
+            }
+            cpa.needsUpdate = true; cca.needsUpdate = true;
         }
 
         if (bridgeGeoRef.current) {
@@ -529,7 +692,7 @@ export function DNAScene({
                         const f = p / 7, ptIdx = h * BRIDGE_COUNT * 8 + i * 8 + p;
                         ba.setXYZ(ptIdx, lx + (rx - lx) * f, (ly + (ry - ly) * f) + bhy, lz + (rz - lz) * f);
                         const heat = Math.max(0, 1 - Math.abs(tN - 0.48) * 2.6);
-                        const rB = 0.45 + heat * 0.55, gB = 0.75 - heat * 0.55, bB = 1.0 - heat * 0.65;
+                        const rB = (0.88 + 0.08 * Math.sin(ang * 1.5 + t * 0.35 + 1.0)) * 0.55, gB = (0.90 + 0.05 * Math.cos(ang * 1.5 + t * 0.35 + 1.0)) * 0.55, bB = (0.96 + 0.04 * Math.sin(ang * 1.5 + t * 0.35 + 3.0)) * 0.55;
                         let rT, gT, bT;
                         if (sideSign === -1) { rT = 0.05 + heat * 0.1; gT = 0.45 - heat * 0.15; bT = 1.0; } else { rT = 0.55 + heat * 0.25; gT = 0.2 - heat * 0.15; bT = 0.9; }
                         bca.setXYZ(ptIdx, THREE.MathUtils.lerp(rB, rT, splitFactor), THREE.MathUtils.lerp(gB, gT, splitFactor), THREE.MathUtils.lerp(bB, bT, splitFactor));
@@ -539,7 +702,8 @@ export function DNAScene({
             ba.needsUpdate = true; bca.needsUpdate = true;
         }
 
-        if (coreMat) coreMat.opacity = 0.88 * (1 - splitFactor);
+        // Core particles stay visible through the split (previously faded to 0) —
+        // they now ride along with each side and pick up its blue/purple tint.
 
         if (groupRef.current) {
             const medFade = 1 - Math.max(0, focus.current), edFade = 1 - Math.max(0, -focus.current);
@@ -561,12 +725,11 @@ export function DNAScene({
 
             {/* ── SINGLE DNA GROUP ── */}
             <group ref={groupRef}>
-                <points material={strandMat}>
-                    <bufferGeometry ref={strandGeoRef}>
-                        <bufferAttribute attach="attributes-position" array={strandData.pos} count={STRAND_PTS * 4} itemSize={3} />
-                        <bufferAttribute attach="attributes-color" array={strandData.col} count={STRAND_PTS * 4} itemSize={3} />
-                    </bufferGeometry>
-                </points>
+                {/* Glow halo — shares strandGeo, so it splits/moves with the strand for free */}
+                {strandGlowMats.map((mat, i) => (
+                    <points key={i} geometry={strandGeo} material={mat} />
+                ))}
+                <points geometry={strandGeo} material={strandMat} />
                 <points material={coreMat}>
                     <bufferGeometry ref={coreGeoRef}>
                         <bufferAttribute attach="attributes-position" array={coreData.pos} count={CORE_PTS} itemSize={3} />
@@ -583,21 +746,21 @@ export function DNAScene({
                 {/* MedTech node — ref exposed to OrbitalParticleSystem */}
                 <mesh ref={medNodeRef} position={[-17.5, 0, 0]} scale={[0, 0, 0]}>
                     <sphereGeometry args={[0.45, 32, 32]} />
-                    <meshBasicMaterial color="#0066cc" />
+                    <meshBasicMaterial color="#003d7a" />
                 </mesh>
                 <mesh ref={medGlowRef} position={[-17.5, 0, 0]}>
                     <sphereGeometry args={[0.8, 32, 32]} />
-                    <meshBasicMaterial color="#0066cc" transparent opacity={0.15} />
+                    <meshBasicMaterial color="#003d7a" transparent opacity={0.15} />
                 </mesh>
 
                 {/* EdTech node */}
                 <mesh ref={edNodeRef} position={[17.5, 0, 0]} scale={[0, 0, 0]}>
                     <sphereGeometry args={[0.45, 32, 32]} />
-                    <meshBasicMaterial color="#7733cc" />
+                    <meshBasicMaterial color="#471f7a" />
                 </mesh>
                 <mesh ref={edGlowRef} position={[17.5, 0, 0]}>
                     <sphereGeometry args={[0.8, 32, 32]} />
-                    <meshBasicMaterial color="#7733cc" transparent opacity={0.15} />
+                    <meshBasicMaterial color="#471f7a" transparent opacity={0.15} />
                 </mesh>
             </group>
 
@@ -658,12 +821,13 @@ export function CameraRig({ scrollProgress, selectedDomain }) {
         const baseTz = isMobile ? 14.5 : 10.5; 
         
         let tz = baseTz;
-        if (scroll < 0.185) tz = baseTz - scroll * 2;
-        else if (scroll < 0.52) tz = baseTz - 0.6;
-        else tz = baseTz - 0.6 + (scroll - 0.52) * 4;
+        if (scroll < 0.22) tz = baseTz - scroll * 2;
+        // Hold the camera distance steady after the split — no further
+        // zoom-out from continued scrolling alone.
+        else tz = baseTz - 0.6;
         tz -= Math.abs(focus.current) * 1.2;
 
-        const centerFactor = THREE.MathUtils.smoothstep(scroll, 0.185, 0.25);
+        const centerFactor = THREE.MathUtils.smoothstep(scroll, 0.22, 0.30);
         
         // On desktop, DNA starts right-aligned (tx=1.5). On mobile, we keep it centered or slightly shifted.
         const startTx = isMobile ? 0.0 : 1.5;
@@ -735,13 +899,134 @@ function ScrollRevealContent({ scrollProgress, setActiveModal }) {
                 />
                 <motion.div initial={{ opacity: 0, y: 12, filter: "blur(4px)" }} animate={{ opacity: show("eyebrow") ? 1 : 0, y: show("eyebrow") ? 0 : 12, filter: show("eyebrow") ? "blur(0px)" : "blur(4px)" }} transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }} style={{ display: "inline-flex", alignItems: "center", gap: 6, marginBottom: 13.5, pointerEvents: "none" }}>
                     <span style={{ width: 5.25, height: 5.25, borderRadius: "50%", display: "inline-block", background: "#0088cc", boxShadow: "0 0 8px #0088cc99", animation: "pulseDot 2.2s ease-in-out infinite" }} />
-                    <span style={{ fontSize: 8.25, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--color-primary)", fontFamily: "'Inter',sans-serif", fontWeight: 500 }}>Biotechnology · Diagnostics · Innovation</span>
+                    <span style={{ fontSize: 9.75, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--color-primary)", fontFamily: "'Inter',sans-serif", fontWeight: 500 }}>Biotechnology · Diagnostics · Innovation</span>
                 </motion.div>
-                <motion.h1 initial={{ opacity: 0, y: 16, filter: "blur(10px)" }} animate={{ opacity: show("title") ? 1 : 0, y: show("title") ? 0 : 16, filter: show("title") ? "blur(0px)" : "blur(10px)" }} transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }} style={{ fontSize: "clamp(28.5px, 5vw, 54px)", fontWeight: 800, letterSpacing: "-0.025em", lineHeight: 1.04, margin: "0 0 12px", fontFamily: "'Inter',sans-serif", background: "linear-gradient(135deg,#060e1c 30%,#003a88 68%,#0099cc 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", pointerEvents: "none" }}>Neanic Solutions</motion.h1>
-                <motion.p initial={{ opacity: 0, y: 14, filter: "blur(6px)" }} animate={{ opacity: show("subtitle") ? 1 : 0, y: show("subtitle") ? 0 : 14, filter: show("subtitle") ? "blur(0px)" : "blur(6px)" }} transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1] }} style={{ fontSize: "clamp(10.5px, 1.45vw, 15px)", color: "var(--color-primary)", fontWeight: 600, lineHeight: 1.4, margin: "0 0 10.5px", fontFamily: "'Inter',sans-serif", whiteSpace: "pre-line", pointerEvents: "none" }}>{"Redefining Healthcare Through\nAdvanced Diagnostic Technologies"}</motion.p>
-                <motion.p initial={{ opacity: 0, y: 12, filter: "blur(4px)" }} animate={{ opacity: show("body") ? 1 : 0, y: show("body") ? 0 : 12, filter: show("body") ? "blur(0px)" : "blur(4px)" }} transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }} style={{ fontSize: "clamp(9.75px, 1vw, 11.25px)", color: "rgba(15,45,90,0.6)", lineHeight: 1.8, margin: "0 0 22.5px", fontFamily: "'Inter',sans-serif", maxWidth: 315, pointerEvents: "none" }}>Empowering biotechnology innovation through advanced diagnostic devices, scientific education, and next-generation healthcare solutions.</motion.p>
+                <motion.h1 initial={{ opacity: 0, y: 16, filter: "blur(10px)" }} animate={{ opacity: show("title") ? 1 : 0, y: show("title") ? 0 : 16, filter: show("title") ? "blur(0px)" : "blur(10px)" }} transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }} style={{ fontSize: "clamp(33px, 5.9vw, 64px)", fontWeight: 800, letterSpacing: "-0.025em", lineHeight: 1.04, margin: "0 0 12px", fontFamily: "'Inter',sans-serif", background: "linear-gradient(135deg,#060e1c 30%,#003a88 68%,#0099cc 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", pointerEvents: "none" }}>Neanic Solutions</motion.h1>
+                <motion.p initial={{ opacity: 0, y: 14, filter: "blur(6px)" }} animate={{ opacity: show("subtitle") ? 1 : 0, y: show("subtitle") ? 0 : 14, filter: show("subtitle") ? "blur(0px)" : "blur(6px)" }} transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1] }} style={{ fontSize: "clamp(12.5px, 1.7vw, 18px)", color: "var(--color-primary)", fontWeight: 600, lineHeight: 1.4, margin: "0 0 10.5px", fontFamily: "'Inter',sans-serif", whiteSpace: "pre-line", pointerEvents: "none" }}>{"Redefining Healthcare Through\nAdvanced Diagnostic Technologies"}</motion.p>
+                <motion.p initial={{ opacity: 0, y: 12, filter: "blur(4px)" }} animate={{ opacity: show("body") ? 1 : 0, y: show("body") ? 0 : 12, filter: show("body") ? "blur(0px)" : "blur(4px)" }} transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }} style={{ fontSize: "clamp(11.5px, 1.2vw, 13.5px)", color: "rgba(15,45,90,0.6)", lineHeight: 1.8, margin: "0 0 22.5px", fontFamily: "'Inter',sans-serif", maxWidth: 315, pointerEvents: "none" }}>Empowering biotechnology innovation through advanced diagnostic devices, scientific education, and next-generation healthcare solutions.</motion.p>
 
             </div>
+        </div>
+    );
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Decorative glassy bubbles floating over the hero (right side, over
+// the DNA) — pure CSS, purely decorative, no interaction.
+// ─────────────────────────────────────────────────────────────────
+const BUBBLES = [
+    { left: "63%", top: "8%", size: 78, delay: 0, duration: 9, tint: "168,150,240", label: "Made in India" },
+    { left: "72%", top: "24%", size: 108, delay: 1.2, duration: 11, tint: "150,170,235", label: "Affordable" },
+    { left: "84%", top: "44%", size: 68, delay: 0.6, duration: 8.5, tint: "180,140,235", label: "Accessible" },
+    { left: "94%", top: "6%", size: 32, delay: 2, duration: 7, tint: "120,170,240" },
+    { left: "68%", top: "58%", size: 40, delay: 1.6, duration: 8, tint: "150,180,250" },
+    { left: "80%", top: "72%", size: 82, delay: 0.3, duration: 10, tint: "190,150,230", label: "Portable" },
+    { left: "90%", top: "88%", size: 64, delay: 1, duration: 9.5, tint: "130,165,245", label: "Rapid" },
+    { left: "97%", top: "40%", size: 26, delay: 2.4, duration: 6.5, tint: "160,150,240" },
+    { left: "58%", top: "82%", size: 22, delay: 0.8, duration: 7.5, tint: "140,175,245" },
+    { left: "76%", top: "12%", size: 20, delay: 1.8, duration: 6, tint: "175,155,235" },
+];
+
+function FloatingBubbles({ scrollProgress }) {
+    const groupRef = useRef(null);
+
+    // Fade out as the user scrolls from the intro toward the DNA split —
+    // fully visible near the top, gone well before the split reveals, so
+    // they don't linger into (or clip abruptly at the edge of) the next
+    // section.
+    useEffect(() => {
+        let raf;
+        const tick = () => {
+            const p = scrollProgress?.current ?? 0;
+            const FADE_START = 0.08;
+            const FADE_END = 0.28;
+            const t = (p - FADE_START) / (FADE_END - FADE_START);
+            const opacity = Math.max(0, Math.min(1, 1 - t));
+            if (groupRef.current) groupRef.current.style.opacity = String(opacity);
+            raf = requestAnimationFrame(tick);
+        };
+        raf = requestAnimationFrame(tick);
+        return () => cancelAnimationFrame(raf);
+    }, [scrollProgress]);
+
+    return (
+        <div ref={groupRef} style={{ position: "absolute", inset: 0, zIndex: 1.5, overflow: "hidden", pointerEvents: "none", transition: "opacity 0.15s linear" }}>
+            {BUBBLES.map((b, i) => (
+                <div
+                    key={i}
+                    style={{
+                        position: "absolute",
+                        left: b.left,
+                        top: b.top,
+                        width: b.size,
+                        height: b.size,
+                        animation: `bubbleFloat ${b.duration}s ease-in-out ${b.delay}s infinite`,
+                    }}
+                >
+                    <div
+                        style={{
+                            position: "relative",
+                            width: "100%",
+                            height: "100%",
+                            borderRadius: "50%",
+                            overflow: "hidden",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            // Glassy sphere body: bright upper-left core fading through
+                            // the tint into a deeper, richer rim at the lower-right —
+                            // real glass/soap-bubble shading rather than a flat glow.
+                            background: `radial-gradient(circle at 30% 26%, rgba(255,255,255,0.75) 0%, rgba(${b.tint},0.55) 10%, rgba(${b.tint},0.78) 28%, rgba(${b.tint},0.92) 50%, rgba(${b.tint},1) 75%, rgba(${b.tint},1) 100%)`,
+                            boxShadow: [
+                                `inset 8px 8px 14px rgba(255,255,255,0.4)`, // top-left glass sheen
+                                `inset -12px -14px 22px rgba(${b.tint},1)`, // bottom-right rim depth
+                                `inset 0 0 0 1.5px rgba(${b.tint},0.9)`, // crisp tinted edge
+                                `0 ${Math.max(6, b.size * 0.12)}px ${Math.max(14, b.size * 0.3)}px rgba(${b.tint},0.55)`, // grounded drop shadow
+                            ].join(", "),
+                        }}
+                    >
+                        {/* Glossy specular highlight streak */}
+                        <div style={{
+                            position: "absolute",
+                            top: "12%",
+                            left: "16%",
+                            width: "42%",
+                            height: "26%",
+                            borderRadius: "50%",
+                            background: "rgba(255,255,255,0.85)",
+                            filter: "blur(3px)",
+                            transform: "rotate(-24deg)",
+                        }} />
+                        {/* Small secondary highlight dot */}
+                        <div style={{
+                            position: "absolute",
+                            bottom: "20%",
+                            right: "22%",
+                            width: "10%",
+                            height: "10%",
+                            borderRadius: "50%",
+                            background: "rgba(255,255,255,0.5)",
+                            filter: "blur(1.5px)",
+                        }} />
+                        {b.label && (
+                            <span style={{
+                                position: "relative",
+                                fontSize: Math.max(10, b.size * 0.15),
+                                fontWeight: 800,
+                                fontFamily: "'Inter',sans-serif",
+                                color: "#ffffff",
+                                textAlign: "center",
+                                lineHeight: 1.15,
+                                padding: "0 10%",
+                                letterSpacing: "0.01em",
+                                textShadow: `0 1px 3px rgba(${b.tint},0.9), 0 1px 8px rgba(0,0,0,0.35), 0 0 2px rgba(0,0,0,0.4)`,
+                            }}>
+                                {b.label}
+                            </span>
+                        )}
+                    </div>
+                </div>
+            ))}
         </div>
     );
 }
@@ -751,8 +1036,8 @@ function ScrollHint({ visible }) {
         <AnimatePresence>
             {visible && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: 0.4 } }} transition={{ delay: 1.2, duration: 1 }} style={{ position: "absolute", bottom: 21, left: "50%", transform: "translateX(-50%)", display: "flex", flexDirection: "column", alignItems: "center", gap: 4.5, zIndex: 20, pointerEvents: "none" }}>
-                    <span style={{ fontSize: 7.5, color: "var(--color-text-muted)", letterSpacing: "0.18em", textTransform: "uppercase", fontFamily: "'Inter',sans-serif" }}>scroll to explore</span>
-                    <motion.div animate={{ scaleY: [1, 0.3, 1], opacity: [0.35, 0.85, 0.35] }} transition={{ repeat: Infinity, duration: 1.9, ease: "easeInOut" }} style={{ width: 0.75, height: 27, background: "linear-gradient(to bottom,rgba(0,120,200,0.45),transparent)" }} />
+                    <span style={{ fontSize: 12, fontWeight: 600, color: "var(--color-text-primary)", letterSpacing: "0.18em", textTransform: "uppercase", fontFamily: "'Inter',sans-serif" }}>scroll to explore</span>
+                    <motion.div animate={{ scaleY: [1, 0.3, 1], opacity: [0.35, 0.85, 0.35] }} transition={{ repeat: Infinity, duration: 1.9, ease: "easeInOut" }} style={{ width: 1.5, height: 34, background: "linear-gradient(to bottom,rgba(0,120,200,0.75),transparent)" }} />
                 </motion.div>
             )}
         </AnimatePresence>
@@ -788,8 +1073,8 @@ export function Navbar({ setActiveModal }) {
                         if (modal) {
                             setActiveModal(modal);
                         } else if (id === "edtech") {
-                            const scrollH = document.documentElement.scrollHeight - window.innerHeight;
-                            window.scrollTo({ top: scrollH * 0.385, behavior: "smooth" });
+                            const scrollH = getHeroScrollableHeight(window.innerHeight);
+                            window.scrollTo({ top: scrollYForProgress(0.42, scrollH), behavior: "smooth" });
                         } else {
                             document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
                         }
@@ -824,7 +1109,7 @@ export function Footer({ setActiveModal }) {
                                     if (link === "📧 neanicsolution@gmail.com") {
                                         window.location.href = "mailto:neanicsolution@gmail.com";
                                     } else if (["MedTech", "EdTech"].includes(link)) {
-                                        const scrollH = document.documentElement.scrollHeight - window.innerHeight;
+                                        const scrollH = getHeroScrollableHeight(window.innerHeight);
                                         window.scrollTo({ top: scrollH * 0.385, behavior: "smooth" });
                                     } else if (link === "Innovation Pipeline") {
                                         document.getElementById("pipeline")?.scrollIntoView({ behavior: "smooth" });
@@ -883,7 +1168,9 @@ export default function NeanicHero({ setActiveModal, scrollProgress: propScrollP
     const cardRevealsRef = useRef([0, 0, 0, 0, 0, 0]);
 
     // Called every frame by OrbitalParticleSystem (inside Canvas)
-    // We batch-update React state at ~10fps to avoid flooding reconciler
+    // We batch-update React state at ~60fps to avoid flooding reconciler
+    // while still staying in step with the render loop (was 32ms/~30fps,
+    // which stacked with the card's own animation and felt sluggish).
     const revealFlushTimer = useRef(null);
     const onCardReveal = useCallback((index, value) => {
         cardRevealsRef.current[index] = value;
@@ -891,7 +1178,7 @@ export default function NeanicHero({ setActiveModal, scrollProgress: propScrollP
             revealFlushTimer.current = setTimeout(() => {
                 setCardReveals([...cardRevealsRef.current]);
                 revealFlushTimer.current = null;
-            }, 32); // ~30fps flush
+            }, 16); // ~60fps flush
         }
     }, []);
 
@@ -900,11 +1187,24 @@ export default function NeanicHero({ setActiveModal, scrollProgress: propScrollP
     const medNodeRef = useRef();
     const edNodeRef = useRef();
 
+    // While a domain is focused, the window should stay pinned at the
+    // framing scroll position captured when it was entered — if the user
+    // keeps scrolling (wheel/trackpad) while focused, snap straight back
+    // to that anchor so the focused view never drifts into a cropped state.
+    const focusedAnchorScrollY = useRef(null);
+    const autoScrollLock = useRef(false);
+
     useEffect(() => {
         const onScroll = () => {
-            const scrollH = document.documentElement.scrollHeight - window.innerHeight;
+            if (selectedDomain && focusedAnchorScrollY.current != null && !autoScrollLock.current) {
+                if (Math.abs(window.scrollY - focusedAnchorScrollY.current) > 2) {
+                    window.scrollTo({ top: focusedAnchorScrollY.current, behavior: "auto" });
+                    return;
+                }
+            }
+            const scrollH = getHeroScrollableHeight(window.innerHeight);
             if (scrollH <= 0) return;
-            const p = Math.min(window.scrollY / scrollH, 1);
+            const p = computeScrollProgress(window.scrollY, scrollH);
             scrollProgress.current = p;
             setScrolled(window.scrollY > 20);
             setSplitRevealed(p >= 0.38);
@@ -916,7 +1216,27 @@ export default function NeanicHero({ setActiveModal, scrollProgress: propScrollP
         };
         window.addEventListener("scroll", onScroll, { passive: true });
         return () => window.removeEventListener("scroll", onScroll);
-    }, [scrollProgress]);
+    }, [scrollProgress, selectedDomain]);
+
+    // Entering focus (medtech/edtech) from wherever the user happens to have
+    // scrolled to within the split section — snap to the stable framing
+    // position first so the focused view is never cropped by being mid-scroll,
+    // then lock scroll there for as long as the domain stays focused.
+    const handleSelectDomain = useCallback((domain) => {
+        if (domain) {
+            const scrollH = getHeroScrollableHeight(window.innerHeight);
+            if (scrollH > 0) {
+                const target = scrollYForProgress(0.42, scrollH);
+                focusedAnchorScrollY.current = target;
+                autoScrollLock.current = true;
+                window.scrollTo({ top: target, behavior: "smooth" });
+                setTimeout(() => { autoScrollLock.current = false; }, 700);
+            }
+        } else {
+            focusedAnchorScrollY.current = null;
+        }
+        setSelectedDomain(domain);
+    }, [setSelectedDomain]);
 
     return (
         <>
@@ -926,13 +1246,14 @@ export default function NeanicHero({ setActiveModal, scrollProgress: propScrollP
     html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
     body{background:var(--color-bg-white);overflow-x:hidden;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
         @keyframes pulseDot{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.6);opacity:0.55;}}
+        @keyframes bubbleFloat{0%,100%{transform:translateY(0) translateX(0);}50%{transform:translateY(-22px) translateX(8px);}}
         ::-webkit-scrollbar{width:3px;}
         ::-webkit-scrollbar-track{background:var(--color-bg-white);}
         ::-webkit-scrollbar-thumb{background:#aac8ee;border-radius:2px;}
       `}</style>
 
-            <div id="about" style={{ height: "300vh", background: "transparent" }}>
-                <div style={{ position: "sticky", top: 0, width: "100%", height: "100vh", overflow: "hidden", background: "transparent" }}>
+            <div id="about" style={{ height: "125vh", background: "transparent" }}>
+                <div style={{ position: "sticky", top: 0, width: "100%", height: "100vh", overflow: "hidden", background: "linear-gradient(135deg,#bcd4f5 0%,#cdd8f7 38%,#e2def6 68%,#eef1fb 100%)" }}>
 
                     <div style={{ position: "absolute", inset: 0, zIndex: 2, background: "linear-gradient(to right,rgba(232,242,252,0.97) 0%,rgba(232,242,252,0.72) 32%,rgba(232,242,252,0.1) 52%,transparent 68%)", pointerEvents: "none" }} />
                     <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 97.5, zIndex: 2, background: "linear-gradient(to top,rgba(226,238,250,1),transparent)", pointerEvents: "none" }} />
@@ -950,13 +1271,15 @@ export default function NeanicHero({ setActiveModal, scrollProgress: propScrollP
                         />
                     </Canvas>
 
+                    <FloatingBubbles scrollProgress={scrollProgress} />
+
                     <ScrollRevealContent scrollProgress={scrollProgress} setActiveModal={setActiveModal} />
 
                     {/* DNASplitSection: exposes card DOM refs so particles can target them */}
                     <DNASplitSection
                         scrollProgress={scrollProgress}
                         selectedDomain={selectedDomain}
-                        setSelectedDomain={setSelectedDomain}
+                        setSelectedDomain={handleSelectDomain}
                         cardReveals={cardReveals}
                         onCardRefsReady={handleCardRefsReady}
                         setActiveModal={setActiveModal}

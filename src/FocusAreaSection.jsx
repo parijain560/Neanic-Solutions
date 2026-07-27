@@ -16,6 +16,7 @@ const ANGLE_STEP = (Math.PI * 2) / CARD_COUNT;
 const RADIUS_XY = 1.6;
 const RADIUS_Z = 1.7;
 const ROT_Y_FACTOR = 0.85;
+const FOCUS_CARD_SCALE = 1.18; // baked size for the helically-arranged focus cards
 
 function shortestOffset(i, activeIndex) {
     let diff = i - activeIndex;
@@ -39,7 +40,7 @@ function GlassCard({ index, activeIndex, data, onSelect }) {
         const rotY = -angle * ROT_Y_FACTOR;
 
         const dist = Math.abs(offset);
-        const scale = isActive ? 0.9 : Math.max(0.41, 0.75 - dist * 0.12);
+        const scale = (isActive ? 0.9 : Math.max(0.41, 0.75 - dist * 0.12)) * FOCUS_CARD_SCALE;
         const opacity = isActive ? 1 : Math.max(0.35, 1 - dist * 0.22);
 
         return { x, y, z, rotY, scale, opacity };
