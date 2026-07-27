@@ -331,8 +331,12 @@ function DomainCardGrid({ cards, color, border, glow, show, cardReveals, cardRef
                             />
                         );
                         if (card.label === "Orientation Program") {
+                            // The 167px nudge centers this odd 5th card under
+                            // the desktop 2-column grid — on mobile's single
+                            // column that just shoves it out of alignment
+                            // with every other card, so skip it there.
                             return (
-                                <div key={card.label} style={{ transform: "translate(167px, 0px)" }}>
+                                <div key={card.label} style={{ transform: isMobile ? "none" : "translate(167px, 0px)" }}>
                                     {cardEl}
                                 </div>
                             );
@@ -370,12 +374,20 @@ const MEDTECH_CARDS_OFFSET = { x: -94, y: -248 };
 // and stutter its Framer transition.
 // ─────────────────────────────────────────────────────────────────
 const MedTechHeading = React.memo(function MedTechHeading({ inView, isFocused, isOther, isMobile, onSelect }) {
-    const headingScale = isFocused ? MEDTECH_FOCUSED_HEADING_SCALE : MEDTECH_HEADING_SCALE;
-    const headingBaseX = isFocused ? -363 : -257;
-    const headingBaseY = isFocused ? 58 : -55;
+    // The baked pixel offsets/scale below were tuned against a desktop
+    // screenshot of the DNA-split layout — on a narrow phone viewport that
+    // much negative X offset can push the heading almost entirely off the
+    // left edge. Skip the fine desktop positioning on mobile and let the
+    // column's own flex centering place it instead.
+    const headingScale = isMobile ? 1 : (isFocused ? MEDTECH_FOCUSED_HEADING_SCALE : MEDTECH_HEADING_SCALE);
+    const headingBaseX = isMobile ? 0 : (isFocused ? -363 : -257);
+    const headingBaseY = isMobile ? 0 : (isFocused ? 58 : -55);
     const headingOffset = isFocused ? MEDTECH_FOCUSED_HEADING_OFFSET : MEDTECH_HEADING_OFFSET;
-    const headingX = headingBaseX + headingOffset.x;
-    const headingY = headingBaseY + headingOffset.y;
+    const headingX = isMobile ? 0 : headingBaseX + headingOffset.x;
+    // Only once MedTech is actually entered (focused) on mobile, lift the
+    // heading all the way up to sit right under "Our Training Programs" —
+    // before that (or on desktop) it stays untouched.
+    const headingY = isMobile ? (isFocused ? -220 : 0) : headingBaseY + headingOffset.y;
     const headingTransition = {
         default: { duration: 1.3, ease: APPLE_EASE },
         scale: { duration: 1.3, ease: "easeInOut" },
@@ -465,9 +477,9 @@ function MedTechColumn({ inView, selectedDomain, onSelect, cardReveals, cardRefs
         >
             <MedTechHeading inView={inView} isFocused={isFocused} isOther={isOther} isMobile={isMobile} onSelect={onSelect} />
 
-            <div style={{ marginTop: isFocused ? 24 : 0 }}>
-                <div style={{ transform: "translate(13px, -76px)" }}>
-                    <div style={{ transform: `translate(${MEDTECH_CARDS_OFFSET.x}px, ${MEDTECH_CARDS_OFFSET.y}px) scale(${MEDTECH_CARDS_SCALE})`, transformOrigin: "top left" }}>
+            <div style={{ marginTop: isMobile ? 0 : (isFocused ? 24 : 0), transform: isMobile && isFocused ? "translateY(-200px)" : "none" }}>
+                <div style={{ transform: isMobile ? "none" : "translate(13px, -76px)" }}>
+                    <div style={{ transform: isMobile ? "none" : `translate(${MEDTECH_CARDS_OFFSET.x}px, ${MEDTECH_CARDS_OFFSET.y}px) scale(${MEDTECH_CARDS_SCALE})`, transformOrigin: "top left" }}>
                             <DomainCardGrid
                                 cards={MEDTECH_CARDS}
                                 color="#0066cc"
@@ -499,12 +511,14 @@ const EDTECH_CARDS_OFFSET = { x: -25, y: -135 };
 // and stutter its Framer transition.
 // ─────────────────────────────────────────────────────────────────
 const EdTechHeading = React.memo(function EdTechHeading({ inView, isFocused, isOther, isMobile, onSelect }) {
-    const headingScale = isFocused ? EDTECH_FOCUSED_HEADING_SCALE : EDTECH_HEADING_SCALE;
-    const headingBaseX = isFocused ? 296 : 255;
-    const headingBaseY = isFocused ? 248 : -55;
+    // See matching note in MedTechHeading — skip the desktop-tuned offsets
+    // on mobile so the heading doesn't get pushed off-screen.
+    const headingScale = isMobile ? 1 : (isFocused ? EDTECH_FOCUSED_HEADING_SCALE : EDTECH_HEADING_SCALE);
+    const headingBaseX = isMobile ? 0 : (isFocused ? 296 : 255);
+    const headingBaseY = isMobile ? 0 : (isFocused ? 248 : -55);
     const headingOffset = isFocused ? EDTECH_FOCUSED_HEADING_OFFSET : EDTECH_HEADING_OFFSET;
-    const headingX = headingBaseX + headingOffset.x;
-    const headingY = headingBaseY + headingOffset.y;
+    const headingX = isMobile ? 0 : headingBaseX + headingOffset.x;
+    const headingY = isMobile ? 0 : headingBaseY + headingOffset.y;
     const headingTransition = {
         default: { duration: 1.3, ease: APPLE_EASE },
         scale: { duration: 1.3, ease: "easeInOut" },
@@ -598,8 +612,8 @@ function EdTechColumn({ inView, selectedDomain, onSelect, cardReveals, cardRefs,
             <EdTechHeading inView={inView} isFocused={isFocused} isOther={isOther} isMobile={isMobile} onSelect={onSelect} />
 
             <div style={{ marginTop: isFocused ? 24 : 0 }}>
-                <div style={{ transform: "translate(-31px, -86px)" }}>
-                    <div style={{ transform: `translate(${EDTECH_CARDS_OFFSET.x}px, ${EDTECH_CARDS_OFFSET.y}px) scale(${EDTECH_CARDS_SCALE})`, transformOrigin: "top right" }}>
+                <div style={{ transform: isMobile ? "none" : "translate(-31px, -86px)" }}>
+                    <div style={{ transform: isMobile ? "none" : `translate(${EDTECH_CARDS_OFFSET.x}px, ${EDTECH_CARDS_OFFSET.y}px) scale(${EDTECH_CARDS_SCALE})`, transformOrigin: "top right" }}>
                             <DomainCardGrid
                                 cards={EDTECH_CARDS}
                                 color="#7733cc"
@@ -768,6 +782,7 @@ function PipelineSection() {
     const ref = useRef(null);
     const inView = useInView(ref, { once: false, margin: "-10%" });
     const [activeStage, setActiveStage] = useState(null);
+    const isMobile = useIsMobile();
 
     return (
         <section id="pipeline" ref={ref} style={{ padding: "clamp(48px, 10vw, 90px) 6vw", background: "linear-gradient(to bottom, #dce9fa, #e8f0fa)", position: "relative", zIndex: 1, overflow: "hidden" }}>
@@ -829,7 +844,7 @@ function PipelineSection() {
                                             boxShadow: isActive ? `0 8px 32px ${stage.color}18` : "none",
                                             transition: "transform 0.15s ease, background 0.3s ease, box-shadow 0.3s ease, border 0.3s ease",
                                             marginBottom: 15,
-                                            transform: `scale(${PIPELINE_CARD_SCALE.x}, ${PIPELINE_CARD_SCALE.y})`,
+                                            transform: isMobile ? "none" : `scale(${PIPELINE_CARD_SCALE.x}, ${PIPELINE_CARD_SCALE.y})`,
                                             transformOrigin: isLeft ? "right center" : "left center",
                                         }}
                                     >
@@ -965,6 +980,7 @@ function PartnershipSection({ setActiveModal }) {
     const inView = useInView(ref, { once: false, margin: "-10%" });
     const [active, setActive] = useState(0);
     const activeItem = PARTNER_ITEMS[active];
+    const isMobile = useIsMobile();
 
     return (
         <section id="partnership" ref={ref} style={{ padding: "clamp(48px, 10vw, 90px) 6vw", background: "var(--color-bg-blue-tint)", position: "relative", zIndex: 1, overflow: "hidden" }}>
@@ -987,7 +1003,7 @@ function PartnershipSection({ setActiveModal }) {
                         {PARTNER_ITEMS.map((item, i) => {
                             const isActive = i === active;
                             return (
-                              <div key={item.title} style={{ transform: `scale(${PARTNER_CARD_SCALE.x}, ${PARTNER_CARD_SCALE.y})`, transformOrigin: "top right" }}>
+                              <div key={item.title} style={{ transform: isMobile ? "none" : `scale(${PARTNER_CARD_SCALE.x}, ${PARTNER_CARD_SCALE.y})`, transformOrigin: "top right" }}>
                                 <motion.div
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -1035,7 +1051,7 @@ function PartnershipSection({ setActiveModal }) {
                         })}
                     </div>
 
-                    <div style={{ transform: `scale(${PARTNER_PANEL_SCALE.x}, ${PARTNER_PANEL_SCALE.y})`, transformOrigin: "top left" }}>
+                    <div style={{ transform: isMobile ? "none" : `scale(${PARTNER_PANEL_SCALE.x}, ${PARTNER_PANEL_SCALE.y})`, transformOrigin: "top left" }}>
                     <div style={{
                         position: "relative",
                         borderRadius: 15,
@@ -1188,13 +1204,23 @@ const WHY_MATTERS_HEADING_OFFSET = { x: -12, y: -88 };
 function WhyNeanicMattersSection() {
     const ref = useRef(null);
     const inView = useInView(ref, { once: false, margin: "-15%" });
+    const isMobile = useIsMobile();
+    // The baked scale/offset below were tuned against a desktop screenshot —
+    // applying them on mobile too would overflow/crop the cards and can push
+    // the heading outside the section's (overflow:hidden) bounds. Skip them
+    // on mobile so the section lays out at its natural, unscaled size.
+    const headingX = isMobile ? 0 : WHY_MATTERS_HEADING_OFFSET.x;
+    const headingY = isMobile ? 0 : WHY_MATTERS_HEADING_OFFSET.y;
+    const cardsTransform = isMobile
+        ? "none"
+        : `translate(${WHY_MATTERS_CARDS_OFFSET.x}px, ${WHY_MATTERS_CARDS_OFFSET.y}px) scale(${WHY_MATTERS_CARDS_SCALE})`;
 
     return (
         <section id="why-neanic-matters" ref={ref} style={{ padding: "clamp(48px, 10vw, 90px) 6vw", background: "var(--color-bg-cream)", position: "relative", zIndex: 1, overflow: "hidden" }}>
             <div style={{ maxWidth: 825, margin: "0 auto" }}>
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
-                    animate={inView ? { opacity: 1, x: WHY_MATTERS_HEADING_OFFSET.x, y: WHY_MATTERS_HEADING_OFFSET.y } : {}}
+                    animate={inView ? { opacity: 1, x: headingX, y: headingY } : {}}
                     transition={{ duration: 0.8 }}
                     style={{ textAlign: "center", marginBottom: 48 }}
                 >
@@ -1204,8 +1230,8 @@ function WhyNeanicMattersSection() {
                     </h2>
                 </motion.div>
 
-                <div style={{ transform: `translate(${WHY_MATTERS_CARDS_OFFSET.x}px, ${WHY_MATTERS_CARDS_OFFSET.y}px) scale(${WHY_MATTERS_CARDS_SCALE})`, transformOrigin: "top center" }}>
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 20 }}>
+                <div style={{ transform: cardsTransform, transformOrigin: "top center" }}>
+                    <div style={{ display: "grid", gridTemplateColumns: `repeat(auto-fit, minmax(min(280px, 100%), 1fr))`, gap: 20 }}>
                         {WHY_MATTERS_DATA.map((item, i) => (
                             <motion.div
                                 key={item.label}
@@ -1251,6 +1277,7 @@ const NEWS_CARD_SCALE = { x: 1.24, y: 1.03 };
 function NewsSection() {
     const ref = useRef(null);
     const inView = useInView(ref, { once: false, margin: "-10%" });
+    const isMobile = useIsMobile();
     return (
         <section id="news" ref={ref} style={{ padding: "clamp(48px, 10vw, 90px) 6vw", background: "var(--color-bg-blue-tint)", position: "relative", zIndex: 1 }}>
             <div style={{ maxWidth: 825, margin: "0 auto" }}>
@@ -1260,11 +1287,15 @@ function NewsSection() {
                         Latest Milestones
                     </h2>
                 </motion.div>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 18 }}>
+                <div style={{ display: "grid", gridTemplateColumns: `repeat(auto-fit, minmax(min(300px, 100%), 1fr))`, gap: 18 }}>
                     {NEWS_ITEMS.map((item, i) => {
                         const isLeft = i % 2 === 0;
+                        // The baked non-uniform scale was tuned for desktop's
+                        // 2-column layout — on a single mobile column it would
+                        // overflow the viewport width, so skip it there.
+                        const cardScaleTransform = isMobile ? "none" : `scale(${NEWS_CARD_SCALE.x}, ${NEWS_CARD_SCALE.y})`;
                         return (
-                        <div key={item.title} style={{ transform: `scale(${NEWS_CARD_SCALE.x}, ${NEWS_CARD_SCALE.y})`, transformOrigin: isLeft ? "right center" : "left center", height: "100%" }}>
+                        <div key={item.title} style={{ transform: cardScaleTransform, transformOrigin: isLeft ? "right center" : "left center", height: "100%" }}>
                             <motion.div
                                 initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: i * 0.12 }}
                                 style={{ height: "100%", display: "flex", flexDirection: "column", padding: "21px 21px", background: "var(--color-bg-white)", borderRadius: 10.5, border: "1px solid rgba(0,80,160,0.08)", cursor: "default", transition: "all 0.25s ease" }}
@@ -1406,20 +1437,29 @@ const SUPPORTED_BY_TRACK_OFFSET = { x: 9, y: 21 };
 
 function SupportedBySection() {
     const track = [...SUPPORTERS, ...SUPPORTERS, ...SUPPORTERS];
+    const isMobile = useIsMobile();
+    // These offsets/scales were baked from a desktop screenshot (the content
+    // offset alone shifts things 572px sideways) — applying them on mobile
+    // would push the whole row off-screen. Fall back to the natural,
+    // unscaled layout on small viewports.
+    const headingTransform = isMobile ? "none" : `translate(${SUPPORTED_BY_HEADING_OFFSET.x}px, ${SUPPORTED_BY_HEADING_OFFSET.y}px) scale(${SUPPORTED_BY_HEADING_SCALE})`;
+    const dividerTransform = isMobile ? "none" : `translate(${SUPPORTED_BY_DIVIDER_OFFSET.x}px, ${SUPPORTED_BY_DIVIDER_OFFSET.y}px)`;
+    const contentTransform = isMobile ? "none" : `translate(${SUPPORTED_BY_CONTENT_OFFSET.x}px, ${SUPPORTED_BY_CONTENT_OFFSET.y}px) scale(${SUPPORTED_BY_CONTENT_SCALE})`;
+    const trackTransform = isMobile ? "none" : `translate(${SUPPORTED_BY_TRACK_OFFSET.x}px, ${SUPPORTED_BY_TRACK_OFFSET.y}px)`;
 
     return (
         <section style={{ padding: "clamp(150px, 18vw, 190px) 6vw clamp(42px, 7vw, 66px)", background: "var(--color-bg-blue-tint)", textAlign: "center", overflow: "hidden" }}>
-            <div style={{ transform: `translate(${SUPPORTED_BY_HEADING_OFFSET.x}px, ${SUPPORTED_BY_HEADING_OFFSET.y}px) scale(${SUPPORTED_BY_HEADING_SCALE})`, transformOrigin: "top center" }}>
+            <div style={{ transform: headingTransform, transformOrigin: "top center" }}>
                 <h2 style={{ fontSize: "clamp(19px, 3vw, 27px)", fontWeight: 800, color: "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", margin: 0 }}>
                     Supported by
                 </h2>
-                <div style={{ width: 42, height: 3, borderRadius: 2, background: "rgba(15,45,90,0.2)", margin: "13px auto 0", transform: `translate(${SUPPORTED_BY_DIVIDER_OFFSET.x}px, ${SUPPORTED_BY_DIVIDER_OFFSET.y}px)` }} />
+                <div style={{ width: 42, height: 3, borderRadius: 2, background: "rgba(15,45,90,0.2)", margin: "13px auto 0", transform: dividerTransform }} />
             </div>
 
             <div style={{ height: 20 }} />
 
-            <div style={{ transform: `translate(${SUPPORTED_BY_CONTENT_OFFSET.x}px, ${SUPPORTED_BY_CONTENT_OFFSET.y}px) scale(${SUPPORTED_BY_CONTENT_SCALE})`, transformOrigin: "top center" }}>
-                <div className="supported-by-track-wrap" style={{ position: "relative", overflow: "hidden", transform: `translate(${SUPPORTED_BY_TRACK_OFFSET.x}px, ${SUPPORTED_BY_TRACK_OFFSET.y}px)` }}>
+            <div style={{ transform: contentTransform, transformOrigin: "top center" }}>
+                <div className="supported-by-track-wrap" style={{ position: "relative", overflow: "hidden", transform: trackTransform }}>
                     <div className="supported-by-fade supported-by-fade-l" style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 60, background: "linear-gradient(90deg,#EDF6FA,rgba(237,246,250,0))", zIndex: 2, pointerEvents: "none" }} />
                     <div className="supported-by-fade supported-by-fade-r" style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: 60, background: "linear-gradient(270deg,#EDF6FA,rgba(237,246,250,0))", zIndex: 2, pointerEvents: "none" }} />
                     <div className="supported-by-track" style={{ display: "flex", alignItems: "center", gap: 90, width: "max-content" }}>
@@ -1567,7 +1607,7 @@ function SyncHerOvuWiseSection() {
                 >
                     <div style={{
                         position: "relative", display: "flex", justifyContent: "center", alignItems: "center", width: "100%", flex: 1,
-                        transform: `translate(${SYNCHER_IMAGE_OFFSET.x}px, ${SYNCHER_IMAGE_OFFSET.y}px) scale(${SYNCHER_IMAGE_SCALE})`, transformOrigin: "center",
+                        transform: isMobile ? "none" : `translate(${SYNCHER_IMAGE_OFFSET.x}px, ${SYNCHER_IMAGE_OFFSET.y}px) scale(${SYNCHER_IMAGE_SCALE})`, transformOrigin: "center",
                     }}>
                         <div className="syncher-glow" style={{
                             position: "absolute", width: "78%", height: "78%", borderRadius: "50%",

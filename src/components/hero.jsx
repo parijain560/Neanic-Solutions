@@ -1197,7 +1197,17 @@ export default function NeanicHero({ setActiveModal, scrollProgress: propScrollP
     useEffect(() => {
         const onScroll = () => {
             if (selectedDomain && focusedAnchorScrollY.current != null && !autoScrollLock.current) {
-                if (Math.abs(window.scrollY - focusedAnchorScrollY.current) > 2) {
+                const isMobileNow = window.innerWidth <= 768;
+                if (isMobileNow) {
+                    // On mobile, only correct if the user drifts DOWN past the
+                    // anchor — scrolling UP is left free so the exit button
+                    // (which can sit above the anchor's framing once focused)
+                    // stays reachable instead of being snapped away from.
+                    if (window.scrollY > focusedAnchorScrollY.current + 2) {
+                        window.scrollTo({ top: focusedAnchorScrollY.current, behavior: "auto" });
+                        return;
+                    }
+                } else if (Math.abs(window.scrollY - focusedAnchorScrollY.current) > 2) {
                     window.scrollTo({ top: focusedAnchorScrollY.current, behavior: "auto" });
                     return;
                 }
