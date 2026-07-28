@@ -214,14 +214,14 @@ export const EDTECH_CARDS = [
 // ─────────────────────────────────────────────────────────────────
 function DomainCard({ card, color, border, glow, cardReveal, cardRef, onCardClick, showContentInline }) {
     const isMobile = useIsMobile();
-    const cardPadding = isMobile ? "10px 16px" : "13px 22px";
+    const cardPadding = isMobile ? "14px 18px" : "13px 22px";
     return (
         <div
             ref={cardRef}
             style={{
                 position: "relative",
-                width: isMobile ? "min(100%, 340px)" : 355,
-                minHeight: isMobile ? 78 : 78,
+                width: isMobile ? "min(100%, 380px)" : 355,
+                minHeight: isMobile ? 92 : 78,
             }}
         >
             {/* Invisible spacer that mirrors the real card content below —
@@ -229,16 +229,16 @@ function DomainCard({ card, color, border, glow, cardReveal, cardRef, onCardClic
                 revealed card needs (no more, no less), instead of a fixed
                 height that leaves blank space under shorter cards. */}
             <div aria-hidden="true" style={{ visibility: "hidden", padding: cardPadding, fontFamily: "'Inter', sans-serif" }}>
-                <p style={{ fontSize: isMobile ? 12 : 13.5, fontWeight: 700, letterSpacing: "0.02em", marginBottom: isMobile ? 4 : 6, lineHeight: 1.3, overflowWrap: "break-word", wordBreak: "break-word" }}>
+                <p style={{ fontSize: isMobile ? 14 : 13.5, fontWeight: 700, letterSpacing: "0.02em", marginBottom: isMobile ? 5 : 6, lineHeight: 1.3, overflowWrap: "break-word", wordBreak: "break-word" }}>
                     {card.label}
                 </p>
                 {card.detail && (
-                    <p style={{ fontSize: isMobile ? 9.5 : 10.5, fontWeight: 400, lineHeight: isMobile ? 1.4 : 1.6, margin: 0, marginBottom: showContentInline && card.content ? (isMobile ? 8 : 16) : 0, overflowWrap: "break-word", wordBreak: "break-word" }}>
+                    <p style={{ fontSize: isMobile ? 11.5 : 10.5, fontWeight: 400, lineHeight: isMobile ? 1.45 : 1.6, margin: 0, marginBottom: showContentInline && card.content ? (isMobile ? 9 : 16) : 0, overflowWrap: "break-word", wordBreak: "break-word" }}>
                         {card.detail}
                     </p>
                 )}
                 {showContentInline && card.content && (
-                    <div style={{ marginTop: 0, transform: isMobile ? "scale(0.9)" : "none", transformOrigin: "top left" }}>
+                    <div style={{ marginTop: 0, transform: isMobile ? "scale(0.98)" : "none", transformOrigin: "top left" }}>
                         {card.content}
                     </div>
                 )}
@@ -256,7 +256,7 @@ function DomainCard({ card, color, border, glow, cardReveal, cardRef, onCardClic
                 style={{
                     position: "absolute",
                     inset: 0,
-                    padding: isMobile ? "10px 16px" : "13px 22px",
+                    padding: isMobile ? "14px 18px" : "13px 22px",
                     borderRadius: 12,
                     background: "var(--color-bg-white)",
                     border: `1px solid ${border}`,
@@ -275,16 +275,16 @@ function DomainCard({ card, color, border, glow, cardReveal, cardRef, onCardClic
                 whileHover={onCardClick ? { y: -4, boxShadow: `0 12px 30px ${border}` } : {}}
             >
 
-                <p style={{ fontSize: isMobile ? 12 : 13.5, fontWeight: 700, color, letterSpacing: "0.02em", marginBottom: isMobile ? 4 : 6, lineHeight: 1.3, overflowWrap: "break-word", wordBreak: "break-word" }}>
+                <p style={{ fontSize: isMobile ? 14 : 13.5, fontWeight: 700, color, letterSpacing: "0.02em", marginBottom: isMobile ? 5 : 6, lineHeight: 1.3, overflowWrap: "break-word", wordBreak: "break-word" }}>
                     {card.label}
                 </p>
                 {card.detail && (
-                    <p style={{ fontSize: isMobile ? 9.5 : 10.5, fontWeight: 400, color: "rgba(15,45,90,0.6)", lineHeight: isMobile ? 1.4 : 1.6, margin: 0, marginBottom: showContentInline && card.content ? (isMobile ? 8 : 16) : 0, overflowWrap: "break-word", wordBreak: "break-word" }}>
+                    <p style={{ fontSize: isMobile ? 11.5 : 10.5, fontWeight: 400, color: "rgba(15,45,90,0.6)", lineHeight: isMobile ? 1.45 : 1.6, margin: 0, marginBottom: showContentInline && card.content ? (isMobile ? 9 : 16) : 0, overflowWrap: "break-word", wordBreak: "break-word" }}>
                         {card.detail}
                     </p>
                 )}
                 {showContentInline && card.content && (
-                    <div style={{ marginTop: 0, transform: isMobile ? "scale(0.9)" : "none", transformOrigin: "top left" }}>
+                    <div style={{ marginTop: 0, transform: isMobile ? "scale(0.98)" : "none", transformOrigin: "top left" }}>
                         {card.content}
                     </div>
                 )}
@@ -518,7 +518,7 @@ const EdTechHeading = React.memo(function EdTechHeading({ inView, isFocused, isO
     const headingBaseY = isMobile ? 0 : (isFocused ? 248 : -55);
     const headingOffset = isFocused ? EDTECH_FOCUSED_HEADING_OFFSET : EDTECH_HEADING_OFFSET;
     const headingX = isMobile ? 0 : headingBaseX + headingOffset.x;
-    const headingY = isMobile ? 0 : headingBaseY + headingOffset.y;
+    const headingY = isMobile ? (isFocused ? 110 : 0) : headingBaseY + headingOffset.y;
     const headingTransition = {
         default: { duration: 1.3, ease: APPLE_EASE },
         scale: { duration: 1.3, ease: "easeInOut" },
@@ -611,7 +611,7 @@ function EdTechColumn({ inView, selectedDomain, onSelect, cardReveals, cardRefs,
         >
             <EdTechHeading inView={inView} isFocused={isFocused} isOther={isOther} isMobile={isMobile} onSelect={onSelect} />
 
-            <div style={{ marginTop: isFocused ? 24 : 0 }}>
+            <div style={{ marginTop: isFocused ? 24 : 0, transform: isMobile && isFocused ? "translateY(90px)" : "none" }}>
                 <div style={{ transform: isMobile ? "none" : "translate(-31px, -86px)" }}>
                     <div style={{ transform: isMobile ? "none" : `translate(${EDTECH_CARDS_OFFSET.x}px, ${EDTECH_CARDS_OFFSET.y}px) scale(${EDTECH_CARDS_SCALE})`, transformOrigin: "top right" }}>
                             <DomainCardGrid
