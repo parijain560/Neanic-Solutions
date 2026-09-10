@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  html { scroll-behavior: smooth; }
+  body { margin: 0; font-family: sans-serif; }
+  #about { height: calc(100vh + 40px); background: transparent; }
+  #sticky { position: sticky; top: 0; width: 100%; height: 100vh; overflow: hidden;
+    background: linear-gradient(135deg,#bcd4f5 0%,#cdd8f7 38%,#e2def6 68%,#eef1fb 100%); }
+  #content { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 40px; font-weight: 800; color: #003399; transition: opacity 0.15s linear; }
+  #next { min-height: 100vh; background: #ffe3e3; display: flex; align-items: center; justify-content: center;
+    font-size: 40px; font-weight: 800; color: #aa0000; }
+  #readout { position: fixed; top: 8px; left: 8px; background: rgba(0,0,0,0.75); color: #0f0; font: 12px monospace;
+    padding: 8px; z-index: 999; white-space: pre; }
+</style>
+</head>
+<body>
+<div id="readout">loading...</div>
+<div id="about">
+  <div id="sticky">
+    <div id="content">HOMEPAGE CONTENT</div>
+  </div>
+</div>
+<div id="next">EXPLORE OUR PROGRAMS</div>
+<script>
+  const INITIAL_PROGRESS = 0.18;
+  const REVEAL_PROGRESS = 0.36;
+  const PRE_REVEAL_SCROLL_FRACTION = 0.6;
+  function getHeroScrollableHeight(viewportHeight) {
+    const aboutEl = document.getElementById("about");
+    if (aboutEl) return Math.max(aboutEl.offsetHeight - viewportHeight, 1);
+    return Math.max(document.documentElement.scrollHeight - viewportHeight, 1);
+  }
+  function computeScrollProgress(scrollY, scrollH) {
+    if (scrollH <= 0 || scrollY <= 0) return INITIAL_PROGRESS;
+    const breakPx = scrollH * PRE_REVEAL_SCROLL_FRACTION;
+    if (scrollY < breakPx) {
+      const t = scrollY / breakPx;
+      return INITIAL_PROGRESS + t * (REVEAL_PROGRESS - INITIAL_PROGRESS);
+    }
+    const t2 = Math.min(1, (scrollY - breakPx) / (scrollH - breakPx));
+    return Math.min(1, REVEAL_PROGRESS + t2 * (1 - REVEAL_PROGRESS));
+  }
+  const content = document.getElementById("content");
+  const readout = document.getElementById("readout");
+  function tick() {
+    const scrollH = getHeroScrollableHeight(window.innerHeight);
+    const p = computeScrollProgress(window.scrollY, scrollH);
+    const FADE_START = 0.185, FADE_END = 0.25;
+    const t = (p - FADE_START) / (FADE_END - FADE_START);
+    const opacity = Math.max(0, Math.min(1, 1 - t));
+    content.style.opacity = String(opacity);
+    readout.textContent = "scrollY=" + Math.round(window.scrollY) + "px\nscrollH=" + Math.round(scrollH) + "px\nprogress=" + p.toFixed(3) + "\nopacity=" + opacity.toFixed(2);
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+</script>
+</body>
+</html>

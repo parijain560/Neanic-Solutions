@@ -4,16 +4,18 @@ import { NeanicSections } from "./NeanicSections";
 import "./components/Modal.css";
 // FormspreeProvider removed per instructions to use Fetch API
 // ─────────────────────────────────────────────────────────────────
-// SCROLL-PROGRESS DENOMINATOR — the DNA hero's own local scrollable
-// range (its pinned region minus one viewport), NOT the whole page.
-// Using the whole document here would dilute scroll progress across
-// every section below the hero, making the DNA take far more
-// scrolling to reach its split/zoom-out state than it should.
+// SCROLL-PROGRESS DENOMINATOR — must match the copy in hero.jsx. #about
+// is a plain (non-sticky) spacer now — the hero itself is a
+// position:fixed overlay with no document-flow height of its own, so
+// #about's height directly IS the scroll distance the hero-to-
+// ProgramsShowcase handoff takes (no more subtracting a viewport's
+// worth off it, since there's no pinned viewport-filling child left
+// to subtract for).
 // ─────────────────────────────────────────────────────────────────
 function getHeroScrollableHeight(viewportHeight) {
   if (typeof document === "undefined") return 0;
   const aboutEl = document.getElementById("about");
-  if (aboutEl) return Math.max(aboutEl.offsetHeight - viewportHeight, 1);
+  if (aboutEl) return Math.max(aboutEl.offsetHeight, 1);
   return Math.max(document.documentElement.scrollHeight - viewportHeight, 1);
 }
 
@@ -82,10 +84,9 @@ function Navbar({ showStickyNav, setActiveModal, selectedDomain }) {
         <ul className="nav-links">
           <li><a href="#why-neanic-matters">About</a></li>
           <li><a href="#pipeline">Research</a></li>
-          <li><a href="#edtech" onClick={(e) => {
+          <li><a href="#programs-showcase" onClick={(e) => {
             e.preventDefault();
-            const scrollH = getHeroScrollableHeight(window.innerHeight);
-            window.scrollTo({ top: scrollYForProgress(0.42, scrollH), behavior: "smooth" });
+            document.getElementById("programs-showcase")?.scrollIntoView({ behavior: "smooth" });
           }}>Education</a></li>
           <li><a href="#news">Milestones</a></li>
           <li><a href="#contact" onClick={(e) => { e.preventDefault(); setActiveModal('contact'); }}>Contact</a></li>

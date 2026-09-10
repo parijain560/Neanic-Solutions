@@ -3,19 +3,17 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import gsap from "gsap";
 import { motion, AnimatePresence } from "framer-motion";
+import { DNASplitSection } from "../NeanicSections";
 
 // ─────────────────────────────────────────────────────────────────
-// SCROLL-PROGRESS DENOMINATOR — see matching helper in App.jsx. #about
-// is now a plain (non-sticky) spacer whose own height IS the scroll
-// distance the hero fade/handoff happens over — the hero itself is a
-// position:fixed overlay that reserves no document-flow height of its
-// own, so we no longer subtract a viewport's worth off #about's height
-// (there's no pinned viewport-filling child to subtract for anymore).
+// SCROLL-PROGRESS DENOMINATOR — see matching helper in App.jsx. Uses
+// the hero's own local scrollable range (#about), not the whole page,
+// so the DNA reaches its split/zoom-out state in far less scrolling.
 // ─────────────────────────────────────────────────────────────────
 function getHeroScrollableHeight(viewportHeight) {
     if (typeof document === "undefined") return 0;
     const aboutEl = document.getElementById("about");
-    if (aboutEl) return Math.max(aboutEl.offsetHeight, 1);
+    if (aboutEl) return Math.max(aboutEl.offsetHeight - viewportHeight, 1);
     return Math.max(document.documentElement.scrollHeight - viewportHeight, 1);
 }
 
@@ -538,12 +536,16 @@ export function DNAScene({
     useFrame((state, delta) => {
         const t = state.clock.getElapsedTime();
         const scroll = scrollProgress.current ?? 0;
-        // The DNA no longer forks into two strands or shrinks/repositions on
-        // scroll — it holds its homepage pose and simply fades out instead
-        // (see DNAFade, which wraps the Canvas in hero.jsx).
-        const splitFactor = 0;
-        const targetX = 3.2, targetY = 0.0;
-        let baseScale = 1.0;
+        const splitFactor = THREE.MathUtils.smoothstep(scroll, 0.30, 0.36);
+
+        let targetX = 3.2, targetY = 0.0, baseScale = 1.0;
+        if (scroll < 0.22) { targetX = 3.2; targetY = 0.0; baseScale = 1.0; }
+        else if (scroll < 0.30) { const b = (scroll - 0.22) / 0.08; targetX = THREE.MathUtils.lerp(3.2, 0.0, b); targetY = THREE.MathUtils.lerp(0.0, 0.5, b); baseScale = THREE.MathUtils.lerp(1.0, 0.35, b); }
+        // After the split completes, hold the DNA steady here — it should
+        // not keep drifting upward/shrinking on its own as the user keeps
+        // scrolling. It only moves again if something else (e.g. the
+        // focused-domain freeze below) explicitly repositions it.
+        else { targetX = 0.0; targetY = 0.5; baseScale = 0.35; }
 
         const focusAbs = Math.abs(focus.current);
         baseScale *= 1 - 0.12 * focusAbs;
@@ -782,7 +784,7 @@ export function DNAScene({
 // ─────────────────────────────────────────────────────────────────
 // CAMERA RIG
 // ─────────────────────────────────────────────────────────────────
-export function CameraRig({ selectedDomain }) {
+export function CameraRig({ scrollProgress, selectedDomain }) {
     const { camera, size } = useThree();
     const curr = useRef({ x: 0, y: 0, z: 11 });
     const mouse = useRef({ x: 0, y: 0 });
@@ -812,24 +814,29 @@ export function CameraRig({ selectedDomain }) {
     }, [size, camera]);
 
     useFrame((_, delta) => {
+        const scroll = scrollProgress.current ?? 0;
         const isMobile = size.width <= 768;
         
         // Base distance pushed back on mobile to fit the height of the helix
         const baseTz = isMobile ? 14.5 : 10.5; 
         
-        // The DNA no longer zooms in/recenters as the user scrolls — it holds
-        // its homepage framing and simply fades out instead (see DNAFade).
         let tz = baseTz;
+        if (scroll < 0.22) tz = baseTz - scroll * 2;
+        // Hold the camera distance steady after the split — no further
+        // zoom-out from continued scrolling alone.
+        else tz = baseTz - 0.6;
         tz -= Math.abs(focus.current) * 1.2;
 
+        const centerFactor = THREE.MathUtils.smoothstep(scroll, 0.22, 0.30);
+        
         // On desktop, DNA starts right-aligned (tx=1.5). On mobile, we keep it centered or slightly shifted.
         const startTx = isMobile ? 0.0 : 1.5;
-        const tx = startTx + mouse.current.x * (isMobile ? 0.5 : 1.0) + focus.current * 0.6;
+        const tx = THREE.MathUtils.lerp(startTx, 0.0, centerFactor) + mouse.current.x * (isMobile ? 0.5 : 1.0) + focus.current * 0.6;
         const ty = -mouse.current.y * 0.7;
         
         // LookAt target
         const startLookX = isMobile ? 0.0 : 2.5;
-        const lookX = startLookX + focus.current * 0.8;
+        const lookX = THREE.MathUtils.lerp(startLookX, 0.0, centerFactor) + focus.current * 0.8;
 
         const lerp = 1 - Math.pow(0.000001, delta);
         curr.current.x += (tx - curr.current.x) * lerp;
@@ -856,26 +863,14 @@ const CONTENT_BLOCKS = [
 function ScrollRevealContent({ scrollProgress, setActiveModal }) {
     const [visible, setVisible] = useState([]);
     const [opacity, setOpacity] = useState(1);
-    // Separate from `opacity`: this is the SAME class of bug that was just
-    // fixed on the outer hero overlay (heroOverlayRef) above — this block
-    // has its own independent fade loop, and was gating pointer-events on
-    // `opacity > 0.1`, i.e. requiring the fade to be ~90% done before
-    // letting clicks through. Verified live: this wrapper (the logo/title
-    // block) physically overlaps the Programs Showcase cards during the
-    // crossfade and was the actual element intercepting taps meant for
-    // MedTech/EdTech, even after the outer overlay fix — because this is a
-    // *different* div with its *own* pointer-events logic, not covered by
-    // that fix. Same remedy: cut interactivity on raw scroll progress, with
-    // a wide margin, instead of on near-total local fade.
-    const [interactive, setInteractive] = useState(true);
     const rafRef = useRef();
     useEffect(() => {
         const tick = () => {
             const s = scrollProgress.current ?? 0;
             setVisible(CONTENT_BLOCKS.filter(b => s >= b.threshold).map(b => b.type));
             if (s < 0.185) setOpacity(1);
-            else setOpacity(Math.max(0, 1 - (s - 0.185) / (1 - 0.185)));
-            setInteractive(s < 0.55);
+            else if (s < 0.25) setOpacity(1 - (s - 0.185) / 0.065);
+            else setOpacity(0);
             rafRef.current = requestAnimationFrame(tick);
         };
         rafRef.current = requestAnimationFrame(tick);
@@ -884,7 +879,7 @@ function ScrollRevealContent({ scrollProgress, setActiveModal }) {
     const show = t => visible.includes(t);
 
     return (
-        <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", zIndex: 20, padding: "0 6vw", pointerEvents: interactive ? "auto" : "none", opacity, transition: "opacity 0.2s ease" }}>
+        <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", zIndex: 20, padding: "0 6vw", pointerEvents: opacity > 0.1 ? "auto" : "none", opacity, transition: "opacity 0.2s ease" }}>
             <div style={{ maxWidth: 390 }}>
                 <motion.img
                     src="/LOGO.png"
@@ -944,7 +939,7 @@ function FloatingBubbles({ scrollProgress }) {
         const tick = () => {
             const p = scrollProgress?.current ?? 0;
             const FADE_START = 0.08;
-            const FADE_END = 1.0;
+            const FADE_END = 0.28;
             const t = (p - FADE_START) / (FADE_END - FADE_START);
             const opacity = Math.max(0, Math.min(1, 1 - t));
             if (groupRef.current) groupRef.current.style.opacity = String(opacity);
@@ -1036,36 +1031,6 @@ function FloatingBubbles({ scrollProgress }) {
     );
 }
 
-// ─────────────────────────────────────────────────────────────────
-// DNA FADE WRAPPER — the DNA scene holds its homepage framing (see
-// CameraRig/DNAScene above) and simply dissolves out over the same
-// scroll range the homepage headline text fades on (CONTENT_BLOCKS
-// in ScrollRevealContent), so the two recede together instead of the
-// DNA zooming/splitting away on its own.
-// ─────────────────────────────────────────────────────────────────
-function DNAFade({ scrollProgress, children }) {
-    const wrapRef = useRef(null);
-    useEffect(() => {
-        let raf;
-        const tick = () => {
-            const p = scrollProgress?.current ?? 0;
-            const FADE_START = 0.185;
-            const FADE_END = 1.0;
-            const t = (p - FADE_START) / (FADE_END - FADE_START);
-            const opacity = Math.max(0, Math.min(1, 1 - t));
-            if (wrapRef.current) wrapRef.current.style.opacity = String(opacity);
-            raf = requestAnimationFrame(tick);
-        };
-        raf = requestAnimationFrame(tick);
-        return () => cancelAnimationFrame(raf);
-    }, [scrollProgress]);
-    return (
-        <div ref={wrapRef} style={{ position: "absolute", inset: 0, zIndex: 1, transition: "opacity 0.15s linear" }}>
-            {children}
-        </div>
-    );
-}
-
 function ScrollHint({ visible }) {
     return (
         <AnimatePresence>
@@ -1144,11 +1109,8 @@ export function Footer({ setActiveModal }) {
                                     if (link === "📧 neanicsolution@gmail.com") {
                                         window.location.href = "mailto:neanicsolution@gmail.com";
                                     } else if (["MedTech", "EdTech"].includes(link)) {
-                                        // MedTech/EdTech content now lives in ProgramsShowcase
-                                        // (DNASplitSection was removed) — jump straight to it
-                                        // instead of an old scrollH-fraction offset that no
-                                        // longer corresponds to any visible state.
-                                        document.getElementById("programs-showcase")?.scrollIntoView({ behavior: "smooth" });
+                                        const scrollH = getHeroScrollableHeight(window.innerHeight);
+                                        window.scrollTo({ top: scrollH * 0.385, behavior: "smooth" });
                                     } else if (link === "Innovation Pipeline") {
                                         document.getElementById("pipeline")?.scrollIntoView({ behavior: "smooth" });
                                     } else if (link === "Partnership Opportunities") {
@@ -1184,26 +1146,25 @@ export function Footer({ setActiveModal }) {
 
 // ─────────────────────────────────────────────────────────────────
 // ROOT HERO COMPONENT
-// Owns: cardDOMRefs / onCardReveal, threaded into the Canvas for
-// OrbitalParticleSystem — dormant now that nothing can focus a domain
-// (that used to happen via the removed DNASplitSection's column clicks).
+// Owns:  cardDOMRefs (from DNASplitSection DOM)
+//        cardReveals state (fed by OrbitalParticleSystem via onCardReveal)
+// Both threaded down into Canvas AND into DNASplitSection.
 // ─────────────────────────────────────────────────────────────────
-export default function NeanicHero({ setActiveModal, scrollProgress: propScrollProgress, selectedDomain }) {
+export default function NeanicHero({ setActiveModal, scrollProgress: propScrollProgress, selectedDomain, setSelectedDomain }) {
     const localScrollProgress = useRef(0);
     const scrollProgress = propScrollProgress || localScrollProgress;
     const [stage, setStage] = useState(0);
     const [scrolled, setScrolled] = useState(false);
     const [splitRevealed, setSplitRevealed] = useState(false);
 
-    // Card DOM refs — previously populated by DNASplitSection once it
-    // mounted; that section is no longer rendered, so this now permanently
-    // stays [null,null,null,null], which OrbitalParticleSystem already
-    // handles gracefully (it only targets cards while a domain is focused,
-    // which can no longer happen either — see below).
+    // Card DOM refs — populated by DNASplitSection once it mounts
     const cardDOMRefs = useRef([null, null, null, null]);
+    const handleCardRefsReady = useCallback((refs) => {
+        cardDOMRefs.current = refs.current;
+    }, []);
 
     // Per-card reveal values 0→1 driven by particle arrival
-    const [, setCardReveals] = useState([0, 0, 0, 0, 0, 0]);
+    const [cardReveals, setCardReveals] = useState([0, 0, 0, 0, 0, 0]);
     const cardRevealsRef = useRef([0, 0, 0, 0, 0, 0]);
 
     // Called every frame by OrbitalParticleSystem (inside Canvas)
@@ -1267,57 +1228,25 @@ export default function NeanicHero({ setActiveModal, scrollProgress: propScrollP
         return () => window.removeEventListener("scroll", onScroll);
     }, [scrollProgress, selectedDomain]);
 
-    // ─────────────────────────────────────────────────────────────
-    // HERO OVERLAY FADE — the hero is a position:fixed layer stacked
-    // above ProgramsShowcase (which now starts right after the #about
-    // spacer in document flow, at zero extra offset). As the user
-    // scrolls through #about's spacer height, this overlay's own
-    // opacity fades 1→0 in lockstep with scrollProgress, so
-    // ProgramsShowcase is simultaneously scrolling into view
-    // underneath while the hero dissolves — a single continuous
-    // motion instead of "fade fully, then reveal". Applied via direct
-    // style mutation (not React state) to stay smooth at scroll speed.
-    // Once fully faded, pointer-events are dropped so clicks reach
-    // ProgramsShowcase underneath.
-    // ─────────────────────────────────────────────────────────────
-    const heroOverlayRef = useRef(null);
-    useEffect(() => {
-        let raf;
-        const tick = () => {
-            const p = scrollProgress.current ?? 0;
-            const FADE_START = 0.185;
-            const FADE_END = 1.0;
-            const t = (p - FADE_START) / (FADE_END - FADE_START);
-            const opacity = Math.max(0, Math.min(1, 1 - t));
-            if (heroOverlayRef.current) {
-                heroOverlayRef.current.style.opacity = String(opacity);
-                // Pointer-events must drop long before the overlay is fully
-                // (visually) faded out. This is a full-viewport, fixed,
-                // z-index:50 layer — and the next section's content scrolls
-                // into view in lockstep with this same scroll progress, not
-                // after it. Gating interactivity on opacity<0.02 (near-total
-                // fade, i.e. p very close to FADE_END=1.0) left a wide scroll
-                // range — verified live: still ~85% through this range, with
-                // the section below already fully on screen — where this div
-                // was still opacity~0.15 AND still pointer-events:auto,
-                // silently swallowing every click meant for what's under it
-                // (MedTech/EdTech cards, and the "Back to Programs" button
-                // once a card is open). Cut pointer-events on the raw scroll
-                // progress instead, with a wide safety margin past where the
-                // reveal content finishes (REVEAL_PROGRESS=0.36) but well
-                // before the opacity fade completes, so this layer stops
-                // blocking clicks long before it's visually gone. Visibility
-                // stays tied to opacity so the fade itself still looks
-                // identical (no visual pop) — only interactivity moves earlier.
-                const POINTER_CUTOFF = 0.55;
-                heroOverlayRef.current.style.pointerEvents = p < POINTER_CUTOFF ? "auto" : "none";
-                heroOverlayRef.current.style.visibility = opacity < 0.02 ? "hidden" : "visible";
+    // Entering focus (medtech/edtech) from wherever the user happens to have
+    // scrolled to within the split section — snap to the stable framing
+    // position first so the focused view is never cropped by being mid-scroll,
+    // then lock scroll there for as long as the domain stays focused.
+    const handleSelectDomain = useCallback((domain) => {
+        if (domain) {
+            const scrollH = getHeroScrollableHeight(window.innerHeight);
+            if (scrollH > 0) {
+                const target = scrollYForProgress(0.42, scrollH);
+                focusedAnchorScrollY.current = target;
+                autoScrollLock.current = true;
+                window.scrollTo({ top: target, behavior: "smooth" });
+                setTimeout(() => { autoScrollLock.current = false; }, 700);
             }
-            raf = requestAnimationFrame(tick);
-        };
-        raf = requestAnimationFrame(tick);
-        return () => cancelAnimationFrame(raf);
-    }, [scrollProgress]);
+        } else {
+            focusedAnchorScrollY.current = null;
+        }
+        setSelectedDomain(domain);
+    }, [setSelectedDomain]);
 
     return (
         <>
@@ -1333,44 +1262,38 @@ export default function NeanicHero({ setActiveModal, scrollProgress: propScrollP
         ::-webkit-scrollbar-thumb{background:#aac8ee;border-radius:2px;}
       `}</style>
 
-            {/* #about is now a plain spacer (no sticky child) — its height is
-                 simply the scroll distance the hero-to-ProgramsShowcase
-                 handoff takes. The hero itself lives in a position:fixed
-                 overlay (see heroOverlayRef above) that reserves NO
-                 document-flow height, so ProgramsShowcase (rendered right
-                 after this spacer by NeanicSections) starts scrolling into
-                 view from the very first pixel of scroll — concurrently
-                 with the overlay fading out on top of it, rather than only
-                 after a pin fully releases. */}
-            <div id="about" style={{ height: "100vh", background: "transparent" }}>
-                <div
-                    ref={heroOverlayRef}
-                    style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100vh", zIndex: 50, overflow: "hidden", background: "linear-gradient(135deg,#bcd4f5 0%,#cdd8f7 38%,#e2def6 68%,#eef1fb 100%)" }}
-                >
+            <div id="about" style={{ height: "125vh", background: "transparent" }}>
+                <div style={{ position: "sticky", top: 0, width: "100%", height: "100vh", overflow: "hidden", background: "linear-gradient(135deg,#bcd4f5 0%,#cdd8f7 38%,#e2def6 68%,#eef1fb 100%)" }}>
 
                     <div style={{ position: "absolute", inset: 0, zIndex: 2, background: "linear-gradient(to right,rgba(232,242,252,0.97) 0%,rgba(232,242,252,0.72) 32%,rgba(232,242,252,0.1) 52%,transparent 68%)", pointerEvents: "none" }} />
                     <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 97.5, zIndex: 2, background: "linear-gradient(to top,rgba(226,238,250,1),transparent)", pointerEvents: "none" }} />
 
-                    {/* ── CANVAS: single DNAScene + OrbitalParticleSystem — holds its
-                         homepage framing and fades out with the headline text
-                         instead of zooming/splitting away (see DNAFade). ── */}
-                    <DNAFade scrollProgress={scrollProgress}>
-                        <Canvas camera={{ position: [0, 0, 11], fov: 55 }} style={{ width: "100%", height: "100%" }} gl={{ antialias: true, alpha: true }}>
-                            <CameraRig selectedDomain={selectedDomain} />
-                            <DNAScene
-                                scrollProgress={scrollProgress}
-                                selectedDomain={selectedDomain}
-                                medNodeRef={medNodeRef}
-                                edNodeRef={edNodeRef}
-                                cardDOMRefs={cardDOMRefs}
-                                onCardReveal={onCardReveal}
-                            />
-                        </Canvas>
-                    </DNAFade>
+                    {/* ── CANVAS: single DNAScene + OrbitalParticleSystem ── */}
+                    <Canvas camera={{ position: [0, 0, 11], fov: 55 }} style={{ position: "absolute", inset: 0, zIndex: 1 }} gl={{ antialias: true, alpha: true }}>
+                        <CameraRig scrollProgress={scrollProgress} selectedDomain={selectedDomain} />
+                        <DNAScene
+                            scrollProgress={scrollProgress}
+                            selectedDomain={selectedDomain}
+                            medNodeRef={medNodeRef}
+                            edNodeRef={edNodeRef}
+                            cardDOMRefs={cardDOMRefs}
+                            onCardReveal={onCardReveal}
+                        />
+                    </Canvas>
 
                     <FloatingBubbles scrollProgress={scrollProgress} />
 
                     <ScrollRevealContent scrollProgress={scrollProgress} setActiveModal={setActiveModal} />
+
+                    {/* DNASplitSection: exposes card DOM refs so particles can target them */}
+                    <DNASplitSection
+                        scrollProgress={scrollProgress}
+                        selectedDomain={selectedDomain}
+                        setSelectedDomain={handleSelectDomain}
+                        cardReveals={cardReveals}
+                        onCardRefsReady={handleCardRefsReady}
+                        setActiveModal={setActiveModal}
+                    />
 
                     <StageIndicator stage={stage} />
                     <ScrollHint visible={!splitRevealed && !selectedDomain} />

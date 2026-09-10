@@ -12,6 +12,7 @@ function useIsMobile() {
     return isMobile;
 }
 import FocusAreaSection from "./FocusAreaSection";
+import ProgramsShowcase from "./ProgramsShowcase";
 const APPLE_EASE = [0.65, 0, 0.35, 1];
 
 // ─────────────────────────────────────────────────────────────────
@@ -789,7 +790,7 @@ function PipelineSection() {
             <div style={{ maxWidth: 825, margin: "0 auto" }}>
                 <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8 }} style={{ textAlign: "center", marginBottom: 48 }}>
                     <p style={{ fontSize: 8.25, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-primary)", fontFamily: "'Inter', sans-serif", marginBottom: 9 }}>How We Build</p>
-                    <h2 style={{ fontSize: "clamp(21px, 3.5vw, 36px)", fontWeight: 800, color: "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.025em" }}>
+                    <h2 style={{ fontSize: "clamp(28px, 4.4vw, 46px)", fontWeight: 800, color: "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.025em", lineHeight: 1.1 }}>
                         Innovation Pipeline
                     </h2>
                     <p style={{ fontSize: 12, color: "rgba(15,45,90,0.55)", fontFamily: "'Inter', sans-serif", marginTop: 10.5 }}>
@@ -947,7 +948,7 @@ function ImpactSection() {
             <div style={{ maxWidth: 825, margin: "0 auto", position: "relative" }}>
                 <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8 }} style={{ textAlign: "center", marginBottom: 48 }}>
                     <p style={{ fontSize: 8.25, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(100,180,255,0.7)", fontFamily: "'Inter', sans-serif", marginBottom: 9 }}>Our Reach</p>
-                    <h2 style={{ fontSize: "clamp(21px, 3.5vw, 36px)", fontWeight: 800, color: "#ffffff", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.025em" }}>
+                    <h2 style={{ fontSize: "clamp(28px, 4.4vw, 46px)", fontWeight: 800, color: "#ffffff", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.025em", lineHeight: 1.1 }}>
                         Measurable Impact
                     </h2>
                     <p style={{ fontSize: 12, color: "rgba(180,210,255,0.6)", fontFamily: "'Inter', sans-serif", marginTop: 10.5 }}>
@@ -987,7 +988,7 @@ function PartnershipSection({ setActiveModal }) {
             <div style={{ maxWidth: 900, margin: "0 auto" }}>
                 <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8 }} style={{ textAlign: "center", marginBottom: 42 }}>
                     <p style={{ fontSize: 8.25, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-primary)", fontFamily: "'Inter', sans-serif", fontWeight: 700, marginBottom: 9 }}>Partner With Us</p>
-                    <h2 style={{ fontSize: "clamp(21px, 3.8vw, 39px)", fontWeight: 800, color: "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.025em", marginBottom: 12 }}>
+                    <h2 style={{ fontSize: "clamp(28px, 4.4vw, 46px)", fontWeight: 800, color: "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.025em", lineHeight: 1.1, marginBottom: 12 }}>
                         Partnership Opportunities
                     </h2>
                     <p style={{ fontSize: 12, color: "rgba(15,45,90,0.55)", fontFamily: "'Inter', sans-serif", lineHeight: 1.7, maxWidth: 465, margin: "0 auto" }}>
@@ -1225,7 +1226,7 @@ function WhyNeanicMattersSection() {
                     style={{ textAlign: "center", marginBottom: 48 }}
                 >
                     <p style={{ fontSize: 8.25, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-primary)", fontFamily: "'Inter', sans-serif", marginBottom: 9 }}>Core Philosophy</p>
-                    <h2 style={{ fontSize: "clamp(21px, 3.5vw, 36px)", fontWeight: 800, color: "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.025em" }}>
+                    <h2 style={{ fontSize: "clamp(28px, 4.4vw, 46px)", fontWeight: 800, color: "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.025em", lineHeight: 1.1 }}>
                         Why Neanic Matters
                     </h2>
                 </motion.div>
@@ -1283,7 +1284,7 @@ function NewsSection() {
             <div style={{ maxWidth: 825, margin: "0 auto" }}>
                 <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8 }} style={{ textAlign: "center", marginBottom: 42 }}>
                     <p style={{ fontSize: 8.25, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-primary)", fontFamily: "'Inter', sans-serif", marginBottom: 9 }}>Latest</p>
-                    <h2 style={{ fontSize: "clamp(21px, 3.5vw, 36px)", fontWeight: 800, color: "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.025em" }}>
+                    <h2 style={{ fontSize: "clamp(28px, 4.4vw, 46px)", fontWeight: 800, color: "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.025em", lineHeight: 1.1 }}>
                         Latest Milestones
                     </h2>
                 </motion.div>
@@ -1329,7 +1330,7 @@ function PartnerWithUsSection() {
             <div style={{ maxWidth: 525, margin: "0 auto", textAlign: "center", position: "relative" }}>
                 <motion.div initial={{ opacity: 0, y: 40 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.9 }}>
                     <p style={{ fontSize: 8.25, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(100,180,255,0.55)", fontFamily: "'Inter', sans-serif", marginBottom: 15 }}>Collaborate With Neanic</p>
-                    <h2 style={{ fontSize: "clamp(22.5px, 4.5vw, 43.5px)", fontWeight: 800, color: "#ffffff", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.03em", lineHeight: 1.1, marginBottom: 15 }}>
+                    <h2 style={{ fontSize: "clamp(28px, 4.4vw, 46px)", fontWeight: 800, color: "#ffffff", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.025em", lineHeight: 1.1, marginBottom: 15 }}>
                         Partner With Us
                     </h2>
                     <p style={{ fontSize: 12, color: "rgba(180,210,255,0.55)", fontFamily: "'Inter', sans-serif", lineHeight: 1.8, marginBottom: 30, maxWidth: 390, margin: "0 auto 30px" }}>
@@ -1360,7 +1361,7 @@ function CareersSection() {
             <div style={{ maxWidth: 525, margin: "0 auto", textAlign: "center", position: "relative" }}>
                 <motion.div initial={{ opacity: 0, y: 40 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.9 }}>
                     <p style={{ fontSize: 8.25, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(100,180,255,0.55)", fontFamily: "'Inter', sans-serif", marginBottom: 15 }}>Join Us</p>
-                    <h2 style={{ fontSize: "clamp(22.5px, 4.5vw, 43.5px)", fontWeight: 800, color: "#ffffff", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.03em", lineHeight: 1.1, marginBottom: 15 }}>
+                    <h2 style={{ fontSize: "clamp(28px, 4.4vw, 46px)", fontWeight: 800, color: "#ffffff", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.025em", lineHeight: 1.1, marginBottom: 15 }}>
                         Build Technologies<br />That Matter
                     </h2>
                     <p style={{ fontSize: 12, color: "rgba(180,210,255,0.55)", fontFamily: "'Inter', sans-serif", lineHeight: 1.8, marginBottom: 30, maxWidth: 390, margin: "0 auto 30px" }}>
@@ -1450,7 +1451,7 @@ function SupportedBySection() {
     return (
         <section style={{ padding: "clamp(150px, 18vw, 190px) 6vw clamp(42px, 7vw, 66px)", background: "var(--color-bg-blue-tint)", textAlign: "center", overflow: "hidden" }}>
             <div style={{ transform: headingTransform, transformOrigin: "top center" }}>
-                <h2 style={{ fontSize: "clamp(19px, 3vw, 27px)", fontWeight: 800, color: "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", margin: 0 }}>
+                <h2 style={{ fontSize: "clamp(28px, 4.4vw, 46px)", fontWeight: 800, color: "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.025em", lineHeight: 1.1, margin: 0 }}>
                     Supported by
                 </h2>
                 <div style={{ width: 42, height: 3, borderRadius: 2, background: "rgba(15,45,90,0.2)", margin: "13px auto 0", transform: dividerTransform }} />
@@ -1677,6 +1678,7 @@ function SyncHerOvuWiseSection() {
 export const NeanicSections = ({ scrollProgress, setActiveModal, selectedDomain, setSelectedDomain }) => {
     return (
         <>
+            <ProgramsShowcase />
             <FocusAreaSection />
             <SyncHerOvuWiseSection />
             <PipelineSection />

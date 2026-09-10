@@ -36,7 +36,7 @@ export default function FoundersSection() {
             <div style={{ maxWidth: 1100, margin: "0 auto" }}>
                 <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8 }} style={{ textAlign: "center", marginBottom: 64 }}>
                     <p style={{ fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-primary)", fontFamily: "'Inter', sans-serif", marginBottom: 12 }}>Leadership</p>
-                    <h2 style={{ fontSize: "clamp(28px, 3.5vw, 48px)", fontWeight: 800, color: "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.025em" }}>
+                    <h2 style={{ fontSize: "clamp(28px, 4.4vw, 46px)", fontWeight: 800, color: "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.025em", lineHeight: 1.1 }}>
                         Meet the Founders
                     </h2>
                 </motion.div>

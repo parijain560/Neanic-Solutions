@@ -1108,9 +1108,17 @@ h3 {
    SECTION 10: 5-YEAR STRATEGIC ROADMAP
    -------------------------------------------------- */
 .roadmap-section {
-  
+
   background: linear-gradient(180deg, var(--color-bg-cream) 0%, var(--color-bg-blue-tint) 100%);
   border-top: 1px solid var(--color-border);
+}
+
+.roadmap-section h2 {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(28px, 4.4vw, 46px);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
 }
 
 .roadmap-intro {
@@ -2420,8 +2428,11 @@ h3 {
 }
 
 .focus-area-section h2 {
-  font-size: 28.5px;
-  /* 38px × 0.75 */
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(28px, 4.4vw, 46px);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
   margin-bottom: 21px;
 }
 
