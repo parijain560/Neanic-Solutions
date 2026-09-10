@@ -1121,53 +1121,98 @@ export function Navbar({ setActiveModal }) {
 }
 
 export function Footer({ setActiveModal }) {
+    // The 4-column grid below (logo/tagline + Solutions + Company + Connect)
+    // was a fixed "2fr 1fr 1fr 1fr" with no mobile fallback, so on narrow
+    // screens all four columns squeezed into slivers — the "Connect" column
+    // in particular was too narrow for "neanicsolution@gmail.com" on one
+    // line, and with the footer's own overflow:hidden, the overflowing tail
+    // was silently clipped instead of wrapping. Below 640px, stack into a
+    // single column instead so every column gets the full width to lay
+    // out (and wrap) its own content properly. Desktop keeps the original
+    // 4-column layout untouched.
+    const [isMobile, setIsMobile] = useState(typeof window !== "undefined" ? window.innerWidth <= 640 : false);
+    useEffect(() => {
+        const onResize = () => setIsMobile(window.innerWidth <= 640);
+        window.addEventListener("resize", onResize);
+        return () => window.removeEventListener("resize", onResize);
+    }, []);
+    // Pulled out of the grid JSX below so the same pieces can be laid out
+    // differently per breakpoint instead of just resizing in place: on
+    // mobile a single "1fr" column left the whole right half of the footer
+    // empty (the logo block and the 3 link columns just stacked one under
+    // another, all left-aligned). Desktop is untouched below — same 4-item
+    // "2fr 1fr 1fr 1fr" grid as before, logo block included as the first
+    // item.
+    const logoBlock = (
+        <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 7.5, marginBottom: 15 }}>
+                <img src="/LOGO.png" alt="Neanic Solutions" style={{ height: 75, objectFit: "contain", transform: "translateY(15px)" }} />
+                <span style={{ fontSize: 12.75, fontWeight: 800, color: "white", fontFamily: "'Inter',sans-serif" }}>Neanic Solutions</span>
+            </div>
+            <p style={{ fontSize: 9.75, color: "rgba(180,200,240,0.5)", fontFamily: "'Inter',sans-serif", lineHeight: 1.8, maxWidth: 210 }}>Bridging molecular science and accessible healthcare.</p>
+        </div>
+    );
+
+    const columnBlocks = [
+        { title: "Solutions", links: ["MedTech", "EdTech", "Innovation Pipeline", "Partnership Opportunities"] },
+        { title: "Company", links: ["About", "Founders", "Latest Milestones", "Careers"] },
+        { title: "Connect", links: ["📧 neanicsolution@gmail.com"] }
+    ].map(col => (
+        <div key={col.title}>
+            <p style={{ fontSize: 8.25, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(100,160,255,0.5)", fontFamily: "'Inter',sans-serif", marginBottom: 12 }}>{col.title}</p>
+            {col.links.map(link => (
+                <p key={link} style={{ fontSize: 9.75, color: "rgba(180,200,240,0.45)", fontFamily: "'Inter',sans-serif", marginBottom: 6, cursor: "pointer", transition: "color 0.2s", wordBreak: "break-word" }} onMouseEnter={e => e.currentTarget.style.color = "rgba(180,200,240,0.85)"} onMouseLeave={e => e.currentTarget.style.color = "rgba(180,200,240,0.45)"} onClick={() => {
+                    if (link === "📧 neanicsolution@gmail.com") {
+                        window.location.href = "mailto:neanicsolution@gmail.com";
+                    } else if (["MedTech", "EdTech"].includes(link)) {
+                        // MedTech/EdTech content now lives in ProgramsShowcase
+                        // (DNASplitSection was removed) — jump straight to it
+                        // instead of an old scrollH-fraction offset that no
+                        // longer corresponds to any visible state.
+                        document.getElementById("programs-showcase")?.scrollIntoView({ behavior: "smooth" });
+                    } else if (link === "Innovation Pipeline") {
+                        document.getElementById("pipeline")?.scrollIntoView({ behavior: "smooth" });
+                    } else if (link === "Partnership Opportunities") {
+                        document.getElementById("partnership")?.scrollIntoView({ behavior: "smooth" });
+                    } else if (link === "About") {
+                        document.getElementById("why-neanic-matters")?.scrollIntoView({ behavior: "smooth" });
+                    } else if (link === "Latest Milestones") {
+                        document.getElementById("news")?.scrollIntoView({ behavior: "smooth" });
+                    } else if (["Careers", "Founders"].includes(link)) {
+                        document.getElementById("founders")?.scrollIntoView({ behavior: "smooth" });
+                    }
+                }}>{link}</p>
+            ))}
+        </div>
+    ));
+
     return (
         <footer style={{ background: "#060e1c", padding: "60px 6vw 30px", position: "relative", overflow: "hidden" }}>
             <div style={{ maxWidth: 825, margin: "0 auto" }}>
-                <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 36, marginBottom: 48 }}>
-                    <div>
-                        <div style={{ display: "flex", alignItems: "center", gap: 7.5, marginBottom: 15 }}>
-                            <img src="/LOGO.png" alt="Neanic Solutions" style={{ height: 75, objectFit: "contain", transform: "translateY(15px)" }} />
-                            <span style={{ fontSize: 12.75, fontWeight: 800, color: "white", fontFamily: "'Inter',sans-serif" }}>Neanic Solutions</span>
+                {isMobile ? (
+                    <div style={{ marginBottom: 48 }}>
+                        <div style={{ marginBottom: 30 }}>{logoBlock}</div>
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", columnGap: 20, rowGap: 26 }}>
+                            {columnBlocks}
                         </div>
-                        <p style={{ fontSize: 9.75, color: "rgba(180,200,240,0.5)", fontFamily: "'Inter',sans-serif", lineHeight: 1.8, maxWidth: 210 }}>Bridging molecular science and accessible healthcare.</p>
                     </div>
-                    {[
-                        { title: "Solutions", links: ["MedTech", "EdTech", "Innovation Pipeline", "Partnership Opportunities"] },
-                        { title: "Company", links: ["About", "Founders", "Latest Milestones", "Careers"] },
-                        { title: "Connect", links: ["📧 neanicsolution@gmail.com"] }
-                    ].map(col => (
-                        <div key={col.title}>
-                            <p style={{ fontSize: 8.25, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(100,160,255,0.5)", fontFamily: "'Inter',sans-serif", marginBottom: 12 }}>{col.title}</p>
-                            {col.links.map(link => (
-                                <p key={link} style={{ fontSize: 9.75, color: "rgba(180,200,240,0.45)", fontFamily: "'Inter',sans-serif", marginBottom: 6, cursor: "pointer", transition: "color 0.2s" }} onMouseEnter={e => e.currentTarget.style.color = "rgba(180,200,240,0.85)"} onMouseLeave={e => e.currentTarget.style.color = "rgba(180,200,240,0.45)"} onClick={() => {
-                                    if (link === "📧 neanicsolution@gmail.com") {
-                                        window.location.href = "mailto:neanicsolution@gmail.com";
-                                    } else if (["MedTech", "EdTech"].includes(link)) {
-                                        // MedTech/EdTech content now lives in ProgramsShowcase
-                                        // (DNASplitSection was removed) — jump straight to it
-                                        // instead of an old scrollH-fraction offset that no
-                                        // longer corresponds to any visible state.
-                                        document.getElementById("programs-showcase")?.scrollIntoView({ behavior: "smooth" });
-                                    } else if (link === "Innovation Pipeline") {
-                                        document.getElementById("pipeline")?.scrollIntoView({ behavior: "smooth" });
-                                    } else if (link === "Partnership Opportunities") {
-                                        document.getElementById("partnership")?.scrollIntoView({ behavior: "smooth" });
-                                    } else if (link === "About") {
-                                        document.getElementById("why-neanic-matters")?.scrollIntoView({ behavior: "smooth" });
-                                    } else if (link === "Latest Milestones") {
-                                        document.getElementById("news")?.scrollIntoView({ behavior: "smooth" });
-                                    } else if (["Careers", "Founders"].includes(link)) {
-                                        document.getElementById("founders")?.scrollIntoView({ behavior: "smooth" });
-                                    }
-                                }}>{link}</p>
-                            ))}
-                        </div>
-                    ))}
-                </div>
+                ) : (
+                    <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 36, marginBottom: 48 }}>
+                        {logoBlock}
+                        {columnBlocks}
+                    </div>
+                )}
                 <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)", paddingTop: 21, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 9 }}>
                     <p style={{ fontSize: 9, color: "rgba(180,200,240,0.3)", fontFamily: "'Inter',sans-serif", margin: 0 }}>© 2025 Neanic Solutions. All rights reserved.</p>
-                    <div style={{ display: "flex", alignItems: "center", gap: 9, fontSize: 8.25, color: "rgba(180,200,240,0.4)", fontFamily: "'Inter',sans-serif", letterSpacing: "0.05em" }}>
+                    {/* The footer wrapper below has overflow:hidden, and this row
+                        previously had no flexWrap of its own — on narrow mobile
+                        widths "Privacy Policy • Careers • Research • Contact" ran
+                        wider than the available space and the tail end (Contact)
+                        was silently clipped by that overflow:hidden instead of
+                        dropping to a second line. flexWrap + rowGap let it wrap
+                        like the outer row already does; desktop is unaffected
+                        since everything still fits on one line there. */}
+                    <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 9, rowGap: 6, fontSize: 8.25, color: "rgba(180,200,240,0.4)", fontFamily: "'Inter',sans-serif", letterSpacing: "0.05em" }}>
                         <span style={{ cursor: "pointer", transition: "color 0.2s" }} onMouseEnter={e => e.currentTarget.style.color = "rgba(180,200,240,0.85)"} onMouseLeave={e => e.currentTarget.style.color = "rgba(180,200,240,0.4)"}>Privacy Policy</span>
                         <span>•</span>
                         <span style={{ cursor: "pointer", transition: "color 0.2s" }} onMouseEnter={e => e.currentTarget.style.color = "rgba(180,200,240,0.85)"} onMouseLeave={e => e.currentTarget.style.color = "rgba(180,200,240,0.4)"} onClick={() => document.getElementById("founders")?.scrollIntoView({ behavior: "smooth" })}>Careers</span>

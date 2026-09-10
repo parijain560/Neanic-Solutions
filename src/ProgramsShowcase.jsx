@@ -543,6 +543,32 @@ export default function ProgramsShowcase() {
                 zIndex: expandedId ? 1000 : 1,
             }}
         >
+            {/* Full-viewport backdrop while a card is open. The expanded
+                card's own overlay sits inset by a small clamp() margin
+                (see overlayStyle in ProgramCard), so without this, whatever
+                is actually on screen behind that margin — on mobile,
+                usually the very next section, "What We Focus On" — showed
+                through around the card's edges. This sits just behind the
+                card (zIndex 499 vs the card's 500) and reuses the section's
+                own background gradient so it reads as a seamless extension
+                of this section rather than a visible seam, on both mobile
+                and desktop. It's always mounted (not conditionally
+                rendered) so its opacity transition actually animates in
+                step with the card's own open/close fade instead of popping. */}
+            <div
+                aria-hidden="true"
+                style={{
+                    position: "fixed",
+                    inset: 0,
+                    zIndex: 499,
+                    background:
+                        "radial-gradient(55% 60% at 80% 15%, rgba(150,200,255,0.4) 0%, rgba(0,0,0,0) 60%), radial-gradient(35% 45% at 15% 85%, rgba(180,215,255,0.3) 0%, rgba(0,0,0,0) 50%), linear-gradient(155deg, #ebf4ff 0%, #ddeaff 50%, #cce0fc 100%)",
+                    opacity: expandedId ? 1 : 0,
+                    pointerEvents: expandedId ? "auto" : "none",
+                    transition: `opacity ${DURATION}ms ${EASE}`,
+                }}
+            />
+
             <div
                 style={{
                     maxWidth: 1140,

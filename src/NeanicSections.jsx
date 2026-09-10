@@ -941,6 +941,17 @@ const IMPACT_CARD_SCALE = { x: 1.00, y: 1.15 };
 function ImpactSection() {
     const ref = useRef(null);
     const inView = useInView(ref, { once: false, margin: "-15%" });
+    // IMPACT_CARD_SCALE stretches each card 15% taller via a CSS transform —
+    // which doesn't change the element's LAYOUT box, only how it paints. On
+    // desktop's multi-column grid that's invisible (plenty of vertical
+    // room), but once the grid collapses to a single column on mobile, each
+    // card visually overflows its own 15px grid gap into the card below it,
+    // so the three cards read as one touching, cluttered block instead of
+    // three separate ones. Skip the scale on mobile (real height = layout
+    // height, so the gap actually separates them) and give that single
+    // column a bit more breathing room than the 15px used for the
+    // multi-column desktop grid.
+    const isMobile = useIsMobile();
     return (
         <section id="impact" ref={ref} style={{ padding: "clamp(48px, 10vw, 90px) 6vw", background: "linear-gradient(135deg, #0a1628 0%, #0d2244 50%, #0a1e3a 100%)", position: "relative", zIndex: 1, overflow: "hidden" }}>
             <div style={{ position: "absolute", inset: 0, opacity: 0.06, backgroundImage: "radial-gradient(circle at 20% 50%, #0088cc 0%, transparent 50%), radial-gradient(circle at 80% 50%, #0044aa 0%, transparent 50%)", pointerEvents: "none" }} />
@@ -955,9 +966,9 @@ function ImpactSection() {
                         Numbers that reflect the depth and reach of Neanic's work in science and healthcare.
                     </p>
                 </motion.div>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 15 }}>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: isMobile ? 20 : 15 }}>
                     {IMPACT_STATS.map((stat, i) => (
-                        <div key={stat.label} style={{ transform: `scale(${IMPACT_CARD_SCALE.x}, ${IMPACT_CARD_SCALE.y})`, transformOrigin: "center" }}>
+                        <div key={stat.label} style={isMobile ? undefined : { transform: `scale(${IMPACT_CARD_SCALE.x}, ${IMPACT_CARD_SCALE.y})`, transformOrigin: "center" }}>
                             <StatCard stat={stat} inView={inView} delay={i * 0.1} />
                         </div>
                     ))}
